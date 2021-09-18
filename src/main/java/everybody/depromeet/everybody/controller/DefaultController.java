@@ -18,7 +18,7 @@ public class DefaultController {
     @GetMapping("/")
     @ResponseStatus(code=HttpStatus.OK)
     public String ping(){
-        return "pong";
+        return "pong-1";
     }
 
     @GetMapping("/users")

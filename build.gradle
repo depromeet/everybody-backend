@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '2.5.4'
+	id 'org.springframework.boot' version '2.4.3' // 2.5.x부터는 gradle 5.6.2로 못 돌리는 것 같은데..
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
