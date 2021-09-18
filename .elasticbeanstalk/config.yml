@@ -1,6 +1,8 @@
 branch-defaults:
   default:
     environment: Everybodydemo1-env
+  main:
+    environment: Everybodydemo1-env
 environment-defaults:
   Everybodydemo1-env:
     branch: null
