@@ -1,0 +1,1 @@
+build: gradle build --exclude-task test --exclude-task testClasses

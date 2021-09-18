@@ -1,0 +1,19 @@
+branch-defaults:
+  default:
+    environment: Everybodydemo1-env
+environment-defaults:
+  Everybodydemo1-env:
+    branch: null
+    repository: null
+global:
+  application_name: everybody-demo-1
+  default_ec2_keyname: null
+  default_platform: Corretto 11 running on 64bit Amazon Linux 2
+  default_region: ap-northeast-2
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: depromeet-everybody
+  sc: git
+  workspace_type: Application
