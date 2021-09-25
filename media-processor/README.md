@@ -1,8 +1,8 @@
 # 에브리바디 media-processor
 
-serverless framwork 참고 예시: https://github.com/serverless/examples/tree/master/aws-python-http-api
+OpenCV와 NumPy를 이용해 사진을 편집하거나 영상을 생성합니다. Lambda + APIGateway를 통해 제공됩니다.
 
-Lambda + APIGateway 이용
+serverless framwork 참고 예시: https://github.com/serverless/examples/tree/master/aws-python-http-api
 
 ## 로컬에서 실행
 
