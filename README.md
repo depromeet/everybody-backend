@@ -1,4 +1,5 @@
 # everybody-backend
+에브리바리 쉑더바리 렛츠고바리 컴온바리 ~ ♪ 제주도엔 다금바리 ~ ♪ 디프만엔 에블바리 ~ ♪
 
 🏋️ 눈바디를 기록하는 에브리바디 서비스의 Golang + Python 마이크로서비스 아키텍쳐 기반 백엔드 (디프만 10기 일조권침해조)
 
@@ -19,3 +20,5 @@
   * ALB - 프리티어
   * EC2 - 프리티어
   * Lambda - 프리티어
+
+**Contact** - (Email) everybody.dev10@gmail.com
