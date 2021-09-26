@@ -1,6 +1,5 @@
 package dto
 
-type RegisterRequest struct{
-    DeviceToken string `json:"device_token"`
+type RegisterRequest struct {
+	DeviceToken string `json:"device_token"`
 }
-
