@@ -9,12 +9,15 @@ import (
 func NewServer(
     userHandler *handler.UserHandler,
 ) *fiber.App{
-    app := fiber.New()
+    app := fiber.New(fiber.Config{
+        ErrorHandler: errorHandle,
+    })
     app.Use(cors.New(cors.Config{
         AllowOrigins: "*",
     }))
     app.Use(logger.New())
     app.Get("/", index)
+
     addUserHandlers(app, userHandler)
 
     return app
