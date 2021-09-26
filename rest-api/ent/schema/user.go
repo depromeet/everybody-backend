@@ -15,7 +15,8 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id"),
 		field.String("nickname"),
-		field.String("deviceToken"),
+		// struct tag를 정의 안 해주면 deviceToken으로 직렬화됨
+		field.String("deviceToken").StructTag("json:\"device_token\""),
 	}
 }
 

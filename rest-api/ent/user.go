@@ -18,7 +18,7 @@ type User struct {
 	// Nickname holds the value of the "nickname" field.
 	Nickname string `json:"nickname,omitempty"`
 	// DeviceToken holds the value of the "deviceToken" field.
-	DeviceToken string `json:"deviceToken,omitempty"`
+	DeviceToken string `json:"device_token"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
