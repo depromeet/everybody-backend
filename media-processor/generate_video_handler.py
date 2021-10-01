@@ -1,8 +1,3 @@
-try:
-    import unzip_requirements
-except ImportError:
-    pass
-
 import cv2, os
 import numpy as np
 import requests
@@ -33,10 +28,17 @@ def handle(event, context):
 
     # 만든 mp4 파일 자체를 rb로 열어서 payload로 보내준다.
     mp4_file = open('/tmp/video-demo.mp4', 'rb')
-    r = requests.put("/".join((tmp_s3_url, "video-demo.mp4")), data=mp4_file)
-    print(r.status_code)
 
-    response = {"statusCode": 200, "body": {"result": "generate video successfully"}}
+    # S3에 업로드하지 않고 /tmp의 내용을 바로 base64를 통해 encode, decode하고
+    # Content-Type을 정의함으로써 binary data를 전달할 수 있음.
+    response = {
+        "headers": {
+            "Content-Type": "video/mp4",
+        },
+        'isBase64Encoded': True,
+        "statusCode": 200,
+        "body": base64.b64encode(mp4_file.read()).decode('utf-8'),
+    }
 
     return response
 
