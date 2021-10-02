@@ -29,6 +29,13 @@ functions:
       - httpApi:
           path: /panorama
           method: get
+  video:
+    handler: generate_video_handler.handle
+    events:
+      - httpApi:
+          path: /video
+          method: get
+
 plugins:
   # 로컬에서 http로 핸들러를 트리거하기 위함
   - serverless-offline

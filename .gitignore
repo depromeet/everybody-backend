@@ -32,3 +32,4 @@ build
 .serverless
 node_modules
 venv
+.npmignore
