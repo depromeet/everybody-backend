@@ -11,6 +11,8 @@ import (
 
 var (
 	ErrDuplicatedUserID = errors.New("고유한 유저 ID 생성에 실패했습니다.")
+	signUpDefaultNickname = "끈육몬"
+	signUpDefaultNotificationInterval = 3
 )
 
 type UserService interface {
@@ -70,7 +72,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
 	}
 
 	if len(body.Nickname) == 0 {
-		body.Nickname = "끈육몬"
+		body.Nickname = signUpDefaultNickname
 	}
 
 	user, err := s.userRepo.Create(&ent.User{
@@ -83,7 +85,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
 	log.Infof("유저를 생성했습니다. User(id=%s)", user.ID)
 
 	if body.NotificationInterval == 0 {
-		body.NotificationInterval = 3
+		body.NotificationInterval = signUpDefaultNotificationInterval
 	}
 
 	notificationConfig, err := s.notificationService.Configure(id, &dto.ConfigureNotificationRequest{
