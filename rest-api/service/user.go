@@ -45,7 +45,6 @@ func (u *userService) Register(body *dto.RegisterRequest) (*ent.User, error) {
 	user, err := u.userRepo.Create(&ent.User{
 		ID:          randomID,
 		Nickname:    "익명의 끄뉵잉",
-		DeviceToken: body.DeviceToken,
 	})
 	if err != nil {
 		return nil, err

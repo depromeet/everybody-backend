@@ -2,8 +2,19 @@
 
 package ent
 
+import (
+	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
+	"github.com/depromeet/everybody-backend/rest-api/ent/schema"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	notificationconfigFields := schema.NotificationConfig{}.Fields()
+	_ = notificationconfigFields
+	// notificationconfigDescIsActive is the schema descriptor for is_active field.
+	notificationconfigDescIsActive := notificationconfigFields[3].Descriptor()
+	// notificationconfig.DefaultIsActive holds the default value on creation for the is_active field.
+	notificationconfig.DefaultIsActive = notificationconfigDescIsActive.Default.(bool)
 }

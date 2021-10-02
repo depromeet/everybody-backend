@@ -4,6 +4,7 @@ package user
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 )
 
@@ -94,13 +95,6 @@ func IDLTE(id string) predicate.User {
 func Nickname(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldNickname), v))
-	})
-}
-
-// DeviceToken applies equality check predicate on the "deviceToken" field. It's identical to DeviceTokenEQ.
-func DeviceToken(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDeviceToken), v))
 	})
 }
 
@@ -215,114 +209,59 @@ func NicknameContainsFold(v string) predicate.User {
 	})
 }
 
-// DeviceTokenEQ applies the EQ predicate on the "deviceToken" field.
-func DeviceTokenEQ(v string) predicate.User {
+// HasDevice applies the HasEdge predicate on the "device" edge.
+func HasDevice() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDeviceToken), v))
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DeviceTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DeviceTable, DeviceColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// DeviceTokenNEQ applies the NEQ predicate on the "deviceToken" field.
-func DeviceTokenNEQ(v string) predicate.User {
+// HasDeviceWith applies the HasEdge predicate on the "device" edge with a given conditions (other predicates).
+func HasDeviceWith(preds ...predicate.Device) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDeviceToken), v))
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DeviceInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DeviceTable, DeviceColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 
-// DeviceTokenIn applies the In predicate on the "deviceToken" field.
-func DeviceTokenIn(vs ...string) predicate.User {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
+// HasNotificationConfig applies the HasEdge predicate on the "notification_config" edge.
+func HasNotificationConfig() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldDeviceToken), v...))
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(NotificationConfigTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, NotificationConfigTable, NotificationConfigColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// DeviceTokenNotIn applies the NotIn predicate on the "deviceToken" field.
-func DeviceTokenNotIn(vs ...string) predicate.User {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
+// HasNotificationConfigWith applies the HasEdge predicate on the "notification_config" edge with a given conditions (other predicates).
+func HasNotificationConfigWith(preds ...predicate.NotificationConfig) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldDeviceToken), v...))
-	})
-}
-
-// DeviceTokenGT applies the GT predicate on the "deviceToken" field.
-func DeviceTokenGT(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDeviceToken), v))
-	})
-}
-
-// DeviceTokenGTE applies the GTE predicate on the "deviceToken" field.
-func DeviceTokenGTE(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDeviceToken), v))
-	})
-}
-
-// DeviceTokenLT applies the LT predicate on the "deviceToken" field.
-func DeviceTokenLT(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDeviceToken), v))
-	})
-}
-
-// DeviceTokenLTE applies the LTE predicate on the "deviceToken" field.
-func DeviceTokenLTE(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDeviceToken), v))
-	})
-}
-
-// DeviceTokenContains applies the Contains predicate on the "deviceToken" field.
-func DeviceTokenContains(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldDeviceToken), v))
-	})
-}
-
-// DeviceTokenHasPrefix applies the HasPrefix predicate on the "deviceToken" field.
-func DeviceTokenHasPrefix(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldDeviceToken), v))
-	})
-}
-
-// DeviceTokenHasSuffix applies the HasSuffix predicate on the "deviceToken" field.
-func DeviceTokenHasSuffix(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldDeviceToken), v))
-	})
-}
-
-// DeviceTokenEqualFold applies the EqualFold predicate on the "deviceToken" field.
-func DeviceTokenEqualFold(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldDeviceToken), v))
-	})
-}
-
-// DeviceTokenContainsFold applies the ContainsFold predicate on the "deviceToken" field.
-func DeviceTokenContainsFold(v string) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldDeviceToken), v))
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(NotificationConfigInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, NotificationConfigTable, NotificationConfigColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 
