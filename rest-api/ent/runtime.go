@@ -3,8 +3,11 @@
 package ent
 
 import (
+	"time"
+
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/schema"
+	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -17,4 +20,10 @@ func init() {
 	notificationconfigDescIsActivated := notificationconfigFields[3].Descriptor()
 	// notificationconfig.DefaultIsActivated holds the default value on creation for the is_activated field.
 	notificationconfig.DefaultIsActivated = notificationconfigDescIsActivated.Default.(bool)
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescCreatedAt is the schema descriptor for created_at field.
+	userDescCreatedAt := userFields[2].Descriptor()
+	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 }

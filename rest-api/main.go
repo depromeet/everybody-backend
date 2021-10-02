@@ -21,6 +21,7 @@ var (
 
 
 	userHandler *handler.UserHandler
+	notificationHandler *handler.NotificationHandler
 
 	server *fiber.App
 )
@@ -44,5 +45,7 @@ func initialize() {
 	userService = service.NewUserService(userRepo, notificationService, deviceService)
 
 	userHandler = handler.NewUserHandler(userService)
-	server = http.NewServer(userHandler)
+	notificationHandler = handler.NewNotificationHandler(notificationService)
+
+	server = http.NewServer(userHandler, notificationHandler)
 }

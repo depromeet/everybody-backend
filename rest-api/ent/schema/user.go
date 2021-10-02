@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"time"
 )
 
 // User holds the schema definition for the User entity.
@@ -16,6 +17,9 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id"),
 		field.String("nickname"),
+		field.Time("created_at").Default(func() time.Time {
+			return time.Now()
+		}),
 	}
 }
 

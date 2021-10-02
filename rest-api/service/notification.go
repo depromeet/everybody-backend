@@ -9,6 +9,7 @@ import (
 type NotificationService interface {
 	Configure(requestUser string, body *dto.ConfigureNotificationRequest) (*ent.NotificationConfig, error)
 	GetConfig(id int) (*ent.NotificationConfig, error)
+	GetConfigByUser(user string) (*ent.NotificationConfig, error)
 }
 
 func NewNotificationService(notificationRepo repository.NotificationRepository) NotificationService {
@@ -58,3 +59,14 @@ func (s *notificationService) GetConfig(id int) (*ent.NotificationConfig, error)
 
 	return config, err
 }
+
+// GetConfigByUser 는 알림 설정 정보를 조회합니다.
+func (s *notificationService) GetConfigByUser(user string) (*ent.NotificationConfig, error){
+	config, err := s.notificationRepo.FindByUser(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return config, err
+}
+
