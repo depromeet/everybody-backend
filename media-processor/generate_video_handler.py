@@ -1,6 +1,7 @@
 import cv2, os
 import numpy as np
 import requests
+import base64
 
 
 def handle(event, context):
