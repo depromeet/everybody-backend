@@ -49,16 +49,16 @@ func (ncc *NotificationConfigCreate) SetNillableLastNotifiedAt(t *time.Time) *No
 	return ncc
 }
 
-// SetIsActive sets the "is_active" field.
-func (ncc *NotificationConfigCreate) SetIsActive(b bool) *NotificationConfigCreate {
-	ncc.mutation.SetIsActive(b)
+// SetIsActivated sets the "is_activated" field.
+func (ncc *NotificationConfigCreate) SetIsActivated(b bool) *NotificationConfigCreate {
+	ncc.mutation.SetIsActivated(b)
 	return ncc
 }
 
-// SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (ncc *NotificationConfigCreate) SetNillableIsActive(b *bool) *NotificationConfigCreate {
+// SetNillableIsActivated sets the "is_activated" field if the given value is not nil.
+func (ncc *NotificationConfigCreate) SetNillableIsActivated(b *bool) *NotificationConfigCreate {
 	if b != nil {
-		ncc.SetIsActive(*b)
+		ncc.SetIsActivated(*b)
 	}
 	return ncc
 }
@@ -159,16 +159,16 @@ func (ncc *NotificationConfigCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ncc *NotificationConfigCreate) defaults() {
-	if _, ok := ncc.mutation.IsActive(); !ok {
-		v := notificationconfig.DefaultIsActive
-		ncc.mutation.SetIsActive(v)
+	if _, ok := ncc.mutation.IsActivated(); !ok {
+		v := notificationconfig.DefaultIsActivated
+		ncc.mutation.SetIsActivated(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (ncc *NotificationConfigCreate) check() error {
-	if _, ok := ncc.mutation.IsActive(); !ok {
-		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "is_active"`)}
+	if _, ok := ncc.mutation.IsActivated(); !ok {
+		return &ValidationError{Name: "is_activated", err: errors.New(`ent: missing required field "is_activated"`)}
 	}
 	return nil
 }
@@ -219,13 +219,13 @@ func (ncc *NotificationConfigCreate) createSpec() (*NotificationConfig, *sqlgrap
 		})
 		_node.LastNotifiedAt = value
 	}
-	if value, ok := ncc.mutation.IsActive(); ok {
+	if value, ok := ncc.mutation.IsActivated(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notificationconfig.FieldIsActive,
+			Column: notificationconfig.FieldIsActivated,
 		})
-		_node.IsActive = value
+		_node.IsActivated = value
 	}
 	if nodes := ncc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -13,8 +13,8 @@ import (
 func init() {
 	notificationconfigFields := schema.NotificationConfig{}.Fields()
 	_ = notificationconfigFields
-	// notificationconfigDescIsActive is the schema descriptor for is_active field.
-	notificationconfigDescIsActive := notificationconfigFields[3].Descriptor()
-	// notificationconfig.DefaultIsActive holds the default value on creation for the is_active field.
-	notificationconfig.DefaultIsActive = notificationconfigDescIsActive.Default.(bool)
+	// notificationconfigDescIsActivated is the schema descriptor for is_activated field.
+	notificationconfigDescIsActivated := notificationconfigFields[3].Descriptor()
+	// notificationconfig.DefaultIsActivated holds the default value on creation for the is_activated field.
+	notificationconfig.DefaultIsActivated = notificationconfigDescIsActivated.Default.(bool)
 }

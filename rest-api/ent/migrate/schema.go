@@ -35,7 +35,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "interval", Type: field.TypeInt, Nullable: true},
 		{Name: "last_notified_at", Type: field.TypeTime, Nullable: true},
-		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "is_activated", Type: field.TypeBool, Default: true},
 		{Name: "user_notification_config", Type: field.TypeString, Nullable: true},
 	}
 	// NotificationConfigsTable holds the schema information for the "notification_configs" table.

@@ -21,8 +21,8 @@ type NotificationConfig struct {
 	Interval int `json:"interval,omitempty"`
 	// LastNotifiedAt holds the value of the "last_notified_at" field.
 	LastNotifiedAt time.Time `json:"last_notified_at,omitempty"`
-	// IsActive holds the value of the "is_active" field.
-	IsActive bool `json:"is_active,omitempty"`
+	// IsActivated holds the value of the "is_activated" field.
+	IsActivated bool `json:"is_activated,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the NotificationConfigQuery when eager-loading is set.
 	Edges                    NotificationConfigEdges `json:"edges"`
@@ -57,7 +57,7 @@ func (*NotificationConfig) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case notificationconfig.FieldIsActive:
+		case notificationconfig.FieldIsActivated:
 			values[i] = new(sql.NullBool)
 		case notificationconfig.FieldID, notificationconfig.FieldInterval:
 			values[i] = new(sql.NullInt64)
@@ -98,11 +98,11 @@ func (nc *NotificationConfig) assignValues(columns []string, values []interface{
 			} else if value.Valid {
 				nc.LastNotifiedAt = value.Time
 			}
-		case notificationconfig.FieldIsActive:
+		case notificationconfig.FieldIsActivated:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field is_active", values[i])
+				return fmt.Errorf("unexpected type %T for field is_activated", values[i])
 			} else if value.Valid {
-				nc.IsActive = value.Bool
+				nc.IsActivated = value.Bool
 			}
 		case notificationconfig.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -148,8 +148,8 @@ func (nc *NotificationConfig) String() string {
 	builder.WriteString(fmt.Sprintf("%v", nc.Interval))
 	builder.WriteString(", last_notified_at=")
 	builder.WriteString(nc.LastNotifiedAt.Format(time.ANSIC))
-	builder.WriteString(", is_active=")
-	builder.WriteString(fmt.Sprintf("%v", nc.IsActive))
+	builder.WriteString(", is_activated=")
+	builder.WriteString(fmt.Sprintf("%v", nc.IsActivated))
 	builder.WriteByte(')')
 	return builder.String()
 }

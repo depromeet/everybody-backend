@@ -16,13 +16,13 @@ type UserHandler struct {
 	userService service.UserService
 }
 
-func (h *UserHandler) Register(ctx *fiber.Ctx) error {
-	body := new(dto.RegisterRequest)
+func (h *UserHandler) SignUp(ctx *fiber.Ctx) error {
+	body := new(dto.SignUpRequest)
 	err := ctx.BodyParser(body)
 	if err != nil {
 		return err
 	}
-	user, err := h.userService.Register(body)
+	user, err := h.userService.SignUp(body)
 	if err != nil {
 		return err
 	}

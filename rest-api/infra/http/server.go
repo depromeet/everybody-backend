@@ -31,5 +31,5 @@ func index(ctx *fiber.Ctx) error {
 func addUserHandlers(app *fiber.App, userHandler *handler.UserHandler) {
 	group := app.Group("/users")
 	group.Get("/:id", userHandler.GetUser)
-	group.Post("", userHandler.Register)
+	group.Post("", userHandler.SignUp)
 }

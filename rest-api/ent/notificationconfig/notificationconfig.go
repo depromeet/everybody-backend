@@ -11,8 +11,8 @@ const (
 	FieldInterval = "interval"
 	// FieldLastNotifiedAt holds the string denoting the last_notified_at field in the database.
 	FieldLastNotifiedAt = "last_notified_at"
-	// FieldIsActive holds the string denoting the is_active field in the database.
-	FieldIsActive = "is_active"
+	// FieldIsActivated holds the string denoting the is_activated field in the database.
+	FieldIsActivated = "is_activated"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the notificationconfig in the database.
@@ -31,7 +31,7 @@ var Columns = []string{
 	FieldID,
 	FieldInterval,
 	FieldLastNotifiedAt,
-	FieldIsActive,
+	FieldIsActivated,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "notification_configs"
@@ -56,6 +56,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultIsActive holds the default value on creation for the "is_active" field.
-	DefaultIsActive bool
+	// DefaultIsActivated holds the default value on creation for the "is_activated" field.
+	DefaultIsActivated bool
 )

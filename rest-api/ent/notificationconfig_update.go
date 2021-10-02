@@ -75,16 +75,16 @@ func (ncu *NotificationConfigUpdate) ClearLastNotifiedAt() *NotificationConfigUp
 	return ncu
 }
 
-// SetIsActive sets the "is_active" field.
-func (ncu *NotificationConfigUpdate) SetIsActive(b bool) *NotificationConfigUpdate {
-	ncu.mutation.SetIsActive(b)
+// SetIsActivated sets the "is_activated" field.
+func (ncu *NotificationConfigUpdate) SetIsActivated(b bool) *NotificationConfigUpdate {
+	ncu.mutation.SetIsActivated(b)
 	return ncu
 }
 
-// SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (ncu *NotificationConfigUpdate) SetNillableIsActive(b *bool) *NotificationConfigUpdate {
+// SetNillableIsActivated sets the "is_activated" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillableIsActivated(b *bool) *NotificationConfigUpdate {
 	if b != nil {
-		ncu.SetIsActive(*b)
+		ncu.SetIsActivated(*b)
 	}
 	return ncu
 }
@@ -224,11 +224,11 @@ func (ncu *NotificationConfigUpdate) sqlSave(ctx context.Context) (n int, err er
 			Column: notificationconfig.FieldLastNotifiedAt,
 		})
 	}
-	if value, ok := ncu.mutation.IsActive(); ok {
+	if value, ok := ncu.mutation.IsActivated(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notificationconfig.FieldIsActive,
+			Column: notificationconfig.FieldIsActivated,
 		})
 	}
 	if ncu.mutation.UserCleared() {
@@ -332,16 +332,16 @@ func (ncuo *NotificationConfigUpdateOne) ClearLastNotifiedAt() *NotificationConf
 	return ncuo
 }
 
-// SetIsActive sets the "is_active" field.
-func (ncuo *NotificationConfigUpdateOne) SetIsActive(b bool) *NotificationConfigUpdateOne {
-	ncuo.mutation.SetIsActive(b)
+// SetIsActivated sets the "is_activated" field.
+func (ncuo *NotificationConfigUpdateOne) SetIsActivated(b bool) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetIsActivated(b)
 	return ncuo
 }
 
-// SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (ncuo *NotificationConfigUpdateOne) SetNillableIsActive(b *bool) *NotificationConfigUpdateOne {
+// SetNillableIsActivated sets the "is_activated" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillableIsActivated(b *bool) *NotificationConfigUpdateOne {
 	if b != nil {
-		ncuo.SetIsActive(*b)
+		ncuo.SetIsActivated(*b)
 	}
 	return ncuo
 }
@@ -505,11 +505,11 @@ func (ncuo *NotificationConfigUpdateOne) sqlSave(ctx context.Context) (_node *No
 			Column: notificationconfig.FieldLastNotifiedAt,
 		})
 	}
-	if value, ok := ncuo.mutation.IsActive(); ok {
+	if value, ok := ncuo.mutation.IsActivated(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: notificationconfig.FieldIsActive,
+			Column: notificationconfig.FieldIsActivated,
 		})
 	}
 	if ncuo.mutation.UserCleared() {

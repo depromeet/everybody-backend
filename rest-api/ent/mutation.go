@@ -514,7 +514,7 @@ type NotificationConfigMutation struct {
 	interval         *int
 	addinterval      *int
 	last_notified_at *time.Time
-	is_active        *bool
+	is_activated     *bool
 	clearedFields    map[string]struct{}
 	user             *string
 	cleareduser      bool
@@ -727,40 +727,40 @@ func (m *NotificationConfigMutation) ResetLastNotifiedAt() {
 	delete(m.clearedFields, notificationconfig.FieldLastNotifiedAt)
 }
 
-// SetIsActive sets the "is_active" field.
-func (m *NotificationConfigMutation) SetIsActive(b bool) {
-	m.is_active = &b
+// SetIsActivated sets the "is_activated" field.
+func (m *NotificationConfigMutation) SetIsActivated(b bool) {
+	m.is_activated = &b
 }
 
-// IsActive returns the value of the "is_active" field in the mutation.
-func (m *NotificationConfigMutation) IsActive() (r bool, exists bool) {
-	v := m.is_active
+// IsActivated returns the value of the "is_activated" field in the mutation.
+func (m *NotificationConfigMutation) IsActivated() (r bool, exists bool) {
+	v := m.is_activated
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldIsActive returns the old "is_active" field's value of the NotificationConfig entity.
+// OldIsActivated returns the old "is_activated" field's value of the NotificationConfig entity.
 // If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NotificationConfigMutation) OldIsActive(ctx context.Context) (v bool, err error) {
+func (m *NotificationConfigMutation) OldIsActivated(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldIsActive is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldIsActivated is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldIsActive requires an ID field in the mutation")
+		return v, fmt.Errorf("OldIsActivated requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldIsActive: %w", err)
+		return v, fmt.Errorf("querying old value for OldIsActivated: %w", err)
 	}
-	return oldValue.IsActive, nil
+	return oldValue.IsActivated, nil
 }
 
-// ResetIsActive resets all changes to the "is_active" field.
-func (m *NotificationConfigMutation) ResetIsActive() {
-	m.is_active = nil
+// ResetIsActivated resets all changes to the "is_activated" field.
+func (m *NotificationConfigMutation) ResetIsActivated() {
+	m.is_activated = nil
 }
 
 // SetUserID sets the "user" edge to the User entity by id.
@@ -828,8 +828,8 @@ func (m *NotificationConfigMutation) Fields() []string {
 	if m.last_notified_at != nil {
 		fields = append(fields, notificationconfig.FieldLastNotifiedAt)
 	}
-	if m.is_active != nil {
-		fields = append(fields, notificationconfig.FieldIsActive)
+	if m.is_activated != nil {
+		fields = append(fields, notificationconfig.FieldIsActivated)
 	}
 	return fields
 }
@@ -843,8 +843,8 @@ func (m *NotificationConfigMutation) Field(name string) (ent.Value, bool) {
 		return m.Interval()
 	case notificationconfig.FieldLastNotifiedAt:
 		return m.LastNotifiedAt()
-	case notificationconfig.FieldIsActive:
-		return m.IsActive()
+	case notificationconfig.FieldIsActivated:
+		return m.IsActivated()
 	}
 	return nil, false
 }
@@ -858,8 +858,8 @@ func (m *NotificationConfigMutation) OldField(ctx context.Context, name string) 
 		return m.OldInterval(ctx)
 	case notificationconfig.FieldLastNotifiedAt:
 		return m.OldLastNotifiedAt(ctx)
-	case notificationconfig.FieldIsActive:
-		return m.OldIsActive(ctx)
+	case notificationconfig.FieldIsActivated:
+		return m.OldIsActivated(ctx)
 	}
 	return nil, fmt.Errorf("unknown NotificationConfig field %s", name)
 }
@@ -883,12 +883,12 @@ func (m *NotificationConfigMutation) SetField(name string, value ent.Value) erro
 		}
 		m.SetLastNotifiedAt(v)
 		return nil
-	case notificationconfig.FieldIsActive:
+	case notificationconfig.FieldIsActivated:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetIsActive(v)
+		m.SetIsActivated(v)
 		return nil
 	}
 	return fmt.Errorf("unknown NotificationConfig field %s", name)
@@ -975,8 +975,8 @@ func (m *NotificationConfigMutation) ResetField(name string) error {
 	case notificationconfig.FieldLastNotifiedAt:
 		m.ResetLastNotifiedAt()
 		return nil
-	case notificationconfig.FieldIsActive:
-		m.ResetIsActive()
+	case notificationconfig.FieldIsActivated:
+		m.ResetIsActivated()
 		return nil
 	}
 	return fmt.Errorf("unknown NotificationConfig field %s", name)

@@ -17,7 +17,7 @@ func (NotificationConfig) Fields() []ent.Field {
 		field.Int("id"),
 		field.Int("interval").Optional(),
 		field.Time("last_notified_at").Optional(),
-		field.Bool("is_active").Default(true),
+		field.Bool("is_activated").Default(true),
 	}
 }
 

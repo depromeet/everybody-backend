@@ -107,10 +107,10 @@ func LastNotifiedAt(v time.Time) predicate.NotificationConfig {
 	})
 }
 
-// IsActive applies equality check predicate on the "is_active" field. It's identical to IsActiveEQ.
-func IsActive(v bool) predicate.NotificationConfig {
+// IsActivated applies equality check predicate on the "is_activated" field. It's identical to IsActivatedEQ.
+func IsActivated(v bool) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIsActive), v))
+		s.Where(sql.EQ(s.C(FieldIsActivated), v))
 	})
 }
 
@@ -294,17 +294,17 @@ func LastNotifiedAtNotNil() predicate.NotificationConfig {
 	})
 }
 
-// IsActiveEQ applies the EQ predicate on the "is_active" field.
-func IsActiveEQ(v bool) predicate.NotificationConfig {
+// IsActivatedEQ applies the EQ predicate on the "is_activated" field.
+func IsActivatedEQ(v bool) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldIsActive), v))
+		s.Where(sql.EQ(s.C(FieldIsActivated), v))
 	})
 }
 
-// IsActiveNEQ applies the NEQ predicate on the "is_active" field.
-func IsActiveNEQ(v bool) predicate.NotificationConfig {
+// IsActivatedNEQ applies the NEQ predicate on the "is_activated" field.
+func IsActivatedNEQ(v bool) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldIsActive), v))
+		s.Where(sql.NEQ(s.C(FieldIsActivated), v))
 	})
 }
 
