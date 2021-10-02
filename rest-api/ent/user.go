@@ -18,6 +18,10 @@ type User struct {
 	ID string `json:"id,omitempty"`
 	// Nickname holds the value of the "nickname" field.
 	Nickname string `json:"nickname,omitempty"`
+	// Height holds the value of the "height" field.
+	Height int `json:"height,omitempty"`
+	// Weight holds the value of the "weight" field.
+	Weight int `json:"weight,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -59,6 +63,8 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldHeight, user.FieldWeight:
+			values[i] = new(sql.NullInt64)
 		case user.FieldID, user.FieldNickname:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
@@ -89,6 +95,18 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field nickname", values[i])
 			} else if value.Valid {
 				u.Nickname = value.String
+			}
+		case user.FieldHeight:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field height", values[i])
+			} else if value.Valid {
+				u.Height = int(value.Int64)
+			}
+		case user.FieldWeight:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field weight", values[i])
+			} else if value.Valid {
+				u.Weight = int(value.Int64)
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -136,6 +154,10 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
 	builder.WriteString(", nickname=")
 	builder.WriteString(u.Nickname)
+	builder.WriteString(", height=")
+	builder.WriteString(fmt.Sprintf("%v", u.Height))
+	builder.WriteString(", weight=")
+	builder.WriteString(fmt.Sprintf("%v", u.Weight))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

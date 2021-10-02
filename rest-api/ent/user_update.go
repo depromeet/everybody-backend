@@ -35,6 +35,32 @@ func (uu *UserUpdate) SetNickname(s string) *UserUpdate {
 	return uu
 }
 
+// SetHeight sets the "height" field.
+func (uu *UserUpdate) SetHeight(i int) *UserUpdate {
+	uu.mutation.ResetHeight()
+	uu.mutation.SetHeight(i)
+	return uu
+}
+
+// AddHeight adds i to the "height" field.
+func (uu *UserUpdate) AddHeight(i int) *UserUpdate {
+	uu.mutation.AddHeight(i)
+	return uu
+}
+
+// SetWeight sets the "weight" field.
+func (uu *UserUpdate) SetWeight(i int) *UserUpdate {
+	uu.mutation.ResetWeight()
+	uu.mutation.SetWeight(i)
+	return uu
+}
+
+// AddWeight adds i to the "weight" field.
+func (uu *UserUpdate) AddWeight(i int) *UserUpdate {
+	uu.mutation.AddWeight(i)
+	return uu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
 	uu.mutation.SetCreatedAt(t)
@@ -205,6 +231,34 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldNickname,
 		})
 	}
+	if value, ok := uu.mutation.Height(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldHeight,
+		})
+	}
+	if value, ok := uu.mutation.AddedHeight(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldHeight,
+		})
+	}
+	if value, ok := uu.mutation.Weight(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+	}
+	if value, ok := uu.mutation.AddedWeight(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -342,6 +396,32 @@ type UserUpdateOne struct {
 // SetNickname sets the "nickname" field.
 func (uuo *UserUpdateOne) SetNickname(s string) *UserUpdateOne {
 	uuo.mutation.SetNickname(s)
+	return uuo
+}
+
+// SetHeight sets the "height" field.
+func (uuo *UserUpdateOne) SetHeight(i int) *UserUpdateOne {
+	uuo.mutation.ResetHeight()
+	uuo.mutation.SetHeight(i)
+	return uuo
+}
+
+// AddHeight adds i to the "height" field.
+func (uuo *UserUpdateOne) AddHeight(i int) *UserUpdateOne {
+	uuo.mutation.AddHeight(i)
+	return uuo
+}
+
+// SetWeight sets the "weight" field.
+func (uuo *UserUpdateOne) SetWeight(i int) *UserUpdateOne {
+	uuo.mutation.ResetWeight()
+	uuo.mutation.SetWeight(i)
+	return uuo
+}
+
+// AddWeight adds i to the "weight" field.
+func (uuo *UserUpdateOne) AddWeight(i int) *UserUpdateOne {
+	uuo.mutation.AddWeight(i)
 	return uuo
 }
 
@@ -537,6 +617,34 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: user.FieldNickname,
+		})
+	}
+	if value, ok := uuo.mutation.Height(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldHeight,
+		})
+	}
+	if value, ok := uuo.mutation.AddedHeight(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldHeight,
+		})
+	}
+	if value, ok := uuo.mutation.Weight(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+	}
+	if value, ok := uuo.mutation.AddedWeight(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
 		})
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {

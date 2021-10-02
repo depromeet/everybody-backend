@@ -13,6 +13,10 @@ const (
 	FieldID = "id"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
+	// FieldHeight holds the string denoting the height field in the database.
+	FieldHeight = "height"
+	// FieldWeight holds the string denoting the weight field in the database.
+	FieldWeight = "weight"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
@@ -41,6 +45,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldNickname,
+	FieldHeight,
+	FieldWeight,
 	FieldCreatedAt,
 }
 

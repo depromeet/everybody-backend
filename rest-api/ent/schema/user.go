@@ -17,6 +17,8 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id"),
 		field.String("nickname"),
+		field.Int("height"),
+		field.Int("weight"),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),

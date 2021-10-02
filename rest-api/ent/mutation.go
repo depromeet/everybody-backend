@@ -1065,6 +1065,10 @@ type UserMutation struct {
 	typ                        string
 	id                         *string
 	nickname                   *string
+	height                     *int
+	addheight                  *int
+	weight                     *int
+	addweight                  *int
 	created_at                 *time.Time
 	clearedFields              map[string]struct{}
 	device                     map[int]struct{}
@@ -1197,6 +1201,118 @@ func (m *UserMutation) OldNickname(ctx context.Context) (v string, err error) {
 // ResetNickname resets all changes to the "nickname" field.
 func (m *UserMutation) ResetNickname() {
 	m.nickname = nil
+}
+
+// SetHeight sets the "height" field.
+func (m *UserMutation) SetHeight(i int) {
+	m.height = &i
+	m.addheight = nil
+}
+
+// Height returns the value of the "height" field in the mutation.
+func (m *UserMutation) Height() (r int, exists bool) {
+	v := m.height
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHeight returns the old "height" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldHeight(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldHeight is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldHeight requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHeight: %w", err)
+	}
+	return oldValue.Height, nil
+}
+
+// AddHeight adds i to the "height" field.
+func (m *UserMutation) AddHeight(i int) {
+	if m.addheight != nil {
+		*m.addheight += i
+	} else {
+		m.addheight = &i
+	}
+}
+
+// AddedHeight returns the value that was added to the "height" field in this mutation.
+func (m *UserMutation) AddedHeight() (r int, exists bool) {
+	v := m.addheight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetHeight resets all changes to the "height" field.
+func (m *UserMutation) ResetHeight() {
+	m.height = nil
+	m.addheight = nil
+}
+
+// SetWeight sets the "weight" field.
+func (m *UserMutation) SetWeight(i int) {
+	m.weight = &i
+	m.addweight = nil
+}
+
+// Weight returns the value of the "weight" field in the mutation.
+func (m *UserMutation) Weight() (r int, exists bool) {
+	v := m.weight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWeight returns the old "weight" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldWeight(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldWeight is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldWeight requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWeight: %w", err)
+	}
+	return oldValue.Weight, nil
+}
+
+// AddWeight adds i to the "weight" field.
+func (m *UserMutation) AddWeight(i int) {
+	if m.addweight != nil {
+		*m.addweight += i
+	} else {
+		m.addweight = &i
+	}
+}
+
+// AddedWeight returns the value that was added to the "weight" field in this mutation.
+func (m *UserMutation) AddedWeight() (r int, exists bool) {
+	v := m.addweight
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetWeight resets all changes to the "weight" field.
+func (m *UserMutation) ResetWeight() {
+	m.weight = nil
+	m.addweight = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1362,9 +1478,15 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 4)
 	if m.nickname != nil {
 		fields = append(fields, user.FieldNickname)
+	}
+	if m.height != nil {
+		fields = append(fields, user.FieldHeight)
+	}
+	if m.weight != nil {
+		fields = append(fields, user.FieldWeight)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -1379,6 +1501,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case user.FieldNickname:
 		return m.Nickname()
+	case user.FieldHeight:
+		return m.Height()
+	case user.FieldWeight:
+		return m.Weight()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -1392,6 +1518,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case user.FieldNickname:
 		return m.OldNickname(ctx)
+	case user.FieldHeight:
+		return m.OldHeight(ctx)
+	case user.FieldWeight:
+		return m.OldWeight(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -1410,6 +1540,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetNickname(v)
 		return nil
+	case user.FieldHeight:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHeight(v)
+		return nil
+	case user.FieldWeight:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWeight(v)
+		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -1424,13 +1568,26 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *UserMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addheight != nil {
+		fields = append(fields, user.FieldHeight)
+	}
+	if m.addweight != nil {
+		fields = append(fields, user.FieldWeight)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case user.FieldHeight:
+		return m.AddedHeight()
+	case user.FieldWeight:
+		return m.AddedWeight()
+	}
 	return nil, false
 }
 
@@ -1439,6 +1596,20 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case user.FieldHeight:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddHeight(v)
+		return nil
+	case user.FieldWeight:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddWeight(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
 }
@@ -1468,6 +1639,12 @@ func (m *UserMutation) ResetField(name string) error {
 	switch name {
 	case user.FieldNickname:
 		m.ResetNickname()
+		return nil
+	case user.FieldHeight:
+		m.ResetHeight()
+		return nil
+	case user.FieldWeight:
+		m.ResetWeight()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()

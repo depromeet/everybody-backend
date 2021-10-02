@@ -100,6 +100,20 @@ func Nickname(v string) predicate.User {
 	})
 }
 
+// Height applies equality check predicate on the "height" field. It's identical to HeightEQ.
+func Height(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHeight), v))
+	})
+}
+
+// Weight applies equality check predicate on the "weight" field. It's identical to WeightEQ.
+func Weight(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWeight), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -215,6 +229,158 @@ func NicknameEqualFold(v string) predicate.User {
 func NicknameContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldNickname), v))
+	})
+}
+
+// HeightEQ applies the EQ predicate on the "height" field.
+func HeightEQ(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHeight), v))
+	})
+}
+
+// HeightNEQ applies the NEQ predicate on the "height" field.
+func HeightNEQ(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldHeight), v))
+	})
+}
+
+// HeightIn applies the In predicate on the "height" field.
+func HeightIn(vs ...int) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldHeight), v...))
+	})
+}
+
+// HeightNotIn applies the NotIn predicate on the "height" field.
+func HeightNotIn(vs ...int) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldHeight), v...))
+	})
+}
+
+// HeightGT applies the GT predicate on the "height" field.
+func HeightGT(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldHeight), v))
+	})
+}
+
+// HeightGTE applies the GTE predicate on the "height" field.
+func HeightGTE(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldHeight), v))
+	})
+}
+
+// HeightLT applies the LT predicate on the "height" field.
+func HeightLT(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldHeight), v))
+	})
+}
+
+// HeightLTE applies the LTE predicate on the "height" field.
+func HeightLTE(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldHeight), v))
+	})
+}
+
+// WeightEQ applies the EQ predicate on the "weight" field.
+func WeightEQ(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWeight), v))
+	})
+}
+
+// WeightNEQ applies the NEQ predicate on the "weight" field.
+func WeightNEQ(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldWeight), v))
+	})
+}
+
+// WeightIn applies the In predicate on the "weight" field.
+func WeightIn(vs ...int) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldWeight), v...))
+	})
+}
+
+// WeightNotIn applies the NotIn predicate on the "weight" field.
+func WeightNotIn(vs ...int) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldWeight), v...))
+	})
+}
+
+// WeightGT applies the GT predicate on the "weight" field.
+func WeightGT(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldWeight), v))
+	})
+}
+
+// WeightGTE applies the GTE predicate on the "weight" field.
+func WeightGTE(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldWeight), v))
+	})
+}
+
+// WeightLT applies the LT predicate on the "weight" field.
+func WeightLT(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldWeight), v))
+	})
+}
+
+// WeightLTE applies the LTE predicate on the "weight" field.
+func WeightLTE(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldWeight), v))
 	})
 }
 

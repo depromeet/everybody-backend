@@ -56,6 +56,8 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
 		{Name: "nickname", Type: field.TypeString},
+		{Name: "height", Type: field.TypeInt},
+		{Name: "weight", Type: field.TypeInt},
 		{Name: "created_at", Type: field.TypeTime},
 	}
 	// UsersTable holds the schema information for the "users" table.

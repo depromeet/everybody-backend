@@ -28,6 +28,18 @@ func (uc *UserCreate) SetNickname(s string) *UserCreate {
 	return uc
 }
 
+// SetHeight sets the "height" field.
+func (uc *UserCreate) SetHeight(i int) *UserCreate {
+	uc.mutation.SetHeight(i)
+	return uc
+}
+
+// SetWeight sets the "weight" field.
+func (uc *UserCreate) SetWeight(i int) *UserCreate {
+	uc.mutation.SetWeight(i)
+	return uc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -160,6 +172,12 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Nickname(); !ok {
 		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "nickname"`)}
 	}
+	if _, ok := uc.mutation.Height(); !ok {
+		return &ValidationError{Name: "height", err: errors.New(`ent: missing required field "height"`)}
+	}
+	if _, ok := uc.mutation.Weight(); !ok {
+		return &ValidationError{Name: "weight", err: errors.New(`ent: missing required field "weight"`)}
+	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
 	}
@@ -202,6 +220,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldNickname,
 		})
 		_node.Nickname = value
+	}
+	if value, ok := uc.mutation.Height(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldHeight,
+		})
+		_node.Height = value
+	}
+	if value, ok := uc.mutation.Weight(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+		_node.Weight = value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
