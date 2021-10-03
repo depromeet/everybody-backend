@@ -1,0 +1,14 @@
+name: Everybody review approval workflow
+on: pull_request_review
+jobs:
+  labelWhenApproved:
+    name: auto-add-approval-label
+    runs-on: ubuntu-latest
+    steps:
+      - name: label when approved
+        uses: pullreminders/label-when-approved-action@master
+        env:
+          APPROVALS: "1"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ADD_LABEL: "approved"
+          REMOVE_LABEL: "awaiting%20review"
