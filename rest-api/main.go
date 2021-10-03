@@ -11,11 +11,17 @@ import (
 )
 
 var (
+	notificationRepo repository.NotificationRepository
+	deviceRepo repository.DeviceRepository
 	userRepo repository.UserRepository
 
+	notificationService service.NotificationService
+	deviceService service.DeviceService
 	userService service.UserService
 
+
 	userHandler *handler.UserHandler
+	notificationHandler *handler.NotificationHandler
 
 	server *fiber.App
 )
@@ -29,9 +35,17 @@ func main() {
 
 func initialize() {
 	dbClient := repository.Connect()
+
+	notificationRepo = repository.NewNotificationRepository(dbClient)
+	deviceRepo = repository.NewDeviceRepository(dbClient)
 	userRepo = repository.NewUserRepository(dbClient)
-	userService = service.NewUserService(userRepo)
-	userService = service.NewUserService(userRepo)
+
+	notificationService = service.NewNotificationService(notificationRepo)
+	deviceService = service.NewDeviceService(deviceRepo)
+	userService = service.NewUserService(userRepo, notificationService, deviceService)
+
 	userHandler = handler.NewUserHandler(userService)
-	server = http.NewServer(userHandler)
+	notificationHandler = handler.NewNotificationHandler(notificationService)
+
+	server = http.NewServer(userHandler, notificationHandler)
 }

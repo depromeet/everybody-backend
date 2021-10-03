@@ -9,6 +9,32 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 )
 
+// The DeviceFunc type is an adapter to allow the use of ordinary
+// function as Device mutator.
+type DeviceFunc func(context.Context, *ent.DeviceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DeviceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.DeviceMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DeviceMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The NotificationConfigFunc type is an adapter to allow the use of ordinary
+// function as NotificationConfig mutator.
+type NotificationConfigFunc func(context.Context, *ent.NotificationConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f NotificationConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.NotificationConfigMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotificationConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)

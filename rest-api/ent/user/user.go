@@ -2,6 +2,10 @@
 
 package user
 
+import (
+	"time"
+)
+
 const (
 	// Label holds the string label denoting the user type in the database.
 	Label = "user"
@@ -9,17 +13,41 @@ const (
 	FieldID = "id"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
-	// FieldDeviceToken holds the string denoting the devicetoken field in the database.
-	FieldDeviceToken = "device_token"
+	// FieldHeight holds the string denoting the height field in the database.
+	FieldHeight = "height"
+	// FieldWeight holds the string denoting the weight field in the database.
+	FieldWeight = "weight"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// EdgeDevice holds the string denoting the device edge name in mutations.
+	EdgeDevice = "device"
+	// EdgeNotificationConfig holds the string denoting the notification_config edge name in mutations.
+	EdgeNotificationConfig = "notification_config"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// DeviceTable is the table that holds the device relation/edge.
+	DeviceTable = "devices"
+	// DeviceInverseTable is the table name for the Device entity.
+	// It exists in this package in order to avoid circular dependency with the "device" package.
+	DeviceInverseTable = "devices"
+	// DeviceColumn is the table column denoting the device relation/edge.
+	DeviceColumn = "user_device"
+	// NotificationConfigTable is the table that holds the notification_config relation/edge.
+	NotificationConfigTable = "notification_configs"
+	// NotificationConfigInverseTable is the table name for the NotificationConfig entity.
+	// It exists in this package in order to avoid circular dependency with the "notificationconfig" package.
+	NotificationConfigInverseTable = "notification_configs"
+	// NotificationConfigColumn is the table column denoting the notification_config relation/edge.
+	NotificationConfigColumn = "user_notification_config"
 )
 
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
 	FieldNickname,
-	FieldDeviceToken,
+	FieldHeight,
+	FieldWeight,
+	FieldCreatedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -31,3 +59,8 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+)

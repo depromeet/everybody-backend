@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
@@ -17,8 +18,44 @@ type User struct {
 	ID string `json:"id,omitempty"`
 	// Nickname holds the value of the "nickname" field.
 	Nickname string `json:"nickname,omitempty"`
-	// DeviceToken holds the value of the "deviceToken" field.
-	DeviceToken string `json:"device_token"`
+	// Height holds the value of the "height" field.
+	Height int `json:"height,omitempty"`
+	// Weight holds the value of the "weight" field.
+	Weight int `json:"weight,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges UserEdges `json:"edges"`
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Device holds the value of the device edge.
+	Device []*Device `json:"device,omitempty"`
+	// NotificationConfig holds the value of the notification_config edge.
+	NotificationConfig []*NotificationConfig `json:"notification_config,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+}
+
+// DeviceOrErr returns the Device value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) DeviceOrErr() ([]*Device, error) {
+	if e.loadedTypes[0] {
+		return e.Device, nil
+	}
+	return nil, &NotLoadedError{edge: "device"}
+}
+
+// NotificationConfigOrErr returns the NotificationConfig value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) NotificationConfigOrErr() ([]*NotificationConfig, error) {
+	if e.loadedTypes[1] {
+		return e.NotificationConfig, nil
+	}
+	return nil, &NotLoadedError{edge: "notification_config"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -26,8 +63,12 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID, user.FieldNickname, user.FieldDeviceToken:
+		case user.FieldHeight, user.FieldWeight:
+			values[i] = new(sql.NullInt64)
+		case user.FieldID, user.FieldNickname:
 			values[i] = new(sql.NullString)
+		case user.FieldCreatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
 		}
@@ -55,15 +96,37 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.Nickname = value.String
 			}
-		case user.FieldDeviceToken:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field deviceToken", values[i])
+		case user.FieldHeight:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field height", values[i])
 			} else if value.Valid {
-				u.DeviceToken = value.String
+				u.Height = int(value.Int64)
+			}
+		case user.FieldWeight:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field weight", values[i])
+			} else if value.Valid {
+				u.Weight = int(value.Int64)
+			}
+		case user.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				u.CreatedAt = value.Time
 			}
 		}
 	}
 	return nil
+}
+
+// QueryDevice queries the "device" edge of the User entity.
+func (u *User) QueryDevice() *DeviceQuery {
+	return (&UserClient{config: u.config}).QueryDevice(u)
+}
+
+// QueryNotificationConfig queries the "notification_config" edge of the User entity.
+func (u *User) QueryNotificationConfig() *NotificationConfigQuery {
+	return (&UserClient{config: u.config}).QueryNotificationConfig(u)
 }
 
 // Update returns a builder for updating this User.
@@ -91,8 +154,12 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
 	builder.WriteString(", nickname=")
 	builder.WriteString(u.Nickname)
-	builder.WriteString(", deviceToken=")
-	builder.WriteString(u.DeviceToken)
+	builder.WriteString(", height=")
+	builder.WriteString(fmt.Sprintf("%v", u.Height))
+	builder.WriteString(", weight=")
+	builder.WriteString(fmt.Sprintf("%v", u.Weight))
+	builder.WriteString(", created_at=")
+	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

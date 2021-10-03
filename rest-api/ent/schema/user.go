@@ -2,7 +2,9 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"time"
 )
 
 // User holds the schema definition for the User entity.
@@ -15,12 +17,19 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id"),
 		field.String("nickname"),
-		// struct tag를 정의 안 해주면 deviceToken으로 직렬화됨
-		field.String("deviceToken").StructTag("json:\"device_token\""),
+		field.Int("height"),
+		field.Int("weight"),
+		field.Time("created_at").Default(func() time.Time {
+			return time.Now()
+		}),
 	}
 }
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("device", Device.Type),
+		edge.To("notification_config", NotificationConfig.Type),
+
+	}
 }

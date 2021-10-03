@@ -6,9 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/depromeet/everybody-backend/rest-api/ent/device"
+	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
@@ -25,9 +28,29 @@ func (uc *UserCreate) SetNickname(s string) *UserCreate {
 	return uc
 }
 
-// SetDeviceToken sets the "deviceToken" field.
-func (uc *UserCreate) SetDeviceToken(s string) *UserCreate {
-	uc.mutation.SetDeviceToken(s)
+// SetHeight sets the "height" field.
+func (uc *UserCreate) SetHeight(i int) *UserCreate {
+	uc.mutation.SetHeight(i)
+	return uc
+}
+
+// SetWeight sets the "weight" field.
+func (uc *UserCreate) SetWeight(i int) *UserCreate {
+	uc.mutation.SetWeight(i)
+	return uc
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetCreatedAt(t)
+	return uc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetCreatedAt(*t)
+	}
 	return uc
 }
 
@@ -35,6 +58,36 @@ func (uc *UserCreate) SetDeviceToken(s string) *UserCreate {
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
 	return uc
+}
+
+// AddDeviceIDs adds the "device" edge to the Device entity by IDs.
+func (uc *UserCreate) AddDeviceIDs(ids ...int) *UserCreate {
+	uc.mutation.AddDeviceIDs(ids...)
+	return uc
+}
+
+// AddDevice adds the "device" edges to the Device entity.
+func (uc *UserCreate) AddDevice(d ...*Device) *UserCreate {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uc.AddDeviceIDs(ids...)
+}
+
+// AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by IDs.
+func (uc *UserCreate) AddNotificationConfigIDs(ids ...int) *UserCreate {
+	uc.mutation.AddNotificationConfigIDs(ids...)
+	return uc
+}
+
+// AddNotificationConfig adds the "notification_config" edges to the NotificationConfig entity.
+func (uc *UserCreate) AddNotificationConfig(n ...*NotificationConfig) *UserCreate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return uc.AddNotificationConfigIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -48,6 +101,7 @@ func (uc *UserCreate) Save(ctx context.Context) (*User, error) {
 		err  error
 		node *User
 	)
+	uc.defaults()
 	if len(uc.hooks) == 0 {
 		if err = uc.check(); err != nil {
 			return nil, err
@@ -105,13 +159,27 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (uc *UserCreate) defaults() {
+	if _, ok := uc.mutation.CreatedAt(); !ok {
+		v := user.DefaultCreatedAt()
+		uc.mutation.SetCreatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Nickname(); !ok {
 		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "nickname"`)}
 	}
-	if _, ok := uc.mutation.DeviceToken(); !ok {
-		return &ValidationError{Name: "deviceToken", err: errors.New(`ent: missing required field "deviceToken"`)}
+	if _, ok := uc.mutation.Height(); !ok {
+		return &ValidationError{Name: "height", err: errors.New(`ent: missing required field "height"`)}
+	}
+	if _, ok := uc.mutation.Weight(); !ok {
+		return &ValidationError{Name: "weight", err: errors.New(`ent: missing required field "weight"`)}
+	}
+	if _, ok := uc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
 	}
 	return nil
 }
@@ -153,13 +221,67 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.Nickname = value
 	}
-	if value, ok := uc.mutation.DeviceToken(); ok {
+	if value, ok := uc.mutation.Height(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: user.FieldDeviceToken,
+			Column: user.FieldHeight,
 		})
-		_node.DeviceToken = value
+		_node.Height = value
+	}
+	if value, ok := uc.mutation.Weight(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+		_node.Weight = value
+	}
+	if value, ok := uc.mutation.CreatedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldCreatedAt,
+		})
+		_node.CreatedAt = value
+	}
+	if nodes := uc.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DeviceTable,
+			Columns: []string{user.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: device.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.NotificationConfigIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationConfigTable,
+			Columns: []string{user.NotificationConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -178,6 +300,7 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 	for i := range ucb.builders {
 		func(i int, root context.Context) {
 			builder := ucb.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*UserMutation)
 				if !ok {

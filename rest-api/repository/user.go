@@ -24,7 +24,6 @@ type userRepository struct {
 func (repo *userRepository) Create(user *ent.User) (*ent.User, error) {
 	result, err := repo.db.User.Create().
 		SetID(user.ID).
-		SetDeviceToken(user.DeviceToken).
 		SetNickname(user.Nickname).
 		Save(context.Background())
 	if err != nil {

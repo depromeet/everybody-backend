@@ -6,5 +6,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Device is the predicate function for device builders.
+type Device func(*sql.Selector)
+
+// NotificationConfig is the predicate function for notificationconfig builders.
+type NotificationConfig func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

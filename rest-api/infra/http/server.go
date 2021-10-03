@@ -9,6 +9,7 @@ import (
 
 func NewServer(
 	userHandler *handler.UserHandler,
+	notificationHandler *handler.NotificationHandler,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: errorHandle,
@@ -20,7 +21,7 @@ func NewServer(
 	app.Get("/", index)
 
 	addUserHandlers(app, userHandler)
-
+	addNotificationHandlers(app, notificationHandler)
 	return app
 }
 
@@ -31,5 +32,10 @@ func index(ctx *fiber.Ctx) error {
 func addUserHandlers(app *fiber.App, userHandler *handler.UserHandler) {
 	group := app.Group("/users")
 	group.Get("/:id", userHandler.GetUser)
-	group.Post("", userHandler.Register)
+	group.Post("", userHandler.SignUp)
+}
+
+func addNotificationHandlers(app *fiber.App, notificationHandler *handler.NotificationHandler) {
+	// 본인에 대한 알림 설정 조회만 수행
+	app.Get("notification-configs/me", notificationHandler.GetConfigByUser)
 }

@@ -3,7 +3,10 @@
 package user
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 )
 
@@ -97,10 +100,24 @@ func Nickname(v string) predicate.User {
 	})
 }
 
-// DeviceToken applies equality check predicate on the "deviceToken" field. It's identical to DeviceTokenEQ.
-func DeviceToken(v string) predicate.User {
+// Height applies equality check predicate on the "height" field. It's identical to HeightEQ.
+func Height(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDeviceToken), v))
+		s.Where(sql.EQ(s.C(FieldHeight), v))
+	})
+}
+
+// Weight applies equality check predicate on the "weight" field. It's identical to WeightEQ.
+func Weight(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWeight), v))
+	})
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
 	})
 }
 
@@ -215,22 +232,22 @@ func NicknameContainsFold(v string) predicate.User {
 	})
 }
 
-// DeviceTokenEQ applies the EQ predicate on the "deviceToken" field.
-func DeviceTokenEQ(v string) predicate.User {
+// HeightEQ applies the EQ predicate on the "height" field.
+func HeightEQ(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldDeviceToken), v))
+		s.Where(sql.EQ(s.C(FieldHeight), v))
 	})
 }
 
-// DeviceTokenNEQ applies the NEQ predicate on the "deviceToken" field.
-func DeviceTokenNEQ(v string) predicate.User {
+// HeightNEQ applies the NEQ predicate on the "height" field.
+func HeightNEQ(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldDeviceToken), v))
+		s.Where(sql.NEQ(s.C(FieldHeight), v))
 	})
 }
 
-// DeviceTokenIn applies the In predicate on the "deviceToken" field.
-func DeviceTokenIn(vs ...string) predicate.User {
+// HeightIn applies the In predicate on the "height" field.
+func HeightIn(vs ...int) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -242,12 +259,12 @@ func DeviceTokenIn(vs ...string) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldDeviceToken), v...))
+		s.Where(sql.In(s.C(FieldHeight), v...))
 	})
 }
 
-// DeviceTokenNotIn applies the NotIn predicate on the "deviceToken" field.
-func DeviceTokenNotIn(vs ...string) predicate.User {
+// HeightNotIn applies the NotIn predicate on the "height" field.
+func HeightNotIn(vs ...int) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -259,70 +276,243 @@ func DeviceTokenNotIn(vs ...string) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldDeviceToken), v...))
+		s.Where(sql.NotIn(s.C(FieldHeight), v...))
 	})
 }
 
-// DeviceTokenGT applies the GT predicate on the "deviceToken" field.
-func DeviceTokenGT(v string) predicate.User {
+// HeightGT applies the GT predicate on the "height" field.
+func HeightGT(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldDeviceToken), v))
+		s.Where(sql.GT(s.C(FieldHeight), v))
 	})
 }
 
-// DeviceTokenGTE applies the GTE predicate on the "deviceToken" field.
-func DeviceTokenGTE(v string) predicate.User {
+// HeightGTE applies the GTE predicate on the "height" field.
+func HeightGTE(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldDeviceToken), v))
+		s.Where(sql.GTE(s.C(FieldHeight), v))
 	})
 }
 
-// DeviceTokenLT applies the LT predicate on the "deviceToken" field.
-func DeviceTokenLT(v string) predicate.User {
+// HeightLT applies the LT predicate on the "height" field.
+func HeightLT(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldDeviceToken), v))
+		s.Where(sql.LT(s.C(FieldHeight), v))
 	})
 }
 
-// DeviceTokenLTE applies the LTE predicate on the "deviceToken" field.
-func DeviceTokenLTE(v string) predicate.User {
+// HeightLTE applies the LTE predicate on the "height" field.
+func HeightLTE(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldDeviceToken), v))
+		s.Where(sql.LTE(s.C(FieldHeight), v))
 	})
 }
 
-// DeviceTokenContains applies the Contains predicate on the "deviceToken" field.
-func DeviceTokenContains(v string) predicate.User {
+// WeightEQ applies the EQ predicate on the "weight" field.
+func WeightEQ(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldDeviceToken), v))
+		s.Where(sql.EQ(s.C(FieldWeight), v))
 	})
 }
 
-// DeviceTokenHasPrefix applies the HasPrefix predicate on the "deviceToken" field.
-func DeviceTokenHasPrefix(v string) predicate.User {
+// WeightNEQ applies the NEQ predicate on the "weight" field.
+func WeightNEQ(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldDeviceToken), v))
+		s.Where(sql.NEQ(s.C(FieldWeight), v))
 	})
 }
 
-// DeviceTokenHasSuffix applies the HasSuffix predicate on the "deviceToken" field.
-func DeviceTokenHasSuffix(v string) predicate.User {
+// WeightIn applies the In predicate on the "weight" field.
+func WeightIn(vs ...int) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldDeviceToken), v))
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldWeight), v...))
 	})
 }
 
-// DeviceTokenEqualFold applies the EqualFold predicate on the "deviceToken" field.
-func DeviceTokenEqualFold(v string) predicate.User {
+// WeightNotIn applies the NotIn predicate on the "weight" field.
+func WeightNotIn(vs ...int) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldDeviceToken), v))
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldWeight), v...))
 	})
 }
 
-// DeviceTokenContainsFold applies the ContainsFold predicate on the "deviceToken" field.
-func DeviceTokenContainsFold(v string) predicate.User {
+// WeightGT applies the GT predicate on the "weight" field.
+func WeightGT(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldDeviceToken), v))
+		s.Where(sql.GT(s.C(FieldWeight), v))
+	})
+}
+
+// WeightGTE applies the GTE predicate on the "weight" field.
+func WeightGTE(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldWeight), v))
+	})
+}
+
+// WeightLT applies the LT predicate on the "weight" field.
+func WeightLT(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldWeight), v))
+	})
+}
+
+// WeightLTE applies the LTE predicate on the "weight" field.
+func WeightLTE(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldWeight), v))
+	})
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
+	})
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldCreatedAt), v))
+	})
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldCreatedAt), v...))
+	})
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldCreatedAt), v...))
+	})
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldCreatedAt), v))
+	})
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldCreatedAt), v))
+	})
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldCreatedAt), v))
+	})
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldCreatedAt), v))
+	})
+}
+
+// HasDevice applies the HasEdge predicate on the "device" edge.
+func HasDevice() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DeviceTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DeviceTable, DeviceColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDeviceWith applies the HasEdge predicate on the "device" edge with a given conditions (other predicates).
+func HasDeviceWith(preds ...predicate.Device) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DeviceInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DeviceTable, DeviceColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasNotificationConfig applies the HasEdge predicate on the "notification_config" edge.
+func HasNotificationConfig() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(NotificationConfigTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, NotificationConfigTable, NotificationConfigColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasNotificationConfigWith applies the HasEdge predicate on the "notification_config" edge with a given conditions (other predicates).
+func HasNotificationConfigWith(preds ...predicate.NotificationConfig) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(NotificationConfigInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, NotificationConfigTable, NotificationConfigColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
 	})
 }
 

@@ -5,10 +5,13 @@ package ent
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/depromeet/everybody-backend/rest-api/ent/device"
+	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
@@ -32,15 +35,121 @@ func (uu *UserUpdate) SetNickname(s string) *UserUpdate {
 	return uu
 }
 
-// SetDeviceToken sets the "deviceToken" field.
-func (uu *UserUpdate) SetDeviceToken(s string) *UserUpdate {
-	uu.mutation.SetDeviceToken(s)
+// SetHeight sets the "height" field.
+func (uu *UserUpdate) SetHeight(i int) *UserUpdate {
+	uu.mutation.ResetHeight()
+	uu.mutation.SetHeight(i)
 	return uu
+}
+
+// AddHeight adds i to the "height" field.
+func (uu *UserUpdate) AddHeight(i int) *UserUpdate {
+	uu.mutation.AddHeight(i)
+	return uu
+}
+
+// SetWeight sets the "weight" field.
+func (uu *UserUpdate) SetWeight(i int) *UserUpdate {
+	uu.mutation.ResetWeight()
+	uu.mutation.SetWeight(i)
+	return uu
+}
+
+// AddWeight adds i to the "weight" field.
+func (uu *UserUpdate) AddWeight(i int) *UserUpdate {
+	uu.mutation.AddWeight(i)
+	return uu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetCreatedAt(t)
+	return uu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetCreatedAt(*t)
+	}
+	return uu
+}
+
+// AddDeviceIDs adds the "device" edge to the Device entity by IDs.
+func (uu *UserUpdate) AddDeviceIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddDeviceIDs(ids...)
+	return uu
+}
+
+// AddDevice adds the "device" edges to the Device entity.
+func (uu *UserUpdate) AddDevice(d ...*Device) *UserUpdate {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uu.AddDeviceIDs(ids...)
+}
+
+// AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by IDs.
+func (uu *UserUpdate) AddNotificationConfigIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddNotificationConfigIDs(ids...)
+	return uu
+}
+
+// AddNotificationConfig adds the "notification_config" edges to the NotificationConfig entity.
+func (uu *UserUpdate) AddNotificationConfig(n ...*NotificationConfig) *UserUpdate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return uu.AddNotificationConfigIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearDevice clears all "device" edges to the Device entity.
+func (uu *UserUpdate) ClearDevice() *UserUpdate {
+	uu.mutation.ClearDevice()
+	return uu
+}
+
+// RemoveDeviceIDs removes the "device" edge to Device entities by IDs.
+func (uu *UserUpdate) RemoveDeviceIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveDeviceIDs(ids...)
+	return uu
+}
+
+// RemoveDevice removes "device" edges to Device entities.
+func (uu *UserUpdate) RemoveDevice(d ...*Device) *UserUpdate {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uu.RemoveDeviceIDs(ids...)
+}
+
+// ClearNotificationConfig clears all "notification_config" edges to the NotificationConfig entity.
+func (uu *UserUpdate) ClearNotificationConfig() *UserUpdate {
+	uu.mutation.ClearNotificationConfig()
+	return uu
+}
+
+// RemoveNotificationConfigIDs removes the "notification_config" edge to NotificationConfig entities by IDs.
+func (uu *UserUpdate) RemoveNotificationConfigIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveNotificationConfigIDs(ids...)
+	return uu
+}
+
+// RemoveNotificationConfig removes "notification_config" edges to NotificationConfig entities.
+func (uu *UserUpdate) RemoveNotificationConfig(n ...*NotificationConfig) *UserUpdate {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return uu.RemoveNotificationConfigIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -122,12 +231,148 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldNickname,
 		})
 	}
-	if value, ok := uu.mutation.DeviceToken(); ok {
+	if value, ok := uu.mutation.Height(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: user.FieldDeviceToken,
+			Column: user.FieldHeight,
 		})
+	}
+	if value, ok := uu.mutation.AddedHeight(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldHeight,
+		})
+	}
+	if value, ok := uu.mutation.Weight(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+	}
+	if value, ok := uu.mutation.AddedWeight(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+	}
+	if value, ok := uu.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldCreatedAt,
+		})
+	}
+	if uu.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DeviceTable,
+			Columns: []string{user.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: device.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedDeviceIDs(); len(nodes) > 0 && !uu.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DeviceTable,
+			Columns: []string{user.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: device.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DeviceTable,
+			Columns: []string{user.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: device.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.NotificationConfigCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationConfigTable,
+			Columns: []string{user.NotificationConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedNotificationConfigIDs(); len(nodes) > 0 && !uu.mutation.NotificationConfigCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationConfigTable,
+			Columns: []string{user.NotificationConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.NotificationConfigIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationConfigTable,
+			Columns: []string{user.NotificationConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -154,15 +399,121 @@ func (uuo *UserUpdateOne) SetNickname(s string) *UserUpdateOne {
 	return uuo
 }
 
-// SetDeviceToken sets the "deviceToken" field.
-func (uuo *UserUpdateOne) SetDeviceToken(s string) *UserUpdateOne {
-	uuo.mutation.SetDeviceToken(s)
+// SetHeight sets the "height" field.
+func (uuo *UserUpdateOne) SetHeight(i int) *UserUpdateOne {
+	uuo.mutation.ResetHeight()
+	uuo.mutation.SetHeight(i)
 	return uuo
+}
+
+// AddHeight adds i to the "height" field.
+func (uuo *UserUpdateOne) AddHeight(i int) *UserUpdateOne {
+	uuo.mutation.AddHeight(i)
+	return uuo
+}
+
+// SetWeight sets the "weight" field.
+func (uuo *UserUpdateOne) SetWeight(i int) *UserUpdateOne {
+	uuo.mutation.ResetWeight()
+	uuo.mutation.SetWeight(i)
+	return uuo
+}
+
+// AddWeight adds i to the "weight" field.
+func (uuo *UserUpdateOne) AddWeight(i int) *UserUpdateOne {
+	uuo.mutation.AddWeight(i)
+	return uuo
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetCreatedAt(t)
+	return uuo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetCreatedAt(*t)
+	}
+	return uuo
+}
+
+// AddDeviceIDs adds the "device" edge to the Device entity by IDs.
+func (uuo *UserUpdateOne) AddDeviceIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddDeviceIDs(ids...)
+	return uuo
+}
+
+// AddDevice adds the "device" edges to the Device entity.
+func (uuo *UserUpdateOne) AddDevice(d ...*Device) *UserUpdateOne {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uuo.AddDeviceIDs(ids...)
+}
+
+// AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by IDs.
+func (uuo *UserUpdateOne) AddNotificationConfigIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddNotificationConfigIDs(ids...)
+	return uuo
+}
+
+// AddNotificationConfig adds the "notification_config" edges to the NotificationConfig entity.
+func (uuo *UserUpdateOne) AddNotificationConfig(n ...*NotificationConfig) *UserUpdateOne {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return uuo.AddNotificationConfigIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearDevice clears all "device" edges to the Device entity.
+func (uuo *UserUpdateOne) ClearDevice() *UserUpdateOne {
+	uuo.mutation.ClearDevice()
+	return uuo
+}
+
+// RemoveDeviceIDs removes the "device" edge to Device entities by IDs.
+func (uuo *UserUpdateOne) RemoveDeviceIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveDeviceIDs(ids...)
+	return uuo
+}
+
+// RemoveDevice removes "device" edges to Device entities.
+func (uuo *UserUpdateOne) RemoveDevice(d ...*Device) *UserUpdateOne {
+	ids := make([]int, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uuo.RemoveDeviceIDs(ids...)
+}
+
+// ClearNotificationConfig clears all "notification_config" edges to the NotificationConfig entity.
+func (uuo *UserUpdateOne) ClearNotificationConfig() *UserUpdateOne {
+	uuo.mutation.ClearNotificationConfig()
+	return uuo
+}
+
+// RemoveNotificationConfigIDs removes the "notification_config" edge to NotificationConfig entities by IDs.
+func (uuo *UserUpdateOne) RemoveNotificationConfigIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveNotificationConfigIDs(ids...)
+	return uuo
+}
+
+// RemoveNotificationConfig removes "notification_config" edges to NotificationConfig entities.
+func (uuo *UserUpdateOne) RemoveNotificationConfig(n ...*NotificationConfig) *UserUpdateOne {
+	ids := make([]int, len(n))
+	for i := range n {
+		ids[i] = n[i].ID
+	}
+	return uuo.RemoveNotificationConfigIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -268,12 +619,148 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldNickname,
 		})
 	}
-	if value, ok := uuo.mutation.DeviceToken(); ok {
+	if value, ok := uuo.mutation.Height(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
-			Column: user.FieldDeviceToken,
+			Column: user.FieldHeight,
 		})
+	}
+	if value, ok := uuo.mutation.AddedHeight(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldHeight,
+		})
+	}
+	if value, ok := uuo.mutation.Weight(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+	}
+	if value, ok := uuo.mutation.AddedWeight(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldWeight,
+		})
+	}
+	if value, ok := uuo.mutation.CreatedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldCreatedAt,
+		})
+	}
+	if uuo.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DeviceTable,
+			Columns: []string{user.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: device.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedDeviceIDs(); len(nodes) > 0 && !uuo.mutation.DeviceCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DeviceTable,
+			Columns: []string{user.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: device.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.DeviceIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.DeviceTable,
+			Columns: []string{user.DeviceColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: device.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.NotificationConfigCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationConfigTable,
+			Columns: []string{user.NotificationConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedNotificationConfigIDs(); len(nodes) > 0 && !uuo.mutation.NotificationConfigCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationConfigTable,
+			Columns: []string{user.NotificationConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.NotificationConfigIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.NotificationConfigTable,
+			Columns: []string{user.NotificationConfigColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

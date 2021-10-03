@@ -42,6 +42,7 @@ func Connect() *ent.Client {
 	})
 
 	client := ent.NewClient(ent.Driver(drv))
+	log.Warning("DB Schema를 적용합니다.")
 	err = client.Schema.Create(
 		context.TODO(),
 		migrate.WithDropIndex(true),
