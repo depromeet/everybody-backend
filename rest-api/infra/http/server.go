@@ -10,6 +10,7 @@ import (
 func NewServer(
 	userHandler *handler.UserHandler,
 	notificationHandler *handler.NotificationHandler,
+	albumHander *handler.AlbumHandler,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: errorHandle,
@@ -22,6 +23,8 @@ func NewServer(
 
 	addUserHandlers(app, userHandler)
 	addNotificationHandlers(app, notificationHandler)
+	addAlbumHandlers(app, albumHander)
+
 	return app
 }
 
@@ -38,4 +41,8 @@ func addUserHandlers(app *fiber.App, userHandler *handler.UserHandler) {
 func addNotificationHandlers(app *fiber.App, notificationHandler *handler.NotificationHandler) {
 	// 본인에 대한 알림 설정 조회만 수행
 	app.Get("notification-configs/me", notificationHandler.GetConfig)
+}
+
+func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {
+	app.Get("/album", albumHandler.CreateAlbum)
 }

@@ -14,13 +14,16 @@ var (
 	notificationRepo repository.NotificationRepository
 	deviceRepo       repository.DeviceRepository
 	userRepo         repository.UserRepository
+	albumRepo        repository.AlbumRepositoryInterface
 
 	notificationService service.NotificationService
 	deviceService       service.DeviceService
 	userService         service.UserService
+	albumService        service.AlbumServiceInterface
 
 	userHandler         *handler.UserHandler
 	notificationHandler *handler.NotificationHandler
+	albumHandler        *handler.AlbumHandler
 
 	server *fiber.App
 )
@@ -38,13 +41,16 @@ func initialize() {
 	notificationRepo = repository.NewNotificationRepository(dbClient)
 	deviceRepo = repository.NewDeviceRepository(dbClient)
 	userRepo = repository.NewUserRepository(dbClient)
+	albumRepo = repository.NewAlbumRepository(dbClient)
 
 	notificationService = service.NewNotificationService(notificationRepo)
 	deviceService = service.NewDeviceService(deviceRepo)
 	userService = service.NewUserService(userRepo, notificationService, deviceService)
+	albumService = service.NewAlbumService(albumRepo)
 
 	userHandler = handler.NewUserHandler(userService)
 	notificationHandler = handler.NewNotificationHandler(notificationService)
+	albumHandler = handler.NewAlbumHandler(albumService)
 
-	server = http.NewServer(userHandler, notificationHandler)
+	server = http.NewServer(userHandler, notificationHandler, albumHandler)
 }
