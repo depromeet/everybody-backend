@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	ErrDuplicatedUserID = errors.New("고유한 유저 ID 생성에 실패했습니다.")
-	signUpDefaultNickname = "끈육몬"
+	ErrDuplicatedUserID               = errors.New("고유한 유저 ID 생성에 실패했습니다.")
+	signUpDefaultNickname             = "끈육몬"
 	signUpDefaultNotificationInterval = 3
 )
 
@@ -25,17 +25,17 @@ func NewUserService(
 	notificationService NotificationService,
 	deviceService DeviceService) UserService {
 	return &userService{
-		userRepo: userRepo,
+		userRepo:            userRepo,
 		notificationService: notificationService,
-		deviceService: deviceService,
+		deviceService:       deviceService,
 	}
 }
 
 // UserService 의 구현체
 type userService struct {
-	userRepo repository.UserRepository
+	userRepo            repository.UserRepository
 	notificationService NotificationService
-	deviceService DeviceService
+	deviceService       DeviceService
 }
 
 // SignUp 는 유저 생성 후 해당 유저의 Device를 등록합니다.
@@ -47,7 +47,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
 	id := ""
 
 	log.Infof("회원 가입을 위해 고유한 UUID 찾기")
-	for i := 0; i < maxTry; i++{
+	for i := 0; i < maxTry; i++ {
 		randomID := uuid.NewV4().String()
 		log.Infof("%d 차 시도: %s", i+1, randomID)
 		_, err := s.userRepo.FindById(randomID)
@@ -76,8 +76,8 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
 	}
 
 	user, err := s.userRepo.Create(&ent.User{
-		ID:          id,
-		Nickname:    body.Nickname,
+		ID:       id,
+		Nickname: body.Nickname,
 	})
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
 	}
 
 	notificationConfig, err := s.notificationService.Configure(id, &dto.ConfigureNotificationRequest{
-		Interval: body.NotificationInterval, // 기본값
+		Interval:    body.NotificationInterval, // 기본값
 		IsActivated: true,
 	})
 	if err != nil {
@@ -99,8 +99,8 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
 
 	device, err := s.deviceService.Register(id, &dto.RegisterDeviceRequest{
 		DeviceToken: body.DeviceToken,
-		PushToken: body.PushToken,
-		DeviceOS: body.DeviceOS,
+		PushToken:   body.PushToken,
+		DeviceOS:    body.DeviceOS,
 	})
 	if err != nil {
 		return nil, err

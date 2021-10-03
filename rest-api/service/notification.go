@@ -28,7 +28,7 @@ func (s *notificationService) Configure(requestUser string, body *dto.ConfigureN
 	// 생성
 	if body.ID == 0 {
 		return s.notificationRepo.CreateNotificationConfig(&ent.NotificationConfig{
-			Interval: body.Interval, // 기본값
+			Interval:    body.Interval, // 기본값
 			IsActivated: body.IsActivated,
 			Edges: ent.NotificationConfigEdges{
 				User: &ent.User{ID: requestUser},
@@ -51,7 +51,7 @@ func (s *notificationService) Configure(requestUser string, body *dto.ConfigureN
 }
 
 // GetConfig 는 알림 설정 정보를 조회합니다.
-func (s *notificationService) GetConfig(id int) (*ent.NotificationConfig, error){
+func (s *notificationService) GetConfig(id int) (*ent.NotificationConfig, error) {
 	config, err := s.notificationRepo.FindById(id)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (s *notificationService) GetConfig(id int) (*ent.NotificationConfig, error)
 }
 
 // GetConfigByUser 는 알림 설정 정보를 조회합니다.
-func (s *notificationService) GetConfigByUser(user string) (*ent.NotificationConfig, error){
+func (s *notificationService) GetConfigByUser(user string) (*ent.NotificationConfig, error) {
 	config, err := s.notificationRepo.FindByUser(user)
 	if err != nil {
 		return nil, err
@@ -69,4 +69,3 @@ func (s *notificationService) GetConfigByUser(user string) (*ent.NotificationCon
 
 	return config, err
 }
-

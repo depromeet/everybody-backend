@@ -23,7 +23,6 @@ func (Device) Fields() []ent.Field {
 		field.String("push_token"),
 		field.Enum("device_os").
 			Values(deviceOSes...),
-
 	}
 }
 

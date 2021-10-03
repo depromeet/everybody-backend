@@ -47,7 +47,7 @@ func (repo *deviceRepository) FindById(id int) (*ent.Device, error) {
 	return u, nil
 }
 
-func (repo *deviceRepository) FindByDeviceToken(deviceToken string) (*ent.Device, error){
+func (repo *deviceRepository) FindByDeviceToken(deviceToken string) (*ent.Device, error) {
 	u, err := repo.db.Device.Query().
 		Where(device.DeviceToken(deviceToken)).
 		Only(context.Background())

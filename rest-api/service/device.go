@@ -12,6 +12,7 @@ import (
 var (
 	ErrDuplicatedDevice = errors.New("같은 디바이스에 대한 정보가 이미 존재합니다.")
 )
+
 type DeviceService interface {
 	Register(requestUser string, body *dto.RegisterDeviceRequest) (*ent.Device, error)
 	GetDevice(id int) (*ent.Device, error)
@@ -29,24 +30,24 @@ type deviceService struct {
 }
 
 // Configure 는 requestUser의 알림 설정을 설정(?)합니다.
-func (s *deviceService) Register(requestUser string, body *dto.RegisterDeviceRequest) (*ent.Device, error){
+func (s *deviceService) Register(requestUser string, body *dto.RegisterDeviceRequest) (*ent.Device, error) {
 	// 생성
 	d, err := s.deviceRepo.FindByDeviceToken(body.DeviceToken)
-	if err != nil{
+	if err != nil {
 		//
 		notFoundErr := &ent.NotFoundError{}
 		if errors.As(err, &notFoundErr) {
 			// 해당 device token의 기기가 존재하지 않으면 생성
 			os := device.DeviceOs(body.DeviceOS)
-			if err = device.DeviceOsValidator(os); err != nil{
+			if err = device.DeviceOsValidator(os); err != nil {
 				return nil, err
 			}
 
 			return s.deviceRepo.CreateDevice(&ent.Device{
 				DeviceToken: body.DeviceToken,
-				PushToken: body.PushToken,
-				DeviceOs: os,
-				Edges: ent.DeviceEdges{User: &ent.User{ID: requestUser}},
+				PushToken:   body.PushToken,
+				DeviceOs:    os,
+				Edges:       ent.DeviceEdges{User: &ent.User{ID: requestUser}},
 			})
 		}
 
@@ -58,7 +59,7 @@ func (s *deviceService) Register(requestUser string, body *dto.RegisterDeviceReq
 }
 
 // GetConfig 는 알림 설정 정보를 조회합니다.
-func (s *deviceService) GetDevice(id int) (*ent.Device, error){
+func (s *deviceService) GetDevice(id int) (*ent.Device, error) {
 	device, err := s.deviceRepo.FindById(id)
 	if err != nil {
 		return nil, err

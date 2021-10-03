@@ -30,6 +30,5 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("device", Device.Type),
 		edge.To("notification_config", NotificationConfig.Type),
-
 	}
 }

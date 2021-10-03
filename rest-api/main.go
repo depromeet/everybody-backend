@@ -12,15 +12,14 @@ import (
 
 var (
 	notificationRepo repository.NotificationRepository
-	deviceRepo repository.DeviceRepository
-	userRepo repository.UserRepository
+	deviceRepo       repository.DeviceRepository
+	userRepo         repository.UserRepository
 
 	notificationService service.NotificationService
-	deviceService service.DeviceService
-	userService service.UserService
+	deviceService       service.DeviceService
+	userService         service.UserService
 
-
-	userHandler *handler.UserHandler
+	userHandler         *handler.UserHandler
 	notificationHandler *handler.NotificationHandler
 
 	server *fiber.App
