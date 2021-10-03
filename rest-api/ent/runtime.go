@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/schema"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
@@ -14,6 +15,12 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	albumFields := schema.Album{}.Fields()
+	_ = albumFields
+	// albumDescCreatedAt is the schema descriptor for created_at field.
+	albumDescCreatedAt := albumFields[2].Descriptor()
+	// album.DefaultCreatedAt holds the default value on creation for the created_at field.
+	album.DefaultCreatedAt = albumDescCreatedAt.Default.(func() time.Time)
 	notificationconfigFields := schema.NotificationConfig{}.Fields()
 	_ = notificationconfigFields
 	// notificationconfigDescIsActivated is the schema descriptor for is_activated field.

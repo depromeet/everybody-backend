@@ -9,6 +9,7 @@ import (
 
 	"github.com/depromeet/everybody-backend/rest-api/ent/migrate"
 
+	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
@@ -23,6 +24,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// Album is the client for interacting with the Album builders.
+	Album *AlbumClient
 	// Device is the client for interacting with the Device builders.
 	Device *DeviceClient
 	// NotificationConfig is the client for interacting with the NotificationConfig builders.
@@ -42,6 +45,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.Album = NewAlbumClient(c.config)
 	c.Device = NewDeviceClient(c.config)
 	c.NotificationConfig = NewNotificationConfigClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -78,6 +82,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                ctx,
 		config:             cfg,
+		Album:              NewAlbumClient(cfg),
 		Device:             NewDeviceClient(cfg),
 		NotificationConfig: NewNotificationConfigClient(cfg),
 		User:               NewUserClient(cfg),
@@ -99,6 +104,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
 		config:             cfg,
+		Album:              NewAlbumClient(cfg),
 		Device:             NewDeviceClient(cfg),
 		NotificationConfig: NewNotificationConfigClient(cfg),
 		User:               NewUserClient(cfg),
@@ -108,7 +114,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Device.
+//		Album.
 //		Query().
 //		Count(ctx)
 //
@@ -131,9 +137,116 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.Album.Use(hooks...)
 	c.Device.Use(hooks...)
 	c.NotificationConfig.Use(hooks...)
 	c.User.Use(hooks...)
+}
+
+// AlbumClient is a client for the Album schema.
+type AlbumClient struct {
+	config
+}
+
+// NewAlbumClient returns a client for the Album from the given config.
+func NewAlbumClient(c config) *AlbumClient {
+	return &AlbumClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `album.Hooks(f(g(h())))`.
+func (c *AlbumClient) Use(hooks ...Hook) {
+	c.hooks.Album = append(c.hooks.Album, hooks...)
+}
+
+// Create returns a create builder for Album.
+func (c *AlbumClient) Create() *AlbumCreate {
+	mutation := newAlbumMutation(c.config, OpCreate)
+	return &AlbumCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Album entities.
+func (c *AlbumClient) CreateBulk(builders ...*AlbumCreate) *AlbumCreateBulk {
+	return &AlbumCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Album.
+func (c *AlbumClient) Update() *AlbumUpdate {
+	mutation := newAlbumMutation(c.config, OpUpdate)
+	return &AlbumUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AlbumClient) UpdateOne(a *Album) *AlbumUpdateOne {
+	mutation := newAlbumMutation(c.config, OpUpdateOne, withAlbum(a))
+	return &AlbumUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AlbumClient) UpdateOneID(id int) *AlbumUpdateOne {
+	mutation := newAlbumMutation(c.config, OpUpdateOne, withAlbumID(id))
+	return &AlbumUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Album.
+func (c *AlbumClient) Delete() *AlbumDelete {
+	mutation := newAlbumMutation(c.config, OpDelete)
+	return &AlbumDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *AlbumClient) DeleteOne(a *Album) *AlbumDeleteOne {
+	return c.DeleteOneID(a.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *AlbumClient) DeleteOneID(id int) *AlbumDeleteOne {
+	builder := c.Delete().Where(album.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AlbumDeleteOne{builder}
+}
+
+// Query returns a query builder for Album.
+func (c *AlbumClient) Query() *AlbumQuery {
+	return &AlbumQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Album entity by its id.
+func (c *AlbumClient) Get(ctx context.Context, id int) (*Album, error) {
+	return c.Query().Where(album.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AlbumClient) GetX(ctx context.Context, id int) *Album {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Album.
+func (c *AlbumClient) QueryUser(a *Album) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(album.Table, album.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, album.UserTable, album.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AlbumClient) Hooks() []Hook {
+	return c.hooks.Album
 }
 
 // DeviceClient is a client for the Device schema.
@@ -458,6 +571,22 @@ func (c *UserClient) QueryNotificationConfig(u *User) *NotificationConfigQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(notificationconfig.Table, notificationconfig.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationConfigTable, user.NotificationConfigColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAlbum queries the album edge of a User.
+func (c *UserClient) QueryAlbum(u *User) *AlbumQuery {
+	query := &AlbumQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(album.Table, album.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AlbumTable, user.AlbumColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

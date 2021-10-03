@@ -24,6 +24,7 @@ type config struct {
 
 // hooks per client, for fast access.
 type hooks struct {
+	Album              []ent.Hook
 	Device             []ent.Hook
 	NotificationConfig []ent.Hook
 	User               []ent.Hook

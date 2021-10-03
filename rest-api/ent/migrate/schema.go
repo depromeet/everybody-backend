@@ -8,6 +8,27 @@ import (
 )
 
 var (
+	// AlbumsColumns holds the columns for the "albums" table.
+	AlbumsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "folder_name", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_album", Type: field.TypeString, Nullable: true},
+	}
+	// AlbumsTable holds the schema information for the "albums" table.
+	AlbumsTable = &schema.Table{
+		Name:       "albums",
+		Columns:    AlbumsColumns,
+		PrimaryKey: []*schema.Column{AlbumsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "albums_users_album",
+				Columns:    []*schema.Column{AlbumsColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// DevicesColumns holds the columns for the "devices" table.
 	DevicesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -68,6 +89,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AlbumsTable,
 		DevicesTable,
 		NotificationConfigsTable,
 		UsersTable,
@@ -75,6 +97,7 @@ var (
 )
 
 func init() {
+	AlbumsTable.ForeignKeys[0].RefTable = UsersTable
 	DevicesTable.ForeignKeys[0].RefTable = UsersTable
 	NotificationConfigsTable.ForeignKeys[0].RefTable = UsersTable
 }
