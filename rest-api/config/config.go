@@ -36,7 +36,7 @@ func init() {
 	}
 
 	if !found {
-		log.Fatalf("설정파일을 하나도 찾지 못했습니다. 다음 stage 중 하나에 대한 설정파일을 생성해주세요. %#v", STAGES)
+		log.Warningf("설정파일을 하나도 찾지 못했습니다. 다음 stage 중 하나에 대한 설정파일을 생성해주세요. %#v", STAGES)
 	}
 	log.Info(Config)
 }

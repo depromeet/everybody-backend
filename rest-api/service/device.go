@@ -31,18 +31,18 @@ type deviceService struct {
 
 // Configure 는 requestUser의 알림 설정을 설정(?)합니다.
 func (s *deviceService) Register(requestUser string, body *dto.RegisterDeviceRequest) (*ent.Device, error) {
-	// 생성
+	// 동일한 디바이스 토큰 정보가 이미 존재하는지
 	d, err := s.deviceRepo.FindByDeviceToken(body.DeviceToken)
 	if err != nil {
 		//
-		notFoundErr := &ent.NotFoundError{}
+		notFoundErr := new(ent.NotFoundError)
 		if errors.As(err, &notFoundErr) {
 			// 해당 device token의 기기가 존재하지 않으면 생성
 			os := device.DeviceOs(body.DeviceOS)
 			if err = device.DeviceOsValidator(os); err != nil {
 				return nil, err
 			}
-
+			// 생성
 			return s.deviceRepo.CreateDevice(&ent.Device{
 				DeviceToken: body.DeviceToken,
 				PushToken:   body.PushToken,
@@ -54,11 +54,12 @@ func (s *deviceService) Register(requestUser string, body *dto.RegisterDeviceReq
 		return nil, err
 	}
 
+	// 기존의 정보 리턴
 	log.Warningf("이미 같은 디바이스를 이용하는 정보가 존재합니다. Device(id=%d)", d.ID)
 	return d, nil
 }
 
-// GetConfig 는 알림 설정 정보를 조회합니다.
+// GetDevice 는 알림 설정 정보를 조회합니다.
 func (s *deviceService) GetDevice(id int) (*ent.Device, error) {
 	device, err := s.deviceRepo.FindById(id)
 	if err != nil {
