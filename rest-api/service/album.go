@@ -12,6 +12,7 @@ type albumService struct {
 
 type AlbumServiceInterface interface {
 	CreateAlbum(userID string, albumReq *dto.AlbumRequest) (*ent.Album, error)
+	GetAlbum(albumID int) (*ent.Album, error)
 }
 
 func NewAlbumService(albumRepo repository.AlbumRepositoryInterface) AlbumServiceInterface {
@@ -34,4 +35,13 @@ func (s *albumService) CreateAlbum(userID string, albumReq *dto.AlbumRequest) (*
 	}
 
 	return newAlbum, nil
+}
+
+func (s *albumService) GetAlbum(albumID int) (*ent.Album, error) {
+	albumData, err := s.albumRepo.Get(albumID)
+	if err != nil {
+		return nil, err
+	}
+
+	return albumData, err
 }

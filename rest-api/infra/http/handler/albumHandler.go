@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"strconv"
+
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
@@ -33,7 +35,31 @@ func (h *AlbumHandler) CreateAlbum(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(dto.AlbumResponse{
+		ID:         newAlbum.ID,
 		FolderName: newAlbum.FolderName,
 		CreatedAt:  newAlbum.CreatedAt,
+	})
+}
+
+func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
+	queryParam := util.GetParams(ctx, "album_id")
+	if queryParam == "" {
+		log.Println("no params provided")
+		return ctx.JSON("no params provided")
+	}
+
+	albumID, err := strconv.Atoi(queryParam)
+	if err != nil {
+		return ctx.JSON(err)
+	}
+
+	album, err := h.albumService.GetAlbum(albumID)
+	if err != nil {
+		return ctx.JSON(err)
+	}
+
+	return ctx.JSON(&dto.AlbumResponse{
+		FolderName: album.FolderName,
+		CreatedAt:  album.CreatedAt,
 	})
 }
