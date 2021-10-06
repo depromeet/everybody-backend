@@ -18,7 +18,7 @@ func init() {
 	albumFields := schema.Album{}.Fields()
 	_ = albumFields
 	// albumDescCreatedAt is the schema descriptor for created_at field.
-	albumDescCreatedAt := albumFields[2].Descriptor()
+	albumDescCreatedAt := albumFields[1].Descriptor()
 	// album.DefaultCreatedAt holds the default value on creation for the created_at field.
 	album.DefaultCreatedAt = albumDescCreatedAt.Default.(func() time.Time)
 	notificationconfigFields := schema.NotificationConfig{}.Fields()

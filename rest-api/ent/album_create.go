@@ -41,12 +41,6 @@ func (ac *AlbumCreate) SetNillableCreatedAt(t *time.Time) *AlbumCreate {
 	return ac
 }
 
-// SetID sets the "id" field.
-func (ac *AlbumCreate) SetID(i int) *AlbumCreate {
-	ac.mutation.SetID(i)
-	return ac
-}
-
 // SetUserID sets the "user" edge to the User entity by ID.
 func (ac *AlbumCreate) SetUserID(id string) *AlbumCreate {
 	ac.mutation.SetUserID(id)
@@ -162,10 +156,8 @@ func (ac *AlbumCreate) sqlSave(ctx context.Context) (*Album, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != _node.ID {
-		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	return _node, nil
 }
 
@@ -180,10 +172,6 @@ func (ac *AlbumCreate) createSpec() (*Album, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
-	if id, ok := ac.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
 	if value, ok := ac.mutation.FolderName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -265,7 +253,7 @@ func (acb *AlbumCreateBulk) Save(ctx context.Context) ([]*Album, error) {
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
-				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+				if specs[i].ID.Value != nil {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}
