@@ -41,18 +41,40 @@ func (h *AlbumHandler) CreateAlbum(ctx *fiber.Ctx) error {
 	})
 }
 
-func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
-	queryParam := util.GetParams(ctx, "album_id")
-	if queryParam == "" {
-		log.Println("no params provided")
-		return ctx.JSON("no params provided")
-	}
+func (h *AlbumHandler) GetAllAlbums(ctx *fiber.Ctx) error {
+	userID := util.GetRequestUserID(ctx)
 
-	albumID, err := strconv.Atoi(queryParam)
+	albums, err := h.albumService.GetAllAlbums(userID)
 	if err != nil {
 		return ctx.JSON(err)
 	}
 
+	albumsResponse := make(dto.AlubumsResponse, 0)
+	for _, album := range albums {
+		var albumResponse dto.AlbumResponse
+		albumResponse.ID = album.ID
+		albumResponse.FolderName = album.FolderName
+		albumResponse.CreatedAt = album.CreatedAt
+
+		albumsResponse = append(albumsResponse, albumResponse)
+	}
+
+	return ctx.JSON(albumsResponse)
+}
+
+func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
+	param := util.GetParams(ctx, "album_id")
+	if param == "" {
+		log.Println("no params provided")
+		return ctx.JSON("no params provided")
+	}
+
+	albumID, err := strconv.Atoi(param)
+	if err != nil {
+		return ctx.JSON(err)
+	}
+
+	// GetAlbum 에서 각 앨범에 해당하는 pictures도 조회해야 함
 	album, err := h.albumService.GetAlbum(albumID)
 	if err != nil {
 		return ctx.JSON(err)
@@ -60,6 +82,7 @@ func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(&dto.AlbumResponse{
 		FolderName: album.FolderName,
-		CreatedAt:  album.CreatedAt,
+		// PictureList: []picture,
+		CreatedAt: album.CreatedAt,
 	})
 }

@@ -9,6 +9,8 @@ type AlbumRequest struct {
 	FolderName string `json:"folder_name"`
 }
 
+type AlubumsResponse []AlbumResponse
+
 type AlbumResponse struct {
 	ID         int       `json:"id,omitempty"`
 	FolderName string    `json:"folder_name,omitempty"`
