@@ -16,7 +16,7 @@ type PictureRepositoryInterface interface {
 	Save(picture *ent.Picture) error
 	GetAllByAlbumID(albumID int) ([]*ent.Picture, error)
 	Get(pictureID int) (*ent.Picture, error)
-	FindByAlbumIDAndBodyParts(albumID int, bodyParts string) ([]*ent.Picture, error)
+	FindByAlbumIDAndBodyPart(albumID int, bodyPart string) ([]*ent.Picture, error)
 }
 
 func NewPictureRepository(db *ent.Client) PictureRepositoryInterface {
@@ -28,8 +28,7 @@ func NewPictureRepository(db *ent.Client) PictureRepositoryInterface {
 func (r *pictureRepository) Save(picture *ent.Picture) error {
 	_, err := r.db.Picture.Create().
 		SetAlbumID(picture.Edges.Album.ID).
-		SetBodyParts(picture.BodyParts).
-		SetCreatedAt(picture.CreatedAt).
+		SetBodyPart(picture.BodyPart).
 		Save(context.Background())
 	if err != nil {
 		return err
@@ -61,9 +60,9 @@ func (r *pictureRepository) Get(pictureID int) (*ent.Picture, error) {
 }
 
 // FindByAlbumIDAndBodyParts은 albumID 와 특정 신체 부위에 해당하는 사진들을 조회
-func (r *pictureRepository) FindByAlbumIDAndBodyParts(albumID int, bodyParts string) ([]*ent.Picture, error) {
+func (r *pictureRepository) FindByAlbumIDAndBodyPart(albumID int, bodyPart string) ([]*ent.Picture, error) {
 	pictures, err := r.db.Picture.Query().
-		Where(picture.And(picture.HasAlbumWith(album.ID(albumID)), picture.BodyParts(bodyParts))).
+		Where(picture.And(picture.HasAlbumWith(album.ID(albumID)), picture.BodyPart(bodyPart))).
 		All(context.Background())
 	if err != nil {
 		return nil, err

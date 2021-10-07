@@ -93,10 +93,10 @@ func IDLTE(id int) predicate.Album {
 	})
 }
 
-// FolderName applies equality check predicate on the "folder_name" field. It's identical to FolderNameEQ.
-func FolderName(v string) predicate.Album {
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFolderName), v))
+		s.Where(sql.EQ(s.C(FieldName), v))
 	})
 }
 
@@ -107,22 +107,22 @@ func CreatedAt(v time.Time) predicate.Album {
 	})
 }
 
-// FolderNameEQ applies the EQ predicate on the "folder_name" field.
-func FolderNameEQ(v string) predicate.Album {
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldFolderName), v))
+		s.Where(sql.EQ(s.C(FieldName), v))
 	})
 }
 
-// FolderNameNEQ applies the NEQ predicate on the "folder_name" field.
-func FolderNameNEQ(v string) predicate.Album {
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldFolderName), v))
+		s.Where(sql.NEQ(s.C(FieldName), v))
 	})
 }
 
-// FolderNameIn applies the In predicate on the "folder_name" field.
-func FolderNameIn(vs ...string) predicate.Album {
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Album {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -134,12 +134,12 @@ func FolderNameIn(vs ...string) predicate.Album {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldFolderName), v...))
+		s.Where(sql.In(s.C(FieldName), v...))
 	})
 }
 
-// FolderNameNotIn applies the NotIn predicate on the "folder_name" field.
-func FolderNameNotIn(vs ...string) predicate.Album {
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Album {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -151,70 +151,70 @@ func FolderNameNotIn(vs ...string) predicate.Album {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldFolderName), v...))
+		s.Where(sql.NotIn(s.C(FieldName), v...))
 	})
 }
 
-// FolderNameGT applies the GT predicate on the "folder_name" field.
-func FolderNameGT(v string) predicate.Album {
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldFolderName), v))
+		s.Where(sql.GT(s.C(FieldName), v))
 	})
 }
 
-// FolderNameGTE applies the GTE predicate on the "folder_name" field.
-func FolderNameGTE(v string) predicate.Album {
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldFolderName), v))
+		s.Where(sql.GTE(s.C(FieldName), v))
 	})
 }
 
-// FolderNameLT applies the LT predicate on the "folder_name" field.
-func FolderNameLT(v string) predicate.Album {
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldFolderName), v))
+		s.Where(sql.LT(s.C(FieldName), v))
 	})
 }
 
-// FolderNameLTE applies the LTE predicate on the "folder_name" field.
-func FolderNameLTE(v string) predicate.Album {
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldFolderName), v))
+		s.Where(sql.LTE(s.C(FieldName), v))
 	})
 }
 
-// FolderNameContains applies the Contains predicate on the "folder_name" field.
-func FolderNameContains(v string) predicate.Album {
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldFolderName), v))
+		s.Where(sql.Contains(s.C(FieldName), v))
 	})
 }
 
-// FolderNameHasPrefix applies the HasPrefix predicate on the "folder_name" field.
-func FolderNameHasPrefix(v string) predicate.Album {
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldFolderName), v))
+		s.Where(sql.HasPrefix(s.C(FieldName), v))
 	})
 }
 
-// FolderNameHasSuffix applies the HasSuffix predicate on the "folder_name" field.
-func FolderNameHasSuffix(v string) predicate.Album {
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldFolderName), v))
+		s.Where(sql.HasSuffix(s.C(FieldName), v))
 	})
 }
 
-// FolderNameEqualFold applies the EqualFold predicate on the "folder_name" field.
-func FolderNameEqualFold(v string) predicate.Album {
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldFolderName), v))
+		s.Where(sql.EqualFold(s.C(FieldName), v))
 	})
 }
 
-// FolderNameContainsFold applies the ContainsFold predicate on the "folder_name" field.
-func FolderNameContainsFold(v string) predicate.Album {
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldFolderName), v))
+		s.Where(sql.ContainsFold(s.C(FieldName), v))
 	})
 }
 

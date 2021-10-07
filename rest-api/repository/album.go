@@ -14,7 +14,7 @@ type albumRepository struct {
 
 type AlbumRepositoryInterface interface {
 	Create(album *ent.Album) (*ent.Album, error)
-	GetAllAlbumsByUserID(userID string) ([]*ent.Album, error)
+	GetAllByUserID(userID string) ([]*ent.Album, error)
 	Get(albumID int) (*ent.Album, error)
 }
 
@@ -27,8 +27,7 @@ func NewAlbumRepository(db *ent.Client) AlbumRepositoryInterface {
 func (r *albumRepository) Create(album *ent.Album) (*ent.Album, error) {
 	newAlbum, err := r.db.Album.Create().
 		SetUser(album.Edges.User).
-		SetFolderName(album.FolderName).
-		SetCreatedAt(album.CreatedAt).
+		SetName(album.Name).
 		Save(context.Background())
 
 	if err != nil {
@@ -38,7 +37,7 @@ func (r *albumRepository) Create(album *ent.Album) (*ent.Album, error) {
 	return newAlbum, nil
 }
 
-func (r *albumRepository) GetAllAlbumsByUserID(userID string) ([]*ent.Album, error) {
+func (r *albumRepository) GetAllByUserID(userID string) ([]*ent.Album, error) {
 	albums, err := r.db.Album.Query().
 		Where(album.HasUserWith(user.ID(userID))).
 		All(context.Background())
@@ -49,7 +48,6 @@ func (r *albumRepository) GetAllAlbumsByUserID(userID string) ([]*ent.Album, err
 	return albums, nil
 }
 
-// Get은 각 album의 picture 정보도 다 조회해야 함
 func (r *albumRepository) Get(albumID int) (*ent.Album, error) {
 	albumData, err := r.db.Album.Query().
 		Where(album.ID(albumID)).
@@ -60,15 +58,3 @@ func (r *albumRepository) Get(albumID int) (*ent.Album, error) {
 
 	return albumData, nil
 }
-
-// func (r *albumRepository) FindByIDAndUserID(userID string, albumID int) (*ent.Album, error) {
-// 	albumData, err := r.db.Album.Query().
-// 		Where(album.And(album.HasUserWith(user.ID(userID)), album.ID(albumID))).
-// 		Only(context.Background())
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return albumData, nil
-// }

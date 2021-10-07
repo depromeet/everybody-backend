@@ -328,12 +328,12 @@ func (aq *AlbumQuery) WithPicture(opts ...func(*PictureQuery)) *AlbumQuery {
 // Example:
 //
 //	var v []struct {
-//		FolderName string `json:"folder_name,omitempty"`
+//		Name string `json:"name,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Album.Query().
-//		GroupBy(album.FieldFolderName).
+//		GroupBy(album.FieldName).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -355,11 +355,11 @@ func (aq *AlbumQuery) GroupBy(field string, fields ...string) *AlbumGroupBy {
 // Example:
 //
 //	var v []struct {
-//		FolderName string `json:"folder_name,omitempty"`
+//		Name string `json:"name,omitempty"`
 //	}
 //
 //	client.Album.Query().
-//		Select(album.FieldFolderName).
+//		Select(album.FieldName).
 //		Scan(ctx, &v)
 //
 func (aq *AlbumQuery) Select(fields ...string) *AlbumSelect {

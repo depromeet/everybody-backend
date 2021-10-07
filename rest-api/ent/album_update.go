@@ -29,9 +29,9 @@ func (au *AlbumUpdate) Where(ps ...predicate.Album) *AlbumUpdate {
 	return au
 }
 
-// SetFolderName sets the "folder_name" field.
-func (au *AlbumUpdate) SetFolderName(s string) *AlbumUpdate {
-	au.mutation.SetFolderName(s)
+// SetName sets the "name" field.
+func (au *AlbumUpdate) SetName(s string) *AlbumUpdate {
+	au.mutation.SetName(s)
 	return au
 }
 
@@ -187,11 +187,11 @@ func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := au.mutation.FolderName(); ok {
+	if value, ok := au.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: album.FieldFolderName,
+			Column: album.FieldName,
 		})
 	}
 	if value, ok := au.mutation.CreatedAt(); ok {
@@ -309,9 +309,9 @@ type AlbumUpdateOne struct {
 	mutation *AlbumMutation
 }
 
-// SetFolderName sets the "folder_name" field.
-func (auo *AlbumUpdateOne) SetFolderName(s string) *AlbumUpdateOne {
-	auo.mutation.SetFolderName(s)
+// SetName sets the "name" field.
+func (auo *AlbumUpdateOne) SetName(s string) *AlbumUpdateOne {
+	auo.mutation.SetName(s)
 	return auo
 }
 
@@ -491,11 +491,11 @@ func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error
 			}
 		}
 	}
-	if value, ok := auo.mutation.FolderName(); ok {
+	if value, ok := auo.mutation.Name(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: album.FieldFolderName,
+			Column: album.FieldName,
 		})
 	}
 	if value, ok := auo.mutation.CreatedAt(); ok {

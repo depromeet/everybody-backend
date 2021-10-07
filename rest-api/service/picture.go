@@ -12,7 +12,7 @@ type pictureService struct {
 
 type PictureServiceInterface interface {
 	SavePicture(pictureReq *dto.PictureRequest) (bool, error)
-	GetAllPicutres(albumID int) ([]*ent.Picture, error)
+	GetAllPictures(albumID int) ([]*ent.Picture, error)
 	GetPicture(pictureID int) (*ent.Picture, error)
 }
 
@@ -24,7 +24,7 @@ func NewPictureService(pictureRepo repository.PictureRepositoryInterface) Pictur
 
 func (s *pictureService) SavePicture(pictureReq *dto.PictureRequest) (bool, error) {
 	picture := &ent.Picture{
-		BodyParts: pictureReq.BodyParts,
+		BodyPart: pictureReq.BodyPart,
 		Edges: ent.PictureEdges{
 			Album: &ent.Album{ID: pictureReq.AlbumID},
 		},
@@ -38,7 +38,7 @@ func (s *pictureService) SavePicture(pictureReq *dto.PictureRequest) (bool, erro
 	return true, nil
 }
 
-func (s *pictureService) GetAllPicutres(albumID int) ([]*ent.Picture, error) {
+func (s *pictureService) GetAllPictures(albumID int) ([]*ent.Picture, error) {
 	pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
 	if err != nil {
 		return nil, err

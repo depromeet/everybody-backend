@@ -40,7 +40,7 @@ type AlbumMutation struct {
 	op             Op
 	typ            string
 	id             *int
-	folder_name    *string
+	name           *string
 	created_at     *time.Time
 	clearedFields  map[string]struct{}
 	user           *string
@@ -132,40 +132,40 @@ func (m *AlbumMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetFolderName sets the "folder_name" field.
-func (m *AlbumMutation) SetFolderName(s string) {
-	m.folder_name = &s
+// SetName sets the "name" field.
+func (m *AlbumMutation) SetName(s string) {
+	m.name = &s
 }
 
-// FolderName returns the value of the "folder_name" field in the mutation.
-func (m *AlbumMutation) FolderName() (r string, exists bool) {
-	v := m.folder_name
+// Name returns the value of the "name" field in the mutation.
+func (m *AlbumMutation) Name() (r string, exists bool) {
+	v := m.name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldFolderName returns the old "folder_name" field's value of the Album entity.
+// OldName returns the old "name" field's value of the Album entity.
 // If the Album object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AlbumMutation) OldFolderName(ctx context.Context) (v string, err error) {
+func (m *AlbumMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldFolderName is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldFolderName requires an ID field in the mutation")
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldFolderName: %w", err)
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
 	}
-	return oldValue.FolderName, nil
+	return oldValue.Name, nil
 }
 
-// ResetFolderName resets all changes to the "folder_name" field.
-func (m *AlbumMutation) ResetFolderName() {
-	m.folder_name = nil
+// ResetName resets all changes to the "name" field.
+func (m *AlbumMutation) ResetName() {
+	m.name = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -317,8 +317,8 @@ func (m *AlbumMutation) Type() string {
 // AddedFields().
 func (m *AlbumMutation) Fields() []string {
 	fields := make([]string, 0, 2)
-	if m.folder_name != nil {
-		fields = append(fields, album.FieldFolderName)
+	if m.name != nil {
+		fields = append(fields, album.FieldName)
 	}
 	if m.created_at != nil {
 		fields = append(fields, album.FieldCreatedAt)
@@ -331,8 +331,8 @@ func (m *AlbumMutation) Fields() []string {
 // schema.
 func (m *AlbumMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case album.FieldFolderName:
-		return m.FolderName()
+	case album.FieldName:
+		return m.Name()
 	case album.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -344,8 +344,8 @@ func (m *AlbumMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *AlbumMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case album.FieldFolderName:
-		return m.OldFolderName(ctx)
+	case album.FieldName:
+		return m.OldName(ctx)
 	case album.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -357,12 +357,12 @@ func (m *AlbumMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *AlbumMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case album.FieldFolderName:
+	case album.FieldName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetFolderName(v)
+		m.SetName(v)
 		return nil
 	case album.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -420,8 +420,8 @@ func (m *AlbumMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *AlbumMutation) ResetField(name string) error {
 	switch name {
-	case album.FieldFolderName:
-		m.ResetFolderName()
+	case album.FieldName:
+		m.ResetName()
 		return nil
 	case album.FieldCreatedAt:
 		m.ResetCreatedAt()
@@ -1566,7 +1566,7 @@ type PictureMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	body_parts    *string
+	body_part     *string
 	created_at    *time.Time
 	clearedFields map[string]struct{}
 	album         *int
@@ -1655,40 +1655,40 @@ func (m *PictureMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetBodyParts sets the "body_parts" field.
-func (m *PictureMutation) SetBodyParts(s string) {
-	m.body_parts = &s
+// SetBodyPart sets the "body_part" field.
+func (m *PictureMutation) SetBodyPart(s string) {
+	m.body_part = &s
 }
 
-// BodyParts returns the value of the "body_parts" field in the mutation.
-func (m *PictureMutation) BodyParts() (r string, exists bool) {
-	v := m.body_parts
+// BodyPart returns the value of the "body_part" field in the mutation.
+func (m *PictureMutation) BodyPart() (r string, exists bool) {
+	v := m.body_part
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldBodyParts returns the old "body_parts" field's value of the Picture entity.
+// OldBodyPart returns the old "body_part" field's value of the Picture entity.
 // If the Picture object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PictureMutation) OldBodyParts(ctx context.Context) (v string, err error) {
+func (m *PictureMutation) OldBodyPart(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldBodyParts is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldBodyPart is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldBodyParts requires an ID field in the mutation")
+		return v, fmt.Errorf("OldBodyPart requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldBodyParts: %w", err)
+		return v, fmt.Errorf("querying old value for OldBodyPart: %w", err)
 	}
-	return oldValue.BodyParts, nil
+	return oldValue.BodyPart, nil
 }
 
-// ResetBodyParts resets all changes to the "body_parts" field.
-func (m *PictureMutation) ResetBodyParts() {
-	m.body_parts = nil
+// ResetBodyPart resets all changes to the "body_part" field.
+func (m *PictureMutation) ResetBodyPart() {
+	m.body_part = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1786,8 +1786,8 @@ func (m *PictureMutation) Type() string {
 // AddedFields().
 func (m *PictureMutation) Fields() []string {
 	fields := make([]string, 0, 2)
-	if m.body_parts != nil {
-		fields = append(fields, picture.FieldBodyParts)
+	if m.body_part != nil {
+		fields = append(fields, picture.FieldBodyPart)
 	}
 	if m.created_at != nil {
 		fields = append(fields, picture.FieldCreatedAt)
@@ -1800,8 +1800,8 @@ func (m *PictureMutation) Fields() []string {
 // schema.
 func (m *PictureMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case picture.FieldBodyParts:
-		return m.BodyParts()
+	case picture.FieldBodyPart:
+		return m.BodyPart()
 	case picture.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -1813,8 +1813,8 @@ func (m *PictureMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *PictureMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case picture.FieldBodyParts:
-		return m.OldBodyParts(ctx)
+	case picture.FieldBodyPart:
+		return m.OldBodyPart(ctx)
 	case picture.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -1826,12 +1826,12 @@ func (m *PictureMutation) OldField(ctx context.Context, name string) (ent.Value,
 // type.
 func (m *PictureMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case picture.FieldBodyParts:
+	case picture.FieldBodyPart:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetBodyParts(v)
+		m.SetBodyPart(v)
 		return nil
 	case picture.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -1889,8 +1889,8 @@ func (m *PictureMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *PictureMutation) ResetField(name string) error {
 	switch name {
-	case picture.FieldBodyParts:
-		m.ResetBodyParts()
+	case picture.FieldBodyPart:
+		m.ResetBodyPart()
 		return nil
 	case picture.FieldCreatedAt:
 		m.ResetCreatedAt()

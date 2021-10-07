@@ -93,10 +93,10 @@ func IDLTE(id int) predicate.Picture {
 	})
 }
 
-// BodyParts applies equality check predicate on the "body_parts" field. It's identical to BodyPartsEQ.
-func BodyParts(v string) predicate.Picture {
+// BodyPart applies equality check predicate on the "body_part" field. It's identical to BodyPartEQ.
+func BodyPart(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldBodyParts), v))
+		s.Where(sql.EQ(s.C(FieldBodyPart), v))
 	})
 }
 
@@ -107,22 +107,22 @@ func CreatedAt(v time.Time) predicate.Picture {
 	})
 }
 
-// BodyPartsEQ applies the EQ predicate on the "body_parts" field.
-func BodyPartsEQ(v string) predicate.Picture {
+// BodyPartEQ applies the EQ predicate on the "body_part" field.
+func BodyPartEQ(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldBodyParts), v))
+		s.Where(sql.EQ(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsNEQ applies the NEQ predicate on the "body_parts" field.
-func BodyPartsNEQ(v string) predicate.Picture {
+// BodyPartNEQ applies the NEQ predicate on the "body_part" field.
+func BodyPartNEQ(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldBodyParts), v))
+		s.Where(sql.NEQ(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsIn applies the In predicate on the "body_parts" field.
-func BodyPartsIn(vs ...string) predicate.Picture {
+// BodyPartIn applies the In predicate on the "body_part" field.
+func BodyPartIn(vs ...string) predicate.Picture {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -134,12 +134,12 @@ func BodyPartsIn(vs ...string) predicate.Picture {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldBodyParts), v...))
+		s.Where(sql.In(s.C(FieldBodyPart), v...))
 	})
 }
 
-// BodyPartsNotIn applies the NotIn predicate on the "body_parts" field.
-func BodyPartsNotIn(vs ...string) predicate.Picture {
+// BodyPartNotIn applies the NotIn predicate on the "body_part" field.
+func BodyPartNotIn(vs ...string) predicate.Picture {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -151,70 +151,70 @@ func BodyPartsNotIn(vs ...string) predicate.Picture {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldBodyParts), v...))
+		s.Where(sql.NotIn(s.C(FieldBodyPart), v...))
 	})
 }
 
-// BodyPartsGT applies the GT predicate on the "body_parts" field.
-func BodyPartsGT(v string) predicate.Picture {
+// BodyPartGT applies the GT predicate on the "body_part" field.
+func BodyPartGT(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldBodyParts), v))
+		s.Where(sql.GT(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsGTE applies the GTE predicate on the "body_parts" field.
-func BodyPartsGTE(v string) predicate.Picture {
+// BodyPartGTE applies the GTE predicate on the "body_part" field.
+func BodyPartGTE(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldBodyParts), v))
+		s.Where(sql.GTE(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsLT applies the LT predicate on the "body_parts" field.
-func BodyPartsLT(v string) predicate.Picture {
+// BodyPartLT applies the LT predicate on the "body_part" field.
+func BodyPartLT(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldBodyParts), v))
+		s.Where(sql.LT(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsLTE applies the LTE predicate on the "body_parts" field.
-func BodyPartsLTE(v string) predicate.Picture {
+// BodyPartLTE applies the LTE predicate on the "body_part" field.
+func BodyPartLTE(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldBodyParts), v))
+		s.Where(sql.LTE(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsContains applies the Contains predicate on the "body_parts" field.
-func BodyPartsContains(v string) predicate.Picture {
+// BodyPartContains applies the Contains predicate on the "body_part" field.
+func BodyPartContains(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldBodyParts), v))
+		s.Where(sql.Contains(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsHasPrefix applies the HasPrefix predicate on the "body_parts" field.
-func BodyPartsHasPrefix(v string) predicate.Picture {
+// BodyPartHasPrefix applies the HasPrefix predicate on the "body_part" field.
+func BodyPartHasPrefix(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldBodyParts), v))
+		s.Where(sql.HasPrefix(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsHasSuffix applies the HasSuffix predicate on the "body_parts" field.
-func BodyPartsHasSuffix(v string) predicate.Picture {
+// BodyPartHasSuffix applies the HasSuffix predicate on the "body_part" field.
+func BodyPartHasSuffix(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldBodyParts), v))
+		s.Where(sql.HasSuffix(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsEqualFold applies the EqualFold predicate on the "body_parts" field.
-func BodyPartsEqualFold(v string) predicate.Picture {
+// BodyPartEqualFold applies the EqualFold predicate on the "body_part" field.
+func BodyPartEqualFold(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldBodyParts), v))
+		s.Where(sql.EqualFold(s.C(FieldBodyPart), v))
 	})
 }
 
-// BodyPartsContainsFold applies the ContainsFold predicate on the "body_parts" field.
-func BodyPartsContainsFold(v string) predicate.Picture {
+// BodyPartContainsFold applies the ContainsFold predicate on the "body_part" field.
+func BodyPartContainsFold(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldBodyParts), v))
+		s.Where(sql.ContainsFold(s.C(FieldBodyPart), v))
 	})
 }
 

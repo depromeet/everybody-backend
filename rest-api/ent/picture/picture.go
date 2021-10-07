@@ -11,8 +11,8 @@ const (
 	Label = "picture"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldBodyParts holds the string denoting the body_parts field in the database.
-	FieldBodyParts = "body_parts"
+	// FieldBodyPart holds the string denoting the body_part field in the database.
+	FieldBodyPart = "body_part"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeAlbum holds the string denoting the album edge name in mutations.
@@ -31,7 +31,7 @@ const (
 // Columns holds all SQL columns for picture fields.
 var Columns = []string{
 	FieldID,
-	FieldBodyParts,
+	FieldBodyPart,
 	FieldCreatedAt,
 }
 

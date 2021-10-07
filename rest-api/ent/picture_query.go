@@ -291,12 +291,12 @@ func (pq *PictureQuery) WithAlbum(opts ...func(*AlbumQuery)) *PictureQuery {
 // Example:
 //
 //	var v []struct {
-//		BodyParts string `json:"body_parts,omitempty"`
+//		BodyPart string `json:"body_part,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Picture.Query().
-//		GroupBy(picture.FieldBodyParts).
+//		GroupBy(picture.FieldBodyPart).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -318,11 +318,11 @@ func (pq *PictureQuery) GroupBy(field string, fields ...string) *PictureGroupBy 
 // Example:
 //
 //	var v []struct {
-//		BodyParts string `json:"body_parts,omitempty"`
+//		BodyPart string `json:"body_part,omitempty"`
 //	}
 //
 //	client.Picture.Query().
-//		Select(picture.FieldBodyParts).
+//		Select(picture.FieldBodyPart).
 //		Scan(ctx, &v)
 //
 func (pq *PictureQuery) Select(fields ...string) *PictureSelect {

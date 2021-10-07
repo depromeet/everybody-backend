@@ -28,9 +28,9 @@ func (pu *PictureUpdate) Where(ps ...predicate.Picture) *PictureUpdate {
 	return pu
 }
 
-// SetBodyParts sets the "body_parts" field.
-func (pu *PictureUpdate) SetBodyParts(s string) *PictureUpdate {
-	pu.mutation.SetBodyParts(s)
+// SetBodyPart sets the "body_part" field.
+func (pu *PictureUpdate) SetBodyPart(s string) *PictureUpdate {
+	pu.mutation.SetBodyPart(s)
 	return pu
 }
 
@@ -150,11 +150,11 @@ func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := pu.mutation.BodyParts(); ok {
+	if value, ok := pu.mutation.BodyPart(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: picture.FieldBodyParts,
+			Column: picture.FieldBodyPart,
 		})
 	}
 	if value, ok := pu.mutation.CreatedAt(); ok {
@@ -218,9 +218,9 @@ type PictureUpdateOne struct {
 	mutation *PictureMutation
 }
 
-// SetBodyParts sets the "body_parts" field.
-func (puo *PictureUpdateOne) SetBodyParts(s string) *PictureUpdateOne {
-	puo.mutation.SetBodyParts(s)
+// SetBodyPart sets the "body_part" field.
+func (puo *PictureUpdateOne) SetBodyPart(s string) *PictureUpdateOne {
+	puo.mutation.SetBodyPart(s)
 	return puo
 }
 
@@ -364,11 +364,11 @@ func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err e
 			}
 		}
 	}
-	if value, ok := puo.mutation.BodyParts(); ok {
+	if value, ok := puo.mutation.BodyPart(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: picture.FieldBodyParts,
+			Column: picture.FieldBodyPart,
 		})
 	}
 	if value, ok := puo.mutation.CreatedAt(); ok {

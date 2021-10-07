@@ -16,7 +16,7 @@ type Picture struct {
 // Fields of the Picture.
 func (Picture) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("body_parts"),
+		field.String("body_part"),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),

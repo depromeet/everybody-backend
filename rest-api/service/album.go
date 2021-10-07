@@ -26,7 +26,7 @@ func NewAlbumService(albumRepo repository.AlbumRepositoryInterface, pictureRepo 
 
 func (s *albumService) CreateAlbum(userID string, albumReq *dto.AlbumRequest) (*ent.Album, error) {
 	album := &ent.Album{
-		FolderName: albumReq.FolderName,
+		Name: albumReq.Name,
 		Edges: ent.AlbumEdges{
 			User: &ent.User{ID: userID},
 		},

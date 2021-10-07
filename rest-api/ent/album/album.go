@@ -11,8 +11,8 @@ const (
 	Label = "album"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldFolderName holds the string denoting the folder_name field in the database.
-	FieldFolderName = "folder_name"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -40,7 +40,7 @@ const (
 // Columns holds all SQL columns for album fields.
 var Columns = []string{
 	FieldID,
-	FieldFolderName,
+	FieldName,
 	FieldCreatedAt,
 }
 

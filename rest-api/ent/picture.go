@@ -17,8 +17,8 @@ type Picture struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// BodyParts holds the value of the "body_parts" field.
-	BodyParts string `json:"body_parts,omitempty"`
+	// BodyPart holds the value of the "body_part" field.
+	BodyPart string `json:"body_part,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -57,7 +57,7 @@ func (*Picture) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case picture.FieldID:
 			values[i] = new(sql.NullInt64)
-		case picture.FieldBodyParts:
+		case picture.FieldBodyPart:
 			values[i] = new(sql.NullString)
 		case picture.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -84,11 +84,11 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			pi.ID = int(value.Int64)
-		case picture.FieldBodyParts:
+		case picture.FieldBodyPart:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field body_parts", values[i])
+				return fmt.Errorf("unexpected type %T for field body_part", values[i])
 			} else if value.Valid {
-				pi.BodyParts = value.String
+				pi.BodyPart = value.String
 			}
 		case picture.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -136,8 +136,8 @@ func (pi *Picture) String() string {
 	var builder strings.Builder
 	builder.WriteString("Picture(")
 	builder.WriteString(fmt.Sprintf("id=%v", pi.ID))
-	builder.WriteString(", body_parts=")
-	builder.WriteString(pi.BodyParts)
+	builder.WriteString(", body_part=")
+	builder.WriteString(pi.BodyPart)
 	builder.WriteString(", created_at=")
 	builder.WriteString(pi.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

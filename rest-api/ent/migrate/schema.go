@@ -11,7 +11,7 @@ var (
 	// AlbumsColumns holds the columns for the "albums" table.
 	AlbumsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "folder_name", Type: field.TypeString},
+		{Name: "name", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "user_album", Type: field.TypeString, Nullable: true},
 	}
@@ -76,7 +76,7 @@ var (
 	// PicturesColumns holds the columns for the "pictures" table.
 	PicturesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "body_parts", Type: field.TypeString},
+		{Name: "body_part", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "album_picture", Type: field.TypeInt, Nullable: true},
 	}

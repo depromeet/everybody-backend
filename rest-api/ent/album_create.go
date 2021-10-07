@@ -22,9 +22,9 @@ type AlbumCreate struct {
 	hooks    []Hook
 }
 
-// SetFolderName sets the "folder_name" field.
-func (ac *AlbumCreate) SetFolderName(s string) *AlbumCreate {
-	ac.mutation.SetFolderName(s)
+// SetName sets the "name" field.
+func (ac *AlbumCreate) SetName(s string) *AlbumCreate {
+	ac.mutation.SetName(s)
 	return ac
 }
 
@@ -155,8 +155,8 @@ func (ac *AlbumCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ac *AlbumCreate) check() error {
-	if _, ok := ac.mutation.FolderName(); !ok {
-		return &ValidationError{Name: "folder_name", err: errors.New(`ent: missing required field "folder_name"`)}
+	if _, ok := ac.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "name"`)}
 	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
@@ -188,13 +188,13 @@ func (ac *AlbumCreate) createSpec() (*Album, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
-	if value, ok := ac.mutation.FolderName(); ok {
+	if value, ok := ac.mutation.Name(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: album.FieldFolderName,
+			Column: album.FieldName,
 		})
-		_node.FolderName = value
+		_node.Name = value
 	}
 	if value, ok := ac.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

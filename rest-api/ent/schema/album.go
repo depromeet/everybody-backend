@@ -16,7 +16,7 @@ type Album struct {
 // Fields of the Album.
 func (Album) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("folder_name"),
+		field.String("name"),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),

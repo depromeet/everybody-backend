@@ -21,9 +21,9 @@ type PictureCreate struct {
 	hooks    []Hook
 }
 
-// SetBodyParts sets the "body_parts" field.
-func (pc *PictureCreate) SetBodyParts(s string) *PictureCreate {
-	pc.mutation.SetBodyParts(s)
+// SetBodyPart sets the "body_part" field.
+func (pc *PictureCreate) SetBodyPart(s string) *PictureCreate {
+	pc.mutation.SetBodyPart(s)
 	return pc
 }
 
@@ -139,8 +139,8 @@ func (pc *PictureCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (pc *PictureCreate) check() error {
-	if _, ok := pc.mutation.BodyParts(); !ok {
-		return &ValidationError{Name: "body_parts", err: errors.New(`ent: missing required field "body_parts"`)}
+	if _, ok := pc.mutation.BodyPart(); !ok {
+		return &ValidationError{Name: "body_part", err: errors.New(`ent: missing required field "body_part"`)}
 	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
@@ -172,13 +172,13 @@ func (pc *PictureCreate) createSpec() (*Picture, *sqlgraph.CreateSpec) {
 			},
 		}
 	)
-	if value, ok := pc.mutation.BodyParts(); ok {
+	if value, ok := pc.mutation.BodyPart(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: picture.FieldBodyParts,
+			Column: picture.FieldBodyPart,
 		})
-		_node.BodyParts = value
+		_node.BodyPart = value
 	}
 	if value, ok := pc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

@@ -17,8 +17,8 @@ type Album struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// FolderName holds the value of the "folder_name" field.
-	FolderName string `json:"folder_name,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -68,7 +68,7 @@ func (*Album) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case album.FieldID:
 			values[i] = new(sql.NullInt64)
-		case album.FieldFolderName:
+		case album.FieldName:
 			values[i] = new(sql.NullString)
 		case album.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -95,11 +95,11 @@ func (a *Album) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			a.ID = int(value.Int64)
-		case album.FieldFolderName:
+		case album.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field folder_name", values[i])
+				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				a.FolderName = value.String
+				a.Name = value.String
 			}
 		case album.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -152,8 +152,8 @@ func (a *Album) String() string {
 	var builder strings.Builder
 	builder.WriteString("Album(")
 	builder.WriteString(fmt.Sprintf("id=%v", a.ID))
-	builder.WriteString(", folder_name=")
-	builder.WriteString(a.FolderName)
+	builder.WriteString(", name=")
+	builder.WriteString(a.Name)
 	builder.WriteString(", created_at=")
 	builder.WriteString(a.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

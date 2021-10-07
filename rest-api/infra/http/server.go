@@ -46,7 +46,7 @@ func addNotificationHandlers(app *fiber.App, notificationHandler *handler.Notifi
 }
 
 func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {
-	app.Post("/album", albumHandler.CreateAlbum)
+	app.Post("/albums", albumHandler.CreateAlbum)
 }
 
 func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) {
