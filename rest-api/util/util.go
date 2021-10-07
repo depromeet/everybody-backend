@@ -11,5 +11,5 @@ func GetParams(ctx *fiber.Ctx, params string) string {
 }
 
 func GetQueryParams(ctx *fiber.Ctx, params string) string {
-	return ctx.Query("params", "")
+	return ctx.Query(params, "")
 }
