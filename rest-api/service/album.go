@@ -7,19 +7,20 @@ import (
 )
 
 type albumService struct {
-	albumRepo repository.AlbumRepositoryInterface
-	// pictureRepo repository.PictureRepositoryInterface
+	albumRepo   repository.AlbumRepositoryInterface
+	pictureRepo repository.PictureRepositoryInterface
 }
 
 type AlbumServiceInterface interface {
 	CreateAlbum(userID string, albumReq *dto.AlbumRequest) (*ent.Album, error)
 	GetAllAlbums(userID string) ([]*ent.Album, error)
-	GetAlbum(albumID int) (*ent.Album, error)
+	GetAlbum(albumID int) (*ent.Album, []*ent.Picture, error)
 }
 
-func NewAlbumService(albumRepo repository.AlbumRepositoryInterface) AlbumServiceInterface {
+func NewAlbumService(albumRepo repository.AlbumRepositoryInterface, pictureRepo repository.PictureRepositoryInterface) AlbumServiceInterface {
 	return &albumService{
-		albumRepo: albumRepo,
+		albumRepo:   albumRepo,
+		pictureRepo: pictureRepo,
 	}
 }
 
@@ -49,13 +50,16 @@ func (s *albumService) GetAllAlbums(userID string) ([]*ent.Album, error) {
 }
 
 // GetAlbum은 alubm 정보와 album의 사진 정보들도 조회
-func (s *albumService) GetAlbum(albumID int) (*ent.Album, error) {
+func (s *albumService) GetAlbum(albumID int) (*ent.Album, []*ent.Picture, error) {
 	albumData, err := s.albumRepo.Get(albumID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// albumID에 해당하는 pictrues 목록 조회 기능 필요
-
-	return albumData, err
+	pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
+	if err != nil {
+		return nil, nil, err
+	}
+	return albumData, pictures, err
 }

@@ -75,14 +75,14 @@ func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
 	}
 
 	// GetAlbum 에서 각 앨범에 해당하는 pictures도 조회해야 함
-	album, err := h.albumService.GetAlbum(albumID)
+	album, _, err := h.albumService.GetAlbum(albumID)
 	if err != nil {
 		return ctx.JSON(err)
 	}
 
 	return ctx.JSON(&dto.AlbumResponse{
 		FolderName: album.FolderName,
-		// PictureList: []picture,
+		// PictureList
 		CreatedAt: album.CreatedAt,
 	})
 }
