@@ -11,6 +11,7 @@ func NewServer(
 	userHandler *handler.UserHandler,
 	notificationHandler *handler.NotificationHandler,
 	albumHander *handler.AlbumHandler,
+	pictureHandler *handler.PictureHandler,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: errorHandle,
@@ -24,6 +25,7 @@ func NewServer(
 	addUserHandlers(app, userHandler)
 	addNotificationHandlers(app, notificationHandler)
 	addAlbumHandlers(app, albumHander)
+	addPictureHandlers(app, pictureHandler)
 
 	return app
 }
@@ -45,4 +47,8 @@ func addNotificationHandlers(app *fiber.App, notificationHandler *handler.Notifi
 
 func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {
 	app.Get("/album", albumHandler.CreateAlbum)
+}
+
+func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) {
+	app.Post("/pictures", pictureHandler.SavePicture)
 }
