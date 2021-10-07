@@ -10,7 +10,7 @@ import (
 func NewServer(
 	userHandler *handler.UserHandler,
 	notificationHandler *handler.NotificationHandler,
-	albumHander *handler.AlbumHandler,
+	albumHandler *handler.AlbumHandler,
 	pictureHandler *handler.PictureHandler,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
@@ -24,7 +24,7 @@ func NewServer(
 
 	addUserHandlers(app, userHandler)
 	addNotificationHandlers(app, notificationHandler)
-	addAlbumHandlers(app, albumHander)
+	addAlbumHandlers(app, albumHandler)
 	addPictureHandlers(app, pictureHandler)
 
 	return app
@@ -46,7 +46,7 @@ func addNotificationHandlers(app *fiber.App, notificationHandler *handler.Notifi
 }
 
 func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {
-	app.Get("/album", albumHandler.CreateAlbum)
+	app.Post("/album", albumHandler.CreateAlbum)
 }
 
 func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) {
