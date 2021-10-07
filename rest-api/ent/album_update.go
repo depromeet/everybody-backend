@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
@@ -67,6 +68,21 @@ func (au *AlbumUpdate) SetUser(u *User) *AlbumUpdate {
 	return au.SetUserID(u.ID)
 }
 
+// AddPictureIDs adds the "picture" edge to the Picture entity by IDs.
+func (au *AlbumUpdate) AddPictureIDs(ids ...int) *AlbumUpdate {
+	au.mutation.AddPictureIDs(ids...)
+	return au
+}
+
+// AddPicture adds the "picture" edges to the Picture entity.
+func (au *AlbumUpdate) AddPicture(p ...*Picture) *AlbumUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return au.AddPictureIDs(ids...)
+}
+
 // Mutation returns the AlbumMutation object of the builder.
 func (au *AlbumUpdate) Mutation() *AlbumMutation {
 	return au.mutation
@@ -76,6 +92,27 @@ func (au *AlbumUpdate) Mutation() *AlbumMutation {
 func (au *AlbumUpdate) ClearUser() *AlbumUpdate {
 	au.mutation.ClearUser()
 	return au
+}
+
+// ClearPicture clears all "picture" edges to the Picture entity.
+func (au *AlbumUpdate) ClearPicture() *AlbumUpdate {
+	au.mutation.ClearPicture()
+	return au
+}
+
+// RemovePictureIDs removes the "picture" edge to Picture entities by IDs.
+func (au *AlbumUpdate) RemovePictureIDs(ids ...int) *AlbumUpdate {
+	au.mutation.RemovePictureIDs(ids...)
+	return au
+}
+
+// RemovePicture removes "picture" edges to Picture entities.
+func (au *AlbumUpdate) RemovePicture(p ...*Picture) *AlbumUpdate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return au.RemovePictureIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -199,6 +236,60 @@ func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if au.mutation.PictureCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.PictureTable,
+			Columns: []string{album.PictureColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: picture.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.RemovedPictureIDs(); len(nodes) > 0 && !au.mutation.PictureCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.PictureTable,
+			Columns: []string{album.PictureColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: picture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.PictureIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.PictureTable,
+			Columns: []string{album.PictureColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: picture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{album.Label}
@@ -257,6 +348,21 @@ func (auo *AlbumUpdateOne) SetUser(u *User) *AlbumUpdateOne {
 	return auo.SetUserID(u.ID)
 }
 
+// AddPictureIDs adds the "picture" edge to the Picture entity by IDs.
+func (auo *AlbumUpdateOne) AddPictureIDs(ids ...int) *AlbumUpdateOne {
+	auo.mutation.AddPictureIDs(ids...)
+	return auo
+}
+
+// AddPicture adds the "picture" edges to the Picture entity.
+func (auo *AlbumUpdateOne) AddPicture(p ...*Picture) *AlbumUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return auo.AddPictureIDs(ids...)
+}
+
 // Mutation returns the AlbumMutation object of the builder.
 func (auo *AlbumUpdateOne) Mutation() *AlbumMutation {
 	return auo.mutation
@@ -266,6 +372,27 @@ func (auo *AlbumUpdateOne) Mutation() *AlbumMutation {
 func (auo *AlbumUpdateOne) ClearUser() *AlbumUpdateOne {
 	auo.mutation.ClearUser()
 	return auo
+}
+
+// ClearPicture clears all "picture" edges to the Picture entity.
+func (auo *AlbumUpdateOne) ClearPicture() *AlbumUpdateOne {
+	auo.mutation.ClearPicture()
+	return auo
+}
+
+// RemovePictureIDs removes the "picture" edge to Picture entities by IDs.
+func (auo *AlbumUpdateOne) RemovePictureIDs(ids ...int) *AlbumUpdateOne {
+	auo.mutation.RemovePictureIDs(ids...)
+	return auo
+}
+
+// RemovePicture removes "picture" edges to Picture entities.
+func (auo *AlbumUpdateOne) RemovePicture(p ...*Picture) *AlbumUpdateOne {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return auo.RemovePictureIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -405,6 +532,60 @@ func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeString,
 					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.PictureCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.PictureTable,
+			Columns: []string{album.PictureColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: picture.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.RemovedPictureIDs(); len(nodes) > 0 && !auo.mutation.PictureCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.PictureTable,
+			Columns: []string{album.PictureColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: picture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.PictureIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.PictureTable,
+			Columns: []string{album.PictureColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: picture.FieldID,
 				},
 			},
 		}

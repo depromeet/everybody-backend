@@ -18,6 +18,8 @@ type Tx struct {
 	Device *DeviceClient
 	// NotificationConfig is the client for interacting with the NotificationConfig builders.
 	NotificationConfig *NotificationConfigClient
+	// Picture is the client for interacting with the Picture builders.
+	Picture *PictureClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -158,6 +160,7 @@ func (tx *Tx) init() {
 	tx.Album = NewAlbumClient(tx.config)
 	tx.Device = NewDeviceClient(tx.config)
 	tx.NotificationConfig = NewNotificationConfigClient(tx.config)
+	tx.Picture = NewPictureClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

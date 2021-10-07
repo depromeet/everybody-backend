@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -12,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
@@ -26,8 +28,9 @@ type AlbumQuery struct {
 	fields     []string
 	predicates []predicate.Album
 	// eager-loading edges.
-	withUser *UserQuery
-	withFKs  bool
+	withUser    *UserQuery
+	withPicture *PictureQuery
+	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -79,6 +82,28 @@ func (aq *AlbumQuery) QueryUser() *UserQuery {
 			sqlgraph.From(album.Table, album.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, album.UserTable, album.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPicture chains the current query on the "picture" edge.
+func (aq *AlbumQuery) QueryPicture() *PictureQuery {
+	query := &PictureQuery{config: aq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(album.Table, album.FieldID, selector),
+			sqlgraph.To(picture.Table, picture.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, album.PictureTable, album.PictureColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -262,12 +287,13 @@ func (aq *AlbumQuery) Clone() *AlbumQuery {
 		return nil
 	}
 	return &AlbumQuery{
-		config:     aq.config,
-		limit:      aq.limit,
-		offset:     aq.offset,
-		order:      append([]OrderFunc{}, aq.order...),
-		predicates: append([]predicate.Album{}, aq.predicates...),
-		withUser:   aq.withUser.Clone(),
+		config:      aq.config,
+		limit:       aq.limit,
+		offset:      aq.offset,
+		order:       append([]OrderFunc{}, aq.order...),
+		predicates:  append([]predicate.Album{}, aq.predicates...),
+		withUser:    aq.withUser.Clone(),
+		withPicture: aq.withPicture.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
@@ -282,6 +308,17 @@ func (aq *AlbumQuery) WithUser(opts ...func(*UserQuery)) *AlbumQuery {
 		opt(query)
 	}
 	aq.withUser = query
+	return aq
+}
+
+// WithPicture tells the query-builder to eager-load the nodes that are connected to
+// the "picture" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AlbumQuery) WithPicture(opts ...func(*PictureQuery)) *AlbumQuery {
+	query := &PictureQuery{config: aq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withPicture = query
 	return aq
 }
 
@@ -351,8 +388,9 @@ func (aq *AlbumQuery) sqlAll(ctx context.Context) ([]*Album, error) {
 		nodes       = []*Album{}
 		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			aq.withUser != nil,
+			aq.withPicture != nil,
 		}
 	)
 	if aq.withUser != nil {
@@ -407,6 +445,35 @@ func (aq *AlbumQuery) sqlAll(ctx context.Context) ([]*Album, error) {
 			for i := range nodes {
 				nodes[i].Edges.User = n
 			}
+		}
+	}
+
+	if query := aq.withPicture; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*Album)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Picture = []*Picture{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Picture(func(s *sql.Selector) {
+			s.Where(sql.InValues(album.PictureColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.album_picture
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "album_picture" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "album_picture" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Picture = append(node.Edges.Picture, n)
 		}
 	}
 

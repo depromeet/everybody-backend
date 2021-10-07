@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
@@ -58,6 +59,21 @@ func (ac *AlbumCreate) SetNillableUserID(id *string) *AlbumCreate {
 // SetUser sets the "user" edge to the User entity.
 func (ac *AlbumCreate) SetUser(u *User) *AlbumCreate {
 	return ac.SetUserID(u.ID)
+}
+
+// AddPictureIDs adds the "picture" edge to the Picture entity by IDs.
+func (ac *AlbumCreate) AddPictureIDs(ids ...int) *AlbumCreate {
+	ac.mutation.AddPictureIDs(ids...)
+	return ac
+}
+
+// AddPicture adds the "picture" edges to the Picture entity.
+func (ac *AlbumCreate) AddPicture(p ...*Picture) *AlbumCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ac.AddPictureIDs(ids...)
 }
 
 // Mutation returns the AlbumMutation object of the builder.
@@ -206,6 +222,25 @@ func (ac *AlbumCreate) createSpec() (*Album, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.user_album = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.PictureIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.PictureTable,
+			Columns: []string{album.PictureColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: picture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

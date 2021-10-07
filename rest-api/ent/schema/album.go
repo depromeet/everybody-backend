@@ -29,5 +29,6 @@ func (Album) Edges() []ent.Edge {
 		edge.From("user", User.Type).
 			Ref("album").
 			Unique(),
+		edge.To("picture", Picture.Type),
 	}
 }

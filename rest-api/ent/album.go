@@ -31,9 +31,11 @@ type Album struct {
 type AlbumEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
+	// Picture holds the value of the picture edge.
+	Picture []*Picture `json:"picture,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -48,6 +50,15 @@ func (e AlbumEdges) UserOrErr() (*User, error) {
 		return e.User, nil
 	}
 	return nil, &NotLoadedError{edge: "user"}
+}
+
+// PictureOrErr returns the Picture value or an error if the edge
+// was not loaded in eager-loading.
+func (e AlbumEdges) PictureOrErr() ([]*Picture, error) {
+	if e.loadedTypes[1] {
+		return e.Picture, nil
+	}
+	return nil, &NotLoadedError{edge: "picture"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -111,6 +122,11 @@ func (a *Album) assignValues(columns []string, values []interface{}) error {
 // QueryUser queries the "user" edge of the Album entity.
 func (a *Album) QueryUser() *UserQuery {
 	return (&AlbumClient{config: a.config}).QueryUser(a)
+}
+
+// QueryPicture queries the "picture" edge of the Album entity.
+func (a *Album) QueryPicture() *PictureQuery {
+	return (&AlbumClient{config: a.config}).QueryPicture(a)
 }
 
 // Update returns a builder for updating this Album.

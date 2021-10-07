@@ -7,6 +7,7 @@ import (
 
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/schema"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
@@ -27,6 +28,12 @@ func init() {
 	notificationconfigDescIsActivated := notificationconfigFields[3].Descriptor()
 	// notificationconfig.DefaultIsActivated holds the default value on creation for the is_activated field.
 	notificationconfig.DefaultIsActivated = notificationconfigDescIsActivated.Default.(bool)
+	pictureFields := schema.Picture{}.Fields()
+	_ = pictureFields
+	// pictureDescCreatedAt is the schema descriptor for created_at field.
+	pictureDescCreatedAt := pictureFields[1].Descriptor()
+	// picture.DefaultCreatedAt holds the default value on creation for the created_at field.
+	picture.DefaultCreatedAt = pictureDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.

@@ -27,6 +27,7 @@ type hooks struct {
 	Album              []ent.Hook
 	Device             []ent.Hook
 	NotificationConfig []ent.Hook
+	Picture            []ent.Hook
 	User               []ent.Hook
 }
 

@@ -73,6 +73,27 @@ var (
 			},
 		},
 	}
+	// PicturesColumns holds the columns for the "pictures" table.
+	PicturesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "body_parts", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "album_picture", Type: field.TypeInt, Nullable: true},
+	}
+	// PicturesTable holds the schema information for the "pictures" table.
+	PicturesTable = &schema.Table{
+		Name:       "pictures",
+		Columns:    PicturesColumns,
+		PrimaryKey: []*schema.Column{PicturesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "pictures_albums_picture",
+				Columns:    []*schema.Column{PicturesColumns[3]},
+				RefColumns: []*schema.Column{AlbumsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -92,6 +113,7 @@ var (
 		AlbumsTable,
 		DevicesTable,
 		NotificationConfigsTable,
+		PicturesTable,
 		UsersTable,
 	}
 )
@@ -100,4 +122,5 @@ func init() {
 	AlbumsTable.ForeignKeys[0].RefTable = UsersTable
 	DevicesTable.ForeignKeys[0].RefTable = UsersTable
 	NotificationConfigsTable.ForeignKeys[0].RefTable = UsersTable
+	PicturesTable.ForeignKeys[0].RefTable = AlbumsTable
 }

@@ -322,6 +322,34 @@ func HasUserWith(preds ...predicate.User) predicate.Album {
 	})
 }
 
+// HasPicture applies the HasEdge predicate on the "picture" edge.
+func HasPicture() predicate.Album {
+	return predicate.Album(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PictureTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PictureTable, PictureColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPictureWith applies the HasEdge predicate on the "picture" edge with a given conditions (other predicates).
+func HasPictureWith(preds ...predicate.Picture) predicate.Album {
+	return predicate.Album(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(PictureInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PictureTable, PictureColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Album) predicate.Album {
 	return predicate.Album(func(s *sql.Selector) {

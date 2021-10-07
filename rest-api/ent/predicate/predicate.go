@@ -15,5 +15,8 @@ type Device func(*sql.Selector)
 // NotificationConfig is the predicate function for notificationconfig builders.
 type NotificationConfig func(*sql.Selector)
 
+// Picture is the predicate function for picture builders.
+type Picture func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

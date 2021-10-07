@@ -12,6 +12,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 
 	"entgo.io/ent/dialect"
@@ -30,6 +31,8 @@ type Client struct {
 	Device *DeviceClient
 	// NotificationConfig is the client for interacting with the NotificationConfig builders.
 	NotificationConfig *NotificationConfigClient
+	// Picture is the client for interacting with the Picture builders.
+	Picture *PictureClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -48,6 +51,7 @@ func (c *Client) init() {
 	c.Album = NewAlbumClient(c.config)
 	c.Device = NewDeviceClient(c.config)
 	c.NotificationConfig = NewNotificationConfigClient(c.config)
+	c.Picture = NewPictureClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -85,6 +89,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Album:              NewAlbumClient(cfg),
 		Device:             NewDeviceClient(cfg),
 		NotificationConfig: NewNotificationConfigClient(cfg),
+		Picture:            NewPictureClient(cfg),
 		User:               NewUserClient(cfg),
 	}, nil
 }
@@ -107,6 +112,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Album:              NewAlbumClient(cfg),
 		Device:             NewDeviceClient(cfg),
 		NotificationConfig: NewNotificationConfigClient(cfg),
+		Picture:            NewPictureClient(cfg),
 		User:               NewUserClient(cfg),
 	}, nil
 }
@@ -140,6 +146,7 @@ func (c *Client) Use(hooks ...Hook) {
 	c.Album.Use(hooks...)
 	c.Device.Use(hooks...)
 	c.NotificationConfig.Use(hooks...)
+	c.Picture.Use(hooks...)
 	c.User.Use(hooks...)
 }
 
@@ -237,6 +244,22 @@ func (c *AlbumClient) QueryUser(a *Album) *UserQuery {
 			sqlgraph.From(album.Table, album.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, album.UserTable, album.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPicture queries the picture edge of a Album.
+func (c *AlbumClient) QueryPicture(a *Album) *PictureQuery {
+	query := &PictureQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(album.Table, album.FieldID, id),
+			sqlgraph.To(picture.Table, picture.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, album.PictureTable, album.PictureColumn),
 		)
 		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
 		return fromV, nil
@@ -459,6 +482,112 @@ func (c *NotificationConfigClient) QueryUser(nc *NotificationConfig) *UserQuery 
 // Hooks returns the client hooks.
 func (c *NotificationConfigClient) Hooks() []Hook {
 	return c.hooks.NotificationConfig
+}
+
+// PictureClient is a client for the Picture schema.
+type PictureClient struct {
+	config
+}
+
+// NewPictureClient returns a client for the Picture from the given config.
+func NewPictureClient(c config) *PictureClient {
+	return &PictureClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `picture.Hooks(f(g(h())))`.
+func (c *PictureClient) Use(hooks ...Hook) {
+	c.hooks.Picture = append(c.hooks.Picture, hooks...)
+}
+
+// Create returns a create builder for Picture.
+func (c *PictureClient) Create() *PictureCreate {
+	mutation := newPictureMutation(c.config, OpCreate)
+	return &PictureCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Picture entities.
+func (c *PictureClient) CreateBulk(builders ...*PictureCreate) *PictureCreateBulk {
+	return &PictureCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Picture.
+func (c *PictureClient) Update() *PictureUpdate {
+	mutation := newPictureMutation(c.config, OpUpdate)
+	return &PictureUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PictureClient) UpdateOne(pi *Picture) *PictureUpdateOne {
+	mutation := newPictureMutation(c.config, OpUpdateOne, withPicture(pi))
+	return &PictureUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PictureClient) UpdateOneID(id int) *PictureUpdateOne {
+	mutation := newPictureMutation(c.config, OpUpdateOne, withPictureID(id))
+	return &PictureUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Picture.
+func (c *PictureClient) Delete() *PictureDelete {
+	mutation := newPictureMutation(c.config, OpDelete)
+	return &PictureDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *PictureClient) DeleteOne(pi *Picture) *PictureDeleteOne {
+	return c.DeleteOneID(pi.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *PictureClient) DeleteOneID(id int) *PictureDeleteOne {
+	builder := c.Delete().Where(picture.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PictureDeleteOne{builder}
+}
+
+// Query returns a query builder for Picture.
+func (c *PictureClient) Query() *PictureQuery {
+	return &PictureQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Picture entity by its id.
+func (c *PictureClient) Get(ctx context.Context, id int) (*Picture, error) {
+	return c.Query().Where(picture.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PictureClient) GetX(ctx context.Context, id int) *Picture {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryAlbum queries the album edge of a Picture.
+func (c *PictureClient) QueryAlbum(pi *Picture) *AlbumQuery {
+	query := &AlbumQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := pi.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(picture.Table, picture.FieldID, id),
+			sqlgraph.To(album.Table, album.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, picture.AlbumTable, picture.AlbumColumn),
+		)
+		fromV = sqlgraph.Neighbors(pi.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PictureClient) Hooks() []Hook {
+	return c.hooks.Picture
 }
 
 // UserClient is a client for the User schema.

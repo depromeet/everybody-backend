@@ -11,6 +11,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
@@ -35,6 +36,7 @@ func columnChecker(table string) func(string) error {
 		album.Table:              album.ValidColumn,
 		device.Table:             device.ValidColumn,
 		notificationconfig.Table: notificationconfig.ValidColumn,
+		picture.Table:            picture.ValidColumn,
 		user.Table:               user.ValidColumn,
 	}
 	check, ok := checks[table]
