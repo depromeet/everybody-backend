@@ -8,6 +8,27 @@ import (
 )
 
 var (
+	// AlbumsColumns holds the columns for the "albums" table.
+	AlbumsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_album", Type: field.TypeString, Nullable: true},
+	}
+	// AlbumsTable holds the schema information for the "albums" table.
+	AlbumsTable = &schema.Table{
+		Name:       "albums",
+		Columns:    AlbumsColumns,
+		PrimaryKey: []*schema.Column{AlbumsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "albums_users_album",
+				Columns:    []*schema.Column{AlbumsColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// DevicesColumns holds the columns for the "devices" table.
 	DevicesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -52,6 +73,27 @@ var (
 			},
 		},
 	}
+	// PicturesColumns holds the columns for the "pictures" table.
+	PicturesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "body_part", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "album_picture", Type: field.TypeInt, Nullable: true},
+	}
+	// PicturesTable holds the schema information for the "pictures" table.
+	PicturesTable = &schema.Table{
+		Name:       "pictures",
+		Columns:    PicturesColumns,
+		PrimaryKey: []*schema.Column{PicturesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "pictures_albums_picture",
+				Columns:    []*schema.Column{PicturesColumns[3]},
+				RefColumns: []*schema.Column{AlbumsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -68,13 +110,17 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AlbumsTable,
 		DevicesTable,
 		NotificationConfigsTable,
+		PicturesTable,
 		UsersTable,
 	}
 )
 
 func init() {
+	AlbumsTable.ForeignKeys[0].RefTable = UsersTable
 	DevicesTable.ForeignKeys[0].RefTable = UsersTable
 	NotificationConfigsTable.ForeignKeys[0].RefTable = UsersTable
+	PicturesTable.ForeignKeys[0].RefTable = AlbumsTable
 }

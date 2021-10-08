@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
@@ -105,6 +106,21 @@ func (uu *UserUpdate) AddNotificationConfig(n ...*NotificationConfig) *UserUpdat
 	return uu.AddNotificationConfigIDs(ids...)
 }
 
+// AddAlbumIDs adds the "album" edge to the Album entity by IDs.
+func (uu *UserUpdate) AddAlbumIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddAlbumIDs(ids...)
+	return uu
+}
+
+// AddAlbum adds the "album" edges to the Album entity.
+func (uu *UserUpdate) AddAlbum(a ...*Album) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAlbumIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -150,6 +166,27 @@ func (uu *UserUpdate) RemoveNotificationConfig(n ...*NotificationConfig) *UserUp
 		ids[i] = n[i].ID
 	}
 	return uu.RemoveNotificationConfigIDs(ids...)
+}
+
+// ClearAlbum clears all "album" edges to the Album entity.
+func (uu *UserUpdate) ClearAlbum() *UserUpdate {
+	uu.mutation.ClearAlbum()
+	return uu
+}
+
+// RemoveAlbumIDs removes the "album" edge to Album entities by IDs.
+func (uu *UserUpdate) RemoveAlbumIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveAlbumIDs(ids...)
+	return uu
+}
+
+// RemoveAlbum removes "album" edges to Album entities.
+func (uu *UserUpdate) RemoveAlbum(a ...*Album) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAlbumIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -374,6 +411,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.AlbumCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlbumTable,
+			Columns: []string{user.AlbumColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: album.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAlbumIDs(); len(nodes) > 0 && !uu.mutation.AlbumCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlbumTable,
+			Columns: []string{user.AlbumColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: album.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AlbumIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlbumTable,
+			Columns: []string{user.AlbumColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: album.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -469,6 +560,21 @@ func (uuo *UserUpdateOne) AddNotificationConfig(n ...*NotificationConfig) *UserU
 	return uuo.AddNotificationConfigIDs(ids...)
 }
 
+// AddAlbumIDs adds the "album" edge to the Album entity by IDs.
+func (uuo *UserUpdateOne) AddAlbumIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddAlbumIDs(ids...)
+	return uuo
+}
+
+// AddAlbum adds the "album" edges to the Album entity.
+func (uuo *UserUpdateOne) AddAlbum(a ...*Album) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAlbumIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -514,6 +620,27 @@ func (uuo *UserUpdateOne) RemoveNotificationConfig(n ...*NotificationConfig) *Us
 		ids[i] = n[i].ID
 	}
 	return uuo.RemoveNotificationConfigIDs(ids...)
+}
+
+// ClearAlbum clears all "album" edges to the Album entity.
+func (uuo *UserUpdateOne) ClearAlbum() *UserUpdateOne {
+	uuo.mutation.ClearAlbum()
+	return uuo
+}
+
+// RemoveAlbumIDs removes the "album" edge to Album entities by IDs.
+func (uuo *UserUpdateOne) RemoveAlbumIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveAlbumIDs(ids...)
+	return uuo
+}
+
+// RemoveAlbum removes "album" edges to Album entities.
+func (uuo *UserUpdateOne) RemoveAlbum(a ...*Album) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAlbumIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -754,6 +881,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.AlbumCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlbumTable,
+			Columns: []string{user.AlbumColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: album.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAlbumIDs(); len(nodes) > 0 && !uuo.mutation.AlbumCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlbumTable,
+			Columns: []string{user.AlbumColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: album.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AlbumIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlbumTable,
+			Columns: []string{user.AlbumColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: album.FieldID,
 				},
 			},
 		}

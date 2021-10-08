@@ -23,6 +23,8 @@ const (
 	EdgeDevice = "device"
 	// EdgeNotificationConfig holds the string denoting the notification_config edge name in mutations.
 	EdgeNotificationConfig = "notification_config"
+	// EdgeAlbum holds the string denoting the album edge name in mutations.
+	EdgeAlbum = "album"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// DeviceTable is the table that holds the device relation/edge.
@@ -39,6 +41,13 @@ const (
 	NotificationConfigInverseTable = "notification_configs"
 	// NotificationConfigColumn is the table column denoting the notification_config relation/edge.
 	NotificationConfigColumn = "user_notification_config"
+	// AlbumTable is the table that holds the album relation/edge.
+	AlbumTable = "albums"
+	// AlbumInverseTable is the table name for the Album entity.
+	// It exists in this package in order to avoid circular dependency with the "album" package.
+	AlbumInverseTable = "albums"
+	// AlbumColumn is the table column denoting the album relation/edge.
+	AlbumColumn = "user_album"
 )
 
 // Columns holds all SQL columns for user fields.

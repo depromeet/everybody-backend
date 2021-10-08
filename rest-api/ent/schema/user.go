@@ -1,10 +1,11 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"time"
 )
 
 // User holds the schema definition for the User entity.
@@ -30,5 +31,6 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("device", Device.Type),
 		edge.To("notification_config", NotificationConfig.Type),
+		edge.To("album", Album.Type),
 	}
 }

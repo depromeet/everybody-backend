@@ -8,8 +8,10 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
@@ -31,8 +33,10 @@ type OrderFunc func(*sql.Selector)
 // columnChecker returns a function indicates if the column exists in the given column.
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
+		album.Table:              album.ValidColumn,
 		device.Table:             device.ValidColumn,
 		notificationconfig.Table: notificationconfig.ValidColumn,
+		picture.Table:            picture.ValidColumn,
 		user.Table:               user.ValidColumn,
 	}
 	check, ok := checks[table]

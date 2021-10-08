@@ -9,6 +9,19 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 )
 
+// The AlbumFunc type is an adapter to allow the use of ordinary
+// function as Album mutator.
+type AlbumFunc func(context.Context, *ent.AlbumMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AlbumFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AlbumMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AlbumMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The DeviceFunc type is an adapter to allow the use of ordinary
 // function as Device mutator.
 type DeviceFunc func(context.Context, *ent.DeviceMutation) (ent.Value, error)
@@ -31,6 +44,19 @@ func (f NotificationConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 	mv, ok := m.(*ent.NotificationConfigMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotificationConfigMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The PictureFunc type is an adapter to allow the use of ordinary
+// function as Picture mutator.
+type PictureFunc func(context.Context, *ent.PictureMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PictureFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.PictureMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PictureMutation", m)
 	}
 	return f(ctx, mv)
 }

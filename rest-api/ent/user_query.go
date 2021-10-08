@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
@@ -30,6 +31,7 @@ type UserQuery struct {
 	// eager-loading edges.
 	withDevice             *DeviceQuery
 	withNotificationConfig *NotificationConfigQuery
+	withAlbum              *AlbumQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -103,6 +105,28 @@ func (uq *UserQuery) QueryNotificationConfig() *NotificationConfigQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(notificationconfig.Table, notificationconfig.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationConfigTable, user.NotificationConfigColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAlbum chains the current query on the "album" edge.
+func (uq *UserQuery) QueryAlbum() *AlbumQuery {
+	query := &AlbumQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(album.Table, album.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AlbumTable, user.AlbumColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -293,6 +317,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		predicates:             append([]predicate.User{}, uq.predicates...),
 		withDevice:             uq.withDevice.Clone(),
 		withNotificationConfig: uq.withNotificationConfig.Clone(),
+		withAlbum:              uq.withAlbum.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -318,6 +343,17 @@ func (uq *UserQuery) WithNotificationConfig(opts ...func(*NotificationConfigQuer
 		opt(query)
 	}
 	uq.withNotificationConfig = query
+	return uq
+}
+
+// WithAlbum tells the query-builder to eager-load the nodes that are connected to
+// the "album" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithAlbum(opts ...func(*AlbumQuery)) *UserQuery {
+	query := &AlbumQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAlbum = query
 	return uq
 }
 
@@ -386,9 +422,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			uq.withDevice != nil,
 			uq.withNotificationConfig != nil,
+			uq.withAlbum != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -466,6 +503,35 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_notification_config" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.NotificationConfig = append(node.Edges.NotificationConfig, n)
+		}
+	}
+
+	if query := uq.withAlbum; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[string]*User)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Album = []*Album{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Album(func(s *sql.Selector) {
+			s.Where(sql.InValues(user.AlbumColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.user_album
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "user_album" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_album" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Album = append(node.Edges.Album, n)
 		}
 	}
 

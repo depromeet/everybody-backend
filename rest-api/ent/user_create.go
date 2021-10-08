@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
@@ -88,6 +89,21 @@ func (uc *UserCreate) AddNotificationConfig(n ...*NotificationConfig) *UserCreat
 		ids[i] = n[i].ID
 	}
 	return uc.AddNotificationConfigIDs(ids...)
+}
+
+// AddAlbumIDs adds the "album" edge to the Album entity by IDs.
+func (uc *UserCreate) AddAlbumIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAlbumIDs(ids...)
+	return uc
+}
+
+// AddAlbum adds the "album" edges to the Album entity.
+func (uc *UserCreate) AddAlbum(a ...*Album) *UserCreate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddAlbumIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -275,6 +291,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: notificationconfig.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AlbumIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AlbumTable,
+			Columns: []string{user.AlbumColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: album.FieldID,
 				},
 			},
 		}
