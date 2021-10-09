@@ -23,7 +23,7 @@ func TestDeviceService_Register(t *testing.T) {
 		deviceSvc := initializeDeviceTest(t)
 		deviceRepo.On("FindByDeviceToken", mock.AnythingOfType("string")).Return(stubDevice, nil).Once()
 
-		device, err := deviceSvc.Register("", &dto.RegisterDeviceRequest{})
+		device, err := deviceSvc.Register(1, &dto.RegisterDeviceRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, stubDevice, device)
 	})
@@ -36,7 +36,7 @@ func TestDeviceService_Register(t *testing.T) {
 			tmpDevice = args.Get(0).(*ent.Device)
 		}).Return(tmpDevice, nil).Once()
 
-		_, err := deviceSvc.Register("", &dto.RegisterDeviceRequest{
+		_, err := deviceSvc.Register(1, &dto.RegisterDeviceRequest{
 			DeviceOS: "ANDROID",
 		})
 		assert.NoError(t, err)

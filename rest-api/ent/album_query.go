@@ -420,8 +420,8 @@ func (aq *AlbumQuery) sqlAll(ctx context.Context) ([]*Album, error) {
 	}
 
 	if query := aq.withUser; query != nil {
-		ids := make([]string, 0, len(nodes))
-		nodeids := make(map[string][]*Album)
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Album)
 		for i := range nodes {
 			if nodes[i].user_album == nil {
 				continue

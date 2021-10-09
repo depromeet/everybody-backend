@@ -18,10 +18,10 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id"),
+		field.Int("id"),
 		field.String("nickname"),
-		field.Int("height"),
-		field.Int("weight"),
+		field.Int("height").Optional(),
+		field.Int("weight").Optional(),
 		field.Enum("type").Values(types...),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()

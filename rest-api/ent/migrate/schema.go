@@ -13,7 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "user_album", Type: field.TypeString, Nullable: true},
+		{Name: "user_album", Type: field.TypeInt, Nullable: true},
 	}
 	// AlbumsTable holds the schema information for the "albums" table.
 	AlbumsTable = &schema.Table{
@@ -35,7 +35,7 @@ var (
 		{Name: "device_token", Type: field.TypeString},
 		{Name: "push_token", Type: field.TypeString},
 		{Name: "device_os", Type: field.TypeEnum, Enums: []string{"ANDROID", "IOS"}},
-		{Name: "user_device", Type: field.TypeString, Nullable: true},
+		{Name: "user_device", Type: field.TypeInt, Nullable: true},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
 	DevicesTable = &schema.Table{
@@ -57,7 +57,7 @@ var (
 		{Name: "interval", Type: field.TypeInt, Nullable: true},
 		{Name: "last_notified_at", Type: field.TypeTime, Nullable: true},
 		{Name: "is_activated", Type: field.TypeBool, Default: true},
-		{Name: "user_notification_config", Type: field.TypeString, Nullable: true},
+		{Name: "user_notification_config", Type: field.TypeInt, Nullable: true},
 	}
 	// NotificationConfigsTable holds the schema information for the "notification_configs" table.
 	NotificationConfigsTable = &schema.Table{
@@ -96,10 +96,10 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "nickname", Type: field.TypeString},
-		{Name: "height", Type: field.TypeInt},
-		{Name: "weight", Type: field.TypeInt},
+		{Name: "height", Type: field.TypeInt, Nullable: true},
+		{Name: "weight", Type: field.TypeInt, Nullable: true},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"SIMPLE", "KAKAO", "APPLE", "NAVER", "GOOGLE"}},
 		{Name: "created_at", Type: field.TypeTime},
 	}

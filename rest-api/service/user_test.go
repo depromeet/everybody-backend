@@ -16,8 +16,8 @@ func initializeUserTest(t *testing.T) *userService {
 	deviceSvc := new(mocks.DeviceService)
 	notificationSvc := new(mocks.NotificationService)
 
-	deviceSvc.On("Register", mock.AnythingOfType("string"), mock.AnythingOfType("*dto.RegisterDeviceRequest")).Return(new(ent.Device), nil)
-	notificationSvc.On("Configure", mock.AnythingOfType("string"), mock.AnythingOfType("*dto.ConfigureNotificationRequest")).Return(new(ent.NotificationConfig), nil)
+	deviceSvc.On("Register", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.RegisterDeviceRequest")).Return(new(ent.Device), nil)
+	notificationSvc.On("Configure", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.ConfigureNotificationRequest")).Return(new(ent.NotificationConfig), nil)
 
 	return NewUserService(userRepo, notificationSvc, deviceSvc).(*userService)
 }
@@ -39,5 +39,4 @@ func TestUserService_SignUp(t *testing.T) {
 	// 3. 알림 설정 등록
 	notificationSvc.AssertNumberOfCalls(t, "Configure", 1)
 	t.Logf("유저 생성 %#v", user)
-
 }

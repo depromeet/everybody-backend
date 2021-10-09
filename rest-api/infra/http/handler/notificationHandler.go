@@ -32,7 +32,11 @@ type NotificationHandler struct {
 
 // GetConfig 는 요청 유저의 알림 설정을 조회합니다.
 func (h *NotificationHandler) GetConfig(ctx *fiber.Ctx) error {
-	user := util.GetRequestUserID(ctx)
+	user, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return err
+	}
+
 	config, err := h.notificationService.GetConfigByUser(user)
 	if err != nil {
 		return err

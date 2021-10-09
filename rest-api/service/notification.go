@@ -7,9 +7,9 @@ import (
 )
 
 type NotificationService interface {
-	Configure(requestUser string, body *dto.ConfigureNotificationRequest) (*ent.NotificationConfig, error)
+	Configure(requestUser int, body *dto.ConfigureNotificationRequest) (*ent.NotificationConfig, error)
 	GetConfig(id int) (*ent.NotificationConfig, error)
-	GetConfigByUser(user string) (*ent.NotificationConfig, error)
+	GetConfigByUser(user int) (*ent.NotificationConfig, error)
 }
 
 func NewNotificationService(notificationRepo repository.NotificationRepository) NotificationService {
@@ -24,7 +24,7 @@ type notificationService struct {
 }
 
 // Configure 는 requestUser의 알림 설정을 설정(?)합니다.
-func (s *notificationService) Configure(requestUser string, body *dto.ConfigureNotificationRequest) (*ent.NotificationConfig, error) {
+func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNotificationRequest) (*ent.NotificationConfig, error) {
 	// 생성
 	if body.ID == 0 {
 		return s.notificationRepo.CreateNotificationConfig(&ent.NotificationConfig{
@@ -61,7 +61,7 @@ func (s *notificationService) GetConfig(id int) (*ent.NotificationConfig, error)
 }
 
 // GetConfigByUser 는 알림 설정 정보를 조회합니다.
-func (s *notificationService) GetConfigByUser(user string) (*ent.NotificationConfig, error) {
+func (s *notificationService) GetConfigByUser(user int) (*ent.NotificationConfig, error) {
 	config, err := s.notificationRepo.FindByUser(user)
 	if err != nil {
 		return nil, err

@@ -12,8 +12,8 @@ type albumService struct {
 }
 
 type AlbumServiceInterface interface {
-	CreateAlbum(userID string, albumReq *dto.AlbumRequest) (*ent.Album, error)
-	GetAllAlbums(userID string) ([]*ent.Album, error)
+	CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*ent.Album, error)
+	GetAllAlbums(userID int) ([]*ent.Album, error)
 	GetAlbum(albumID int) (*ent.Album, []*ent.Picture, error)
 }
 
@@ -24,7 +24,7 @@ func NewAlbumService(albumRepo repository.AlbumRepositoryInterface, pictureRepo 
 	}
 }
 
-func (s *albumService) CreateAlbum(userID string, albumReq *dto.AlbumRequest) (*ent.Album, error) {
+func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*ent.Album, error) {
 	album := &ent.Album{
 		Name: albumReq.Name,
 		Edges: ent.AlbumEdges{
@@ -40,7 +40,7 @@ func (s *albumService) CreateAlbum(userID string, albumReq *dto.AlbumRequest) (*
 	return newAlbum, nil
 }
 
-func (s *albumService) GetAllAlbums(userID string) ([]*ent.Album, error) {
+func (s *albumService) GetAllAlbums(userID int) ([]*ent.Album, error) {
 	albums, err := s.albumRepo.GetAllByUserID(userID)
 	if err != nil {
 		return nil, err

@@ -26,7 +26,7 @@ type NotificationConfig struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the NotificationConfigQuery when eager-loading is set.
 	Edges                    NotificationConfigEdges `json:"edges"`
-	user_notification_config *string
+	user_notification_config *int
 }
 
 // NotificationConfigEdges holds the relations/edges for other nodes in the graph.
@@ -64,7 +64,7 @@ func (*NotificationConfig) scanValues(columns []string) ([]interface{}, error) {
 		case notificationconfig.FieldLastNotifiedAt:
 			values[i] = new(sql.NullTime)
 		case notificationconfig.ForeignKeys[0]: // user_notification_config
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type NotificationConfig", columns[i])
 		}
@@ -105,11 +105,11 @@ func (nc *NotificationConfig) assignValues(columns []string, values []interface{
 				nc.IsActivated = value.Bool
 			}
 		case notificationconfig.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_notification_config", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_notification_config", value)
 			} else if value.Valid {
-				nc.user_notification_config = new(string)
-				*nc.user_notification_config = value.String
+				nc.user_notification_config = new(int)
+				*nc.user_notification_config = int(value.Int64)
 			}
 		}
 	}

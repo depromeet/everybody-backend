@@ -8,7 +8,7 @@ import (
 
 type UserRepository interface {
 	Create(user *ent.User) (*ent.User, error)
-	FindById(id string) (*ent.User, error)
+	FindById(id int) (*ent.User, error)
 }
 
 func NewUserRepository(client *ent.Client) UserRepository {
@@ -23,8 +23,8 @@ type userRepository struct {
 
 func (repo *userRepository) Create(user *ent.User) (*ent.User, error) {
 	result, err := repo.db.User.Create().
-		SetID(user.ID).
 		SetNickname(user.Nickname).
+		SetType(user.Type).
 		Save(context.Background())
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (repo *userRepository) Create(user *ent.User) (*ent.User, error) {
 	return result, nil
 }
 
-func (repo *userRepository) FindById(id string) (*ent.User, error) {
+func (repo *userRepository) FindById(id int) (*ent.User, error) {
 	u, err := repo.db.User.Query().
 		Where(user.ID(id)).
 		Only(context.Background())

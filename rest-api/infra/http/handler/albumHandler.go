@@ -22,8 +22,12 @@ func NewAlbumHandler(albumService service.AlbumServiceInterface) *AlbumHandler {
 
 func (h *AlbumHandler) CreateAlbum(ctx *fiber.Ctx) error {
 	var albumReq dto.AlbumRequest
-	userID := util.GetRequestUserID(ctx)
-	err := ctx.BodyParser(&albumReq)
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = ctx.BodyParser(&albumReq)
 	if err != nil {
 		return err
 	}
@@ -41,7 +45,10 @@ func (h *AlbumHandler) CreateAlbum(ctx *fiber.Ctx) error {
 }
 
 func (h *AlbumHandler) GetAllAlbums(ctx *fiber.Ctx) error {
-	userID := util.GetRequestUserID(ctx)
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return err
+	}
 
 	albums, err := h.albumService.GetAllAlbums(userID)
 	if err != nil {

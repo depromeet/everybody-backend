@@ -32,6 +32,8 @@ var (
 )
 
 func main() {
+	log.SetReportCaller(true)
+
 	initialize()
 	if err := server.Listen(":8888"); err != nil {
 		log.Error(err)

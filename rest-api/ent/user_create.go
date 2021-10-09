@@ -35,9 +35,25 @@ func (uc *UserCreate) SetHeight(i int) *UserCreate {
 	return uc
 }
 
+// SetNillableHeight sets the "height" field if the given value is not nil.
+func (uc *UserCreate) SetNillableHeight(i *int) *UserCreate {
+	if i != nil {
+		uc.SetHeight(*i)
+	}
+	return uc
+}
+
 // SetWeight sets the "weight" field.
 func (uc *UserCreate) SetWeight(i int) *UserCreate {
 	uc.mutation.SetWeight(i)
+	return uc
+}
+
+// SetNillableWeight sets the "weight" field if the given value is not nil.
+func (uc *UserCreate) SetNillableWeight(i *int) *UserCreate {
+	if i != nil {
+		uc.SetWeight(*i)
+	}
 	return uc
 }
 
@@ -62,8 +78,8 @@ func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 }
 
 // SetID sets the "id" field.
-func (uc *UserCreate) SetID(s string) *UserCreate {
-	uc.mutation.SetID(s)
+func (uc *UserCreate) SetID(i int) *UserCreate {
+	uc.mutation.SetID(i)
 	return uc
 }
 
@@ -194,12 +210,6 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Nickname(); !ok {
 		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "nickname"`)}
 	}
-	if _, ok := uc.mutation.Height(); !ok {
-		return &ValidationError{Name: "height", err: errors.New(`ent: missing required field "height"`)}
-	}
-	if _, ok := uc.mutation.Weight(); !ok {
-		return &ValidationError{Name: "weight", err: errors.New(`ent: missing required field "weight"`)}
-	}
 	if _, ok := uc.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "type"`)}
 	}
@@ -222,8 +232,9 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(string)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
 	}
 	return _node, nil
 }
@@ -234,7 +245,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec = &sqlgraph.CreateSpec{
 			Table: user.Table,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
+				Type:   field.TypeInt,
 				Column: user.FieldID,
 			},
 		}
@@ -385,6 +396,10 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 				}
 				mutation.id = &nodes[i].ID
 				mutation.done = true
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				return nodes[i], nil
 			})
 			for i := len(builder.hooks) - 1; i >= 0; i-- {

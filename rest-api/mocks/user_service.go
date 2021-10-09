@@ -15,11 +15,11 @@ type UserService struct {
 }
 
 // GetUser provides a mock function with given fields: id
-func (_m *UserService) GetUser(id string) (*ent.User, error) {
+func (_m *UserService) GetUser(id int) (*ent.User, error) {
 	ret := _m.Called(id)
 
 	var r0 *ent.User
-	if rf, ok := ret.Get(0).(func(string) *ent.User); ok {
+	if rf, ok := ret.Get(0).(func(int) *ent.User); ok {
 		r0 = rf(id)
 	} else {
 		if ret.Get(0) != nil {
@@ -28,7 +28,7 @@ func (_m *UserService) GetUser(id string) (*ent.User, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
+	if rf, ok := ret.Get(1).(func(int) error); ok {
 		r1 = rf(id)
 	} else {
 		r1 = ret.Error(1)

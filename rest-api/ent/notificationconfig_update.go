@@ -90,13 +90,13 @@ func (ncu *NotificationConfigUpdate) SetNillableIsActivated(b *bool) *Notificati
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (ncu *NotificationConfigUpdate) SetUserID(id string) *NotificationConfigUpdate {
+func (ncu *NotificationConfigUpdate) SetUserID(id int) *NotificationConfigUpdate {
 	ncu.mutation.SetUserID(id)
 	return ncu
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ncu *NotificationConfigUpdate) SetNillableUserID(id *string) *NotificationConfigUpdate {
+func (ncu *NotificationConfigUpdate) SetNillableUserID(id *int) *NotificationConfigUpdate {
 	if id != nil {
 		ncu = ncu.SetUserID(*id)
 	}
@@ -240,7 +240,7 @@ func (ncu *NotificationConfigUpdate) sqlSave(ctx context.Context) (n int, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -256,7 +256,7 @@ func (ncu *NotificationConfigUpdate) sqlSave(ctx context.Context) (n int, err er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -347,13 +347,13 @@ func (ncuo *NotificationConfigUpdateOne) SetNillableIsActivated(b *bool) *Notifi
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (ncuo *NotificationConfigUpdateOne) SetUserID(id string) *NotificationConfigUpdateOne {
+func (ncuo *NotificationConfigUpdateOne) SetUserID(id int) *NotificationConfigUpdateOne {
 	ncuo.mutation.SetUserID(id)
 	return ncuo
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ncuo *NotificationConfigUpdateOne) SetNillableUserID(id *string) *NotificationConfigUpdateOne {
+func (ncuo *NotificationConfigUpdateOne) SetNillableUserID(id *int) *NotificationConfigUpdateOne {
 	if id != nil {
 		ncuo = ncuo.SetUserID(*id)
 	}
@@ -521,7 +521,7 @@ func (ncuo *NotificationConfigUpdateOne) sqlSave(ctx context.Context) (_node *No
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -537,7 +537,7 @@ func (ncuo *NotificationConfigUpdateOne) sqlSave(ctx context.Context) (_node *No
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},

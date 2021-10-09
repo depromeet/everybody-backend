@@ -14,7 +14,7 @@ type albumRepository struct {
 
 type AlbumRepositoryInterface interface {
 	Create(album *ent.Album) (*ent.Album, error)
-	GetAllByUserID(userID string) ([]*ent.Album, error)
+	GetAllByUserID(userID int) ([]*ent.Album, error)
 	Get(albumID int) (*ent.Album, error)
 }
 
@@ -37,7 +37,7 @@ func (r *albumRepository) Create(album *ent.Album) (*ent.Album, error) {
 	return newAlbum, nil
 }
 
-func (r *albumRepository) GetAllByUserID(userID string) ([]*ent.Album, error) {
+func (r *albumRepository) GetAllByUserID(userID int) ([]*ent.Album, error) {
 	albums, err := r.db.Album.Query().
 		Where(album.HasUserWith(user.ID(userID))).
 		All(context.Background())

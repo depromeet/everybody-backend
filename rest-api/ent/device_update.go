@@ -46,13 +46,13 @@ func (du *DeviceUpdate) SetDeviceOs(do device.DeviceOs) *DeviceUpdate {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (du *DeviceUpdate) SetUserID(id string) *DeviceUpdate {
+func (du *DeviceUpdate) SetUserID(id int) *DeviceUpdate {
 	du.mutation.SetUserID(id)
 	return du
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (du *DeviceUpdate) SetNillableUserID(id *string) *DeviceUpdate {
+func (du *DeviceUpdate) SetNillableUserID(id *int) *DeviceUpdate {
 	if id != nil {
 		du = du.SetUserID(*id)
 	}
@@ -193,7 +193,7 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -209,7 +209,7 @@ func (du *DeviceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -257,13 +257,13 @@ func (duo *DeviceUpdateOne) SetDeviceOs(do device.DeviceOs) *DeviceUpdateOne {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (duo *DeviceUpdateOne) SetUserID(id string) *DeviceUpdateOne {
+func (duo *DeviceUpdateOne) SetUserID(id int) *DeviceUpdateOne {
 	duo.mutation.SetUserID(id)
 	return duo
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableUserID(id *string) *DeviceUpdateOne {
+func (duo *DeviceUpdateOne) SetNillableUserID(id *int) *DeviceUpdateOne {
 	if id != nil {
 		duo = duo.SetUserID(*id)
 	}
@@ -428,7 +428,7 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -444,7 +444,7 @@ func (duo *DeviceUpdateOne) sqlSave(ctx context.Context) (_node *Device, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},

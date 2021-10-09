@@ -382,8 +382,8 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context) ([]*Device, error) {
 	}
 
 	if query := dq.withUser; query != nil {
-		ids := make([]string, 0, len(nodes))
-		nodeids := make(map[string][]*Device)
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Device)
 		for i := range nodes {
 			if nodes[i].user_device == nil {
 				continue

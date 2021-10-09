@@ -50,13 +50,13 @@ func (au *AlbumUpdate) SetNillableCreatedAt(t *time.Time) *AlbumUpdate {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (au *AlbumUpdate) SetUserID(id string) *AlbumUpdate {
+func (au *AlbumUpdate) SetUserID(id int) *AlbumUpdate {
 	au.mutation.SetUserID(id)
 	return au
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (au *AlbumUpdate) SetNillableUserID(id *string) *AlbumUpdate {
+func (au *AlbumUpdate) SetNillableUserID(id *int) *AlbumUpdate {
 	if id != nil {
 		au = au.SetUserID(*id)
 	}
@@ -210,7 +210,7 @@ func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -226,7 +226,7 @@ func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -330,13 +330,13 @@ func (auo *AlbumUpdateOne) SetNillableCreatedAt(t *time.Time) *AlbumUpdateOne {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (auo *AlbumUpdateOne) SetUserID(id string) *AlbumUpdateOne {
+func (auo *AlbumUpdateOne) SetUserID(id int) *AlbumUpdateOne {
 	auo.mutation.SetUserID(id)
 	return auo
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (auo *AlbumUpdateOne) SetNillableUserID(id *string) *AlbumUpdateOne {
+func (auo *AlbumUpdateOne) SetNillableUserID(id *int) *AlbumUpdateOne {
 	if id != nil {
 		auo = auo.SetUserID(*id)
 	}
@@ -514,7 +514,7 @@ func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
@@ -530,7 +530,7 @@ func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},

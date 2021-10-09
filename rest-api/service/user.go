@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
+	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
 	log "github.com/sirupsen/logrus"
 )
@@ -16,7 +17,7 @@ var (
 
 type UserService interface {
 	SignUp(body *dto.SignUpRequest) (*ent.User, error)
-	GetUser(id string) (*ent.User, error)
+	GetUser(id int) (*ent.User, error)
 }
 
 func NewUserService(
@@ -48,11 +49,12 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
 
 	user, err := s.userRepo.Create(&ent.User{
 		Nickname: body.Nickname,
+		Type:     user.Type(body.Type),
 	})
 	if err != nil {
 		return nil, err
 	}
-	log.Infof("유저를 생성했습니다. User(id=%s)", user.ID)
+	log.Infof("유저를 생성했습니다. User(id=%d)", user.ID)
 
 	if body.NotificationInterval == 0 {
 		body.NotificationInterval = signUpDefaultNotificationInterval
@@ -81,7 +83,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
 }
 
 // GetUser 는 유저 정보를 조회합니다.
-func (s *userService) GetUser(id string) (*ent.User, error) {
+func (s *userService) GetUser(id int) (*ent.User, error) {
 	user, err := s.userRepo.FindById(id)
 	if err != nil {
 		return nil, err

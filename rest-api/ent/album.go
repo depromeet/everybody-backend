@@ -24,7 +24,7 @@ type Album struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AlbumQuery when eager-loading is set.
 	Edges      AlbumEdges `json:"edges"`
-	user_album *string
+	user_album *int
 }
 
 // AlbumEdges holds the relations/edges for other nodes in the graph.
@@ -73,7 +73,7 @@ func (*Album) scanValues(columns []string) ([]interface{}, error) {
 		case album.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		case album.ForeignKeys[0]: // user_album
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Album", columns[i])
 		}
@@ -108,11 +108,11 @@ func (a *Album) assignValues(columns []string, values []interface{}) error {
 				a.CreatedAt = value.Time
 			}
 		case album.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_album", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_album", value)
 			} else if value.Valid {
-				a.user_album = new(string)
-				*a.user_album = value.String
+				a.user_album = new(int)
+				*a.user_album = int(value.Int64)
 			}
 		}
 	}

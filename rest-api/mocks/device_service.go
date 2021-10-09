@@ -38,11 +38,11 @@ func (_m *DeviceService) GetDevice(id int) (*ent.Device, error) {
 }
 
 // Register provides a mock function with given fields: requestUser, body
-func (_m *DeviceService) Register(requestUser string, body *dto.RegisterDeviceRequest) (*ent.Device, error) {
+func (_m *DeviceService) Register(requestUser int, body *dto.RegisterDeviceRequest) (*ent.Device, error) {
 	ret := _m.Called(requestUser, body)
 
 	var r0 *ent.Device
-	if rf, ok := ret.Get(0).(func(string, *dto.RegisterDeviceRequest) *ent.Device); ok {
+	if rf, ok := ret.Get(0).(func(int, *dto.RegisterDeviceRequest) *ent.Device); ok {
 		r0 = rf(requestUser, body)
 	} else {
 		if ret.Get(0) != nil {
@@ -51,7 +51,7 @@ func (_m *DeviceService) Register(requestUser string, body *dto.RegisterDeviceRe
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, *dto.RegisterDeviceRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(int, *dto.RegisterDeviceRequest) error); ok {
 		r1 = rf(requestUser, body)
 	} else {
 		r1 = ret.Error(1)
