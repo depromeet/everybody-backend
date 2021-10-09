@@ -20,8 +20,8 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id"),
 		field.String("nickname"),
-		field.Int("height").Optional(),
-		field.Int("weight").Optional(),
+		field.Int("height").Optional().Nillable(),
+		field.Int("weight").Optional().Nillable(),
 		field.Enum("type").Values(types...),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()

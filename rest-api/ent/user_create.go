@@ -268,7 +268,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: user.FieldHeight,
 		})
-		_node.Height = value
+		_node.Height = &value
 	}
 	if value, ok := uc.mutation.Weight(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -276,7 +276,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: user.FieldWeight,
 		})
-		_node.Weight = value
+		_node.Weight = &value
 	}
 	if value, ok := uc.mutation.GetType(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

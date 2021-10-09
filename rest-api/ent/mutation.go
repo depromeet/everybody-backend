@@ -2142,7 +2142,7 @@ func (m *UserMutation) Height() (r int, exists bool) {
 // OldHeight returns the old "height" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldHeight(ctx context.Context) (v int, err error) {
+func (m *UserMutation) OldHeight(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldHeight is only allowed on UpdateOne operations")
 	}
@@ -2212,7 +2212,7 @@ func (m *UserMutation) Weight() (r int, exists bool) {
 // OldWeight returns the old "weight" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldWeight(ctx context.Context) (v int, err error) {
+func (m *UserMutation) OldWeight(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldWeight is only allowed on UpdateOne operations")
 	}
