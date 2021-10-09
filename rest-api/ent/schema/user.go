@@ -8,6 +8,8 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
+var types = []string{"SIMPLE", "KAKAO", "APPLE", "NAVER", "GOOGLE"}
+
 // User holds the schema definition for the User entity.
 type User struct {
 	ent.Schema
@@ -20,6 +22,7 @@ func (User) Fields() []ent.Field {
 		field.String("nickname"),
 		field.Int("height"),
 		field.Int("weight"),
+		field.Enum("type").Values(types...),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),
