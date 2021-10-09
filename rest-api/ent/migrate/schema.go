@@ -100,6 +100,7 @@ var (
 		{Name: "nickname", Type: field.TypeString},
 		{Name: "height", Type: field.TypeInt},
 		{Name: "weight", Type: field.TypeInt},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"SIMPLE", "KAKAO", "APPLE", "NAVER", "GOOGLE"}},
 		{Name: "created_at", Type: field.TypeTime},
 	}
 	// UsersTable holds the schema information for the "users" table.

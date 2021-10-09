@@ -22,6 +22,8 @@ type User struct {
 	Height int `json:"height,omitempty"`
 	// Weight holds the value of the "weight" field.
 	Weight int `json:"weight,omitempty"`
+	// Type holds the value of the "type" field.
+	Type user.Type `json:"type,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -76,7 +78,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldHeight, user.FieldWeight:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldNickname:
+		case user.FieldID, user.FieldNickname, user.FieldType:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -118,6 +120,12 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field weight", values[i])
 			} else if value.Valid {
 				u.Weight = int(value.Int64)
+			}
+		case user.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				u.Type = user.Type(value.String)
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -174,6 +182,8 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("%v", u.Height))
 	builder.WriteString(", weight=")
 	builder.WriteString(fmt.Sprintf("%v", u.Weight))
+	builder.WriteString(", type=")
+	builder.WriteString(fmt.Sprintf("%v", u.Type))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
