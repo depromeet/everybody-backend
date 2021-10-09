@@ -60,14 +60,14 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 		body.NotificationInterval = signUpDefaultNotificationInterval
 	}
 
-	notificationConfig, err := s.notificationService.Configure(user.ID, &dto.ConfigureNotificationRequest{
+	_, err = s.notificationService.Configure(user.ID, &dto.ConfigureNotificationRequest{
 		Interval:    body.NotificationInterval, // 기본값
 		IsActivated: true,
 	})
 	if err != nil {
 		return nil, err
 	}
-	log.Infof("알림 설정을 생성했습니다. NotificaitonConfig(id=%d)", notificationConfig.ID)
+	log.Infof("알림 설정을 생성했습니다. NotificaitonConfig(user.id=%d)", user.ID)
 
 	device, err := s.deviceService.Register(user.ID, &dto.RegisterDeviceRequest{
 		DeviceToken: body.DeviceToken,

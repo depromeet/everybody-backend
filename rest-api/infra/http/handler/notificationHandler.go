@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/gofiber/fiber/v2"
@@ -38,6 +39,27 @@ func (h *NotificationHandler) GetConfig(ctx *fiber.Ctx) error {
 	}
 
 	config, err := h.notificationService.GetConfigByUser(user)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(config)
+}
+
+// GetConfig 는 요청 유저의 알림 설정을 수정합니다.
+func (h *NotificationHandler) UpdateConfig(ctx *fiber.Ctx) error {
+	user, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return err
+	}
+
+	body := new(dto.ConfigureNotificationRequest)
+	err = ctx.BodyParser(body)
+	if err != nil {
+		return err
+	}
+
+	config, err := h.notificationService.Configure(user, body)
 	if err != nil {
 		return err
 	}
