@@ -16,8 +16,9 @@ func initializeUserTest(t *testing.T) *userService {
 	deviceSvc := new(mocks.DeviceService)
 	notificationSvc := new(mocks.NotificationService)
 
+	// TODO: device도 DTO로 리턴하도록 정의
 	deviceSvc.On("Register", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.RegisterDeviceRequest")).Return(new(ent.Device), nil)
-	notificationSvc.On("Configure", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.ConfigureNotificationRequest")).Return(new(ent.NotificationConfig), nil)
+	notificationSvc.On("Configure", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.ConfigureNotificationRequest")).Return(new(dto.NotificationConfigDto), nil)
 
 	return NewUserService(userRepo, notificationSvc, deviceSvc).(*userService)
 }

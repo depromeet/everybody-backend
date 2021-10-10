@@ -4,8 +4,6 @@ package mocks
 
 import (
 	dto "github.com/depromeet/everybody-backend/rest-api/dto"
-	ent "github.com/depromeet/everybody-backend/rest-api/ent"
-
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,15 +13,15 @@ type UserService struct {
 }
 
 // GetUser provides a mock function with given fields: id
-func (_m *UserService) GetUser(id int) (*ent.User, error) {
+func (_m *UserService) GetUser(id int) (*dto.UserDto, error) {
 	ret := _m.Called(id)
 
-	var r0 *ent.User
-	if rf, ok := ret.Get(0).(func(int) *ent.User); ok {
+	var r0 *dto.UserDto
+	if rf, ok := ret.Get(0).(func(int) *dto.UserDto); ok {
 		r0 = rf(id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.User)
+			r0 = ret.Get(0).(*dto.UserDto)
 		}
 	}
 
@@ -38,15 +36,15 @@ func (_m *UserService) GetUser(id int) (*ent.User, error) {
 }
 
 // SignUp provides a mock function with given fields: body
-func (_m *UserService) SignUp(body *dto.SignUpRequest) (*ent.User, error) {
+func (_m *UserService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 	ret := _m.Called(body)
 
-	var r0 *ent.User
-	if rf, ok := ret.Get(0).(func(*dto.SignUpRequest) *ent.User); ok {
+	var r0 *dto.UserDto
+	if rf, ok := ret.Get(0).(func(*dto.SignUpRequest) *dto.UserDto); ok {
 		r0 = rf(body)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.User)
+			r0 = ret.Get(0).(*dto.UserDto)
 		}
 	}
 
