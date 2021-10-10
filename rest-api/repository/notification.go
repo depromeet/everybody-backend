@@ -11,7 +11,7 @@ import (
 type NotificationRepository interface {
 	CreateNotificationConfig(config *ent.NotificationConfig) (*ent.NotificationConfig, error)
 	FindById(id int) (*ent.NotificationConfig, error)
-	FindByUser(user string) (*ent.NotificationConfig, error)
+	FindByUser(user int) (*ent.NotificationConfig, error)
 	UpdateInterval(id, interval int) (*ent.NotificationConfig, error)
 	UpdateLastNotifiedAt(id int, lastNotifiedAt time.Time) (*ent.NotificationConfig, error)
 	UpdateIsActivated(id int, isActivated bool) (*ent.NotificationConfig, error)
@@ -51,7 +51,7 @@ func (repo *notificationRepository) FindById(id int) (*ent.NotificationConfig, e
 	return u, nil
 }
 
-func (repo *notificationRepository) FindByUser(userID string) (*ent.NotificationConfig, error) {
+func (repo *notificationRepository) FindByUser(userID int) (*ent.NotificationConfig, error) {
 	u, err := repo.db.NotificationConfig.Query().
 		Where(notificationconfig.HasUserWith(user.ID(userID))).
 		First(context.Background())

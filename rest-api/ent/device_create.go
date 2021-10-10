@@ -45,13 +45,13 @@ func (dc *DeviceCreate) SetID(i int) *DeviceCreate {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (dc *DeviceCreate) SetUserID(id string) *DeviceCreate {
+func (dc *DeviceCreate) SetUserID(id int) *DeviceCreate {
 	dc.mutation.SetUserID(id)
 	return dc
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (dc *DeviceCreate) SetNillableUserID(id *string) *DeviceCreate {
+func (dc *DeviceCreate) SetNillableUserID(id *int) *DeviceCreate {
 	if id != nil {
 		dc = dc.SetUserID(*id)
 	}
@@ -213,7 +213,7 @@ func (dc *DeviceCreate) createSpec() (*Device, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},

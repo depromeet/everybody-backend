@@ -61,11 +61,11 @@ func (_m *NotificationRepository) FindById(id int) (*ent.NotificationConfig, err
 }
 
 // FindByUser provides a mock function with given fields: user
-func (_m *NotificationRepository) FindByUser(user string) (*ent.NotificationConfig, error) {
+func (_m *NotificationRepository) FindByUser(user int) (*ent.NotificationConfig, error) {
 	ret := _m.Called(user)
 
 	var r0 *ent.NotificationConfig
-	if rf, ok := ret.Get(0).(func(string) *ent.NotificationConfig); ok {
+	if rf, ok := ret.Get(0).(func(int) *ent.NotificationConfig); ok {
 		r0 = rf(user)
 	} else {
 		if ret.Get(0) != nil {
@@ -74,7 +74,7 @@ func (_m *NotificationRepository) FindByUser(user string) (*ent.NotificationConf
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
+	if rf, ok := ret.Get(1).(func(int) error); ok {
 		r1 = rf(user)
 	} else {
 		r1 = ret.Error(1)

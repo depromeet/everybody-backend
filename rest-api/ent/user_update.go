@@ -43,9 +43,23 @@ func (uu *UserUpdate) SetHeight(i int) *UserUpdate {
 	return uu
 }
 
+// SetNillableHeight sets the "height" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableHeight(i *int) *UserUpdate {
+	if i != nil {
+		uu.SetHeight(*i)
+	}
+	return uu
+}
+
 // AddHeight adds i to the "height" field.
 func (uu *UserUpdate) AddHeight(i int) *UserUpdate {
 	uu.mutation.AddHeight(i)
+	return uu
+}
+
+// ClearHeight clears the value of the "height" field.
+func (uu *UserUpdate) ClearHeight() *UserUpdate {
+	uu.mutation.ClearHeight()
 	return uu
 }
 
@@ -56,9 +70,29 @@ func (uu *UserUpdate) SetWeight(i int) *UserUpdate {
 	return uu
 }
 
+// SetNillableWeight sets the "weight" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableWeight(i *int) *UserUpdate {
+	if i != nil {
+		uu.SetWeight(*i)
+	}
+	return uu
+}
+
 // AddWeight adds i to the "weight" field.
 func (uu *UserUpdate) AddWeight(i int) *UserUpdate {
 	uu.mutation.AddWeight(i)
+	return uu
+}
+
+// ClearWeight clears the value of the "weight" field.
+func (uu *UserUpdate) ClearWeight() *UserUpdate {
+	uu.mutation.ClearWeight()
+	return uu
+}
+
+// SetType sets the "type" field.
+func (uu *UserUpdate) SetType(u user.Type) *UserUpdate {
+	uu.mutation.SetType(u)
 	return uu
 }
 
@@ -196,12 +230,18 @@ func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(uu.hooks) == 0 {
+		if err = uu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = uu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UserMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uu.check(); err != nil {
+				return 0, err
 			}
 			uu.mutation = mutation
 			affected, err = uu.sqlSave(ctx)
@@ -243,13 +283,23 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (uu *UserUpdate) check() error {
+	if v, ok := uu.mutation.GetType(); ok {
+		if err := user.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	return nil
+}
+
 func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
+				Type:   field.TypeInt,
 				Column: user.FieldID,
 			},
 		},
@@ -282,6 +332,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldHeight,
 		})
 	}
+	if uu.mutation.HeightCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: user.FieldHeight,
+		})
+	}
 	if value, ok := uu.mutation.Weight(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -294,6 +350,19 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: user.FieldWeight,
+		})
+	}
+	if uu.mutation.WeightCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: user.FieldWeight,
+		})
+	}
+	if value, ok := uu.mutation.GetType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: user.FieldType,
 		})
 	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
@@ -497,9 +566,23 @@ func (uuo *UserUpdateOne) SetHeight(i int) *UserUpdateOne {
 	return uuo
 }
 
+// SetNillableHeight sets the "height" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableHeight(i *int) *UserUpdateOne {
+	if i != nil {
+		uuo.SetHeight(*i)
+	}
+	return uuo
+}
+
 // AddHeight adds i to the "height" field.
 func (uuo *UserUpdateOne) AddHeight(i int) *UserUpdateOne {
 	uuo.mutation.AddHeight(i)
+	return uuo
+}
+
+// ClearHeight clears the value of the "height" field.
+func (uuo *UserUpdateOne) ClearHeight() *UserUpdateOne {
+	uuo.mutation.ClearHeight()
 	return uuo
 }
 
@@ -510,9 +593,29 @@ func (uuo *UserUpdateOne) SetWeight(i int) *UserUpdateOne {
 	return uuo
 }
 
+// SetNillableWeight sets the "weight" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableWeight(i *int) *UserUpdateOne {
+	if i != nil {
+		uuo.SetWeight(*i)
+	}
+	return uuo
+}
+
 // AddWeight adds i to the "weight" field.
 func (uuo *UserUpdateOne) AddWeight(i int) *UserUpdateOne {
 	uuo.mutation.AddWeight(i)
+	return uuo
+}
+
+// ClearWeight clears the value of the "weight" field.
+func (uuo *UserUpdateOne) ClearWeight() *UserUpdateOne {
+	uuo.mutation.ClearWeight()
+	return uuo
+}
+
+// SetType sets the "type" field.
+func (uuo *UserUpdateOne) SetType(u user.Type) *UserUpdateOne {
+	uuo.mutation.SetType(u)
 	return uuo
 }
 
@@ -657,12 +760,18 @@ func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
 		node *User
 	)
 	if len(uuo.hooks) == 0 {
+		if err = uuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = uuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UserMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uuo.check(); err != nil {
+				return nil, err
 			}
 			uuo.mutation = mutation
 			node, err = uuo.sqlSave(ctx)
@@ -704,13 +813,23 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (uuo *UserUpdateOne) check() error {
+	if v, ok := uuo.mutation.GetType(); ok {
+		if err := user.TypeValidator(v); err != nil {
+			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+		}
+	}
+	return nil
+}
+
 func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeString,
+				Type:   field.TypeInt,
 				Column: user.FieldID,
 			},
 		},
@@ -760,6 +879,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldHeight,
 		})
 	}
+	if uuo.mutation.HeightCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: user.FieldHeight,
+		})
+	}
 	if value, ok := uuo.mutation.Weight(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -772,6 +897,19 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: user.FieldWeight,
+		})
+	}
+	if uuo.mutation.WeightCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Column: user.FieldWeight,
+		})
+	}
+	if value, ok := uuo.mutation.GetType(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeEnum,
+			Value:  value,
+			Column: user.FieldType,
 		})
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {

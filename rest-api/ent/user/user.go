@@ -3,6 +3,7 @@
 package user
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -17,6 +18,8 @@ const (
 	FieldHeight = "height"
 	// FieldWeight holds the string denoting the weight field in the database.
 	FieldWeight = "weight"
+	// FieldType holds the string denoting the type field in the database.
+	FieldType = "type"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeDevice holds the string denoting the device edge name in mutations.
@@ -56,6 +59,7 @@ var Columns = []string{
 	FieldNickname,
 	FieldHeight,
 	FieldWeight,
+	FieldType,
 	FieldCreatedAt,
 }
 
@@ -73,3 +77,29 @@ var (
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 )
+
+// Type defines the type for the "type" enum field.
+type Type string
+
+// Type values.
+const (
+	TypeSIMPLE Type = "SIMPLE"
+	TypeKAKAO  Type = "KAKAO"
+	TypeAPPLE  Type = "APPLE"
+	TypeNAVER  Type = "NAVER"
+	TypeGOOGLE Type = "GOOGLE"
+)
+
+func (_type Type) String() string {
+	return string(_type)
+}
+
+// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
+func TypeValidator(_type Type) error {
+	switch _type {
+	case TypeSIMPLE, TypeKAKAO, TypeAPPLE, TypeNAVER, TypeGOOGLE:
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for type field: %q", _type)
+	}
+}

@@ -14,7 +14,7 @@ var (
 )
 
 type DeviceService interface {
-	Register(requestUser string, body *dto.RegisterDeviceRequest) (*ent.Device, error)
+	Register(requestUser int, body *dto.RegisterDeviceRequest) (*ent.Device, error)
 	GetDevice(id int) (*ent.Device, error)
 }
 
@@ -30,7 +30,7 @@ type deviceService struct {
 }
 
 // Configure 는 requestUser의 알림 설정을 설정(?)합니다.
-func (s *deviceService) Register(requestUser string, body *dto.RegisterDeviceRequest) (*ent.Device, error) {
+func (s *deviceService) Register(requestUser int, body *dto.RegisterDeviceRequest) (*ent.Device, error) {
 	// 동일한 디바이스 토큰 정보가 이미 존재하는지
 	d, err := s.deviceRepo.FindByDeviceToken(body.DeviceToken)
 	if err != nil {

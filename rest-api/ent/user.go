@@ -15,13 +15,15 @@ import (
 type User struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID string `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// Nickname holds the value of the "nickname" field.
 	Nickname string `json:"nickname,omitempty"`
 	// Height holds the value of the "height" field.
-	Height int `json:"height,omitempty"`
+	Height *int `json:"height,omitempty"`
 	// Weight holds the value of the "weight" field.
-	Weight int `json:"weight,omitempty"`
+	Weight *int `json:"weight,omitempty"`
+	// Type holds the value of the "type" field.
+	Type user.Type `json:"type,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -74,9 +76,9 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldHeight, user.FieldWeight:
+		case user.FieldID, user.FieldHeight, user.FieldWeight:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldNickname:
+		case user.FieldNickname, user.FieldType:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -96,11 +98,11 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case user.FieldID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value.Valid {
-				u.ID = value.String
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			u.ID = int(value.Int64)
 		case user.FieldNickname:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field nickname", values[i])
@@ -111,13 +113,21 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field height", values[i])
 			} else if value.Valid {
-				u.Height = int(value.Int64)
+				u.Height = new(int)
+				*u.Height = int(value.Int64)
 			}
 		case user.FieldWeight:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field weight", values[i])
 			} else if value.Valid {
-				u.Weight = int(value.Int64)
+				u.Weight = new(int)
+				*u.Weight = int(value.Int64)
+			}
+		case user.FieldType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field type", values[i])
+			} else if value.Valid {
+				u.Type = user.Type(value.String)
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -170,10 +180,16 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
 	builder.WriteString(", nickname=")
 	builder.WriteString(u.Nickname)
-	builder.WriteString(", height=")
-	builder.WriteString(fmt.Sprintf("%v", u.Height))
-	builder.WriteString(", weight=")
-	builder.WriteString(fmt.Sprintf("%v", u.Weight))
+	if v := u.Height; v != nil {
+		builder.WriteString(", height=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	if v := u.Weight; v != nil {
+		builder.WriteString(", weight=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", type=")
+	builder.WriteString(fmt.Sprintf("%v", u.Type))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

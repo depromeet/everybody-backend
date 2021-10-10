@@ -42,7 +42,8 @@ func addUserHandlers(app *fiber.App, userHandler *handler.UserHandler) {
 
 func addNotificationHandlers(app *fiber.App, notificationHandler *handler.NotificationHandler) {
 	// 본인에 대한 알림 설정 조회만 수행
-	app.Get("notification-configs/me", notificationHandler.GetConfig)
+	app.Get("/notification-configs/me", notificationHandler.GetConfig)
+	app.Put("/notification-configs/me", notificationHandler.UpdateConfig)
 }
 
 func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {

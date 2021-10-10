@@ -43,7 +43,7 @@ type AlbumMutation struct {
 	name           *string
 	created_at     *time.Time
 	clearedFields  map[string]struct{}
-	user           *string
+	user           *int
 	cleareduser    bool
 	picture        map[int]struct{}
 	removedpicture map[int]struct{}
@@ -205,7 +205,7 @@ func (m *AlbumMutation) ResetCreatedAt() {
 }
 
 // SetUserID sets the "user" edge to the User entity by id.
-func (m *AlbumMutation) SetUserID(id string) {
+func (m *AlbumMutation) SetUserID(id int) {
 	m.user = &id
 }
 
@@ -220,7 +220,7 @@ func (m *AlbumMutation) UserCleared() bool {
 }
 
 // UserID returns the "user" edge ID in the mutation.
-func (m *AlbumMutation) UserID() (id string, exists bool) {
+func (m *AlbumMutation) UserID() (id int, exists bool) {
 	if m.user != nil {
 		return *m.user, true
 	}
@@ -230,7 +230,7 @@ func (m *AlbumMutation) UserID() (id string, exists bool) {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *AlbumMutation) UserIDs() (ids []string) {
+func (m *AlbumMutation) UserIDs() (ids []int) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -542,7 +542,7 @@ type DeviceMutation struct {
 	push_token    *string
 	device_os     *device.DeviceOs
 	clearedFields map[string]struct{}
-	user          *string
+	user          *int
 	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*Device, error)
@@ -743,7 +743,7 @@ func (m *DeviceMutation) ResetDeviceOs() {
 }
 
 // SetUserID sets the "user" edge to the User entity by id.
-func (m *DeviceMutation) SetUserID(id string) {
+func (m *DeviceMutation) SetUserID(id int) {
 	m.user = &id
 }
 
@@ -758,7 +758,7 @@ func (m *DeviceMutation) UserCleared() bool {
 }
 
 // UserID returns the "user" edge ID in the mutation.
-func (m *DeviceMutation) UserID() (id string, exists bool) {
+func (m *DeviceMutation) UserID() (id int, exists bool) {
 	if m.user != nil {
 		return *m.user, true
 	}
@@ -768,7 +768,7 @@ func (m *DeviceMutation) UserID() (id string, exists bool) {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *DeviceMutation) UserIDs() (ids []string) {
+func (m *DeviceMutation) UserIDs() (ids []int) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1018,7 +1018,7 @@ type NotificationConfigMutation struct {
 	last_notified_at *time.Time
 	is_activated     *bool
 	clearedFields    map[string]struct{}
-	user             *string
+	user             *int
 	cleareduser      bool
 	done             bool
 	oldValue         func(context.Context) (*NotificationConfig, error)
@@ -1266,7 +1266,7 @@ func (m *NotificationConfigMutation) ResetIsActivated() {
 }
 
 // SetUserID sets the "user" edge to the User entity by id.
-func (m *NotificationConfigMutation) SetUserID(id string) {
+func (m *NotificationConfigMutation) SetUserID(id int) {
 	m.user = &id
 }
 
@@ -1281,7 +1281,7 @@ func (m *NotificationConfigMutation) UserCleared() bool {
 }
 
 // UserID returns the "user" edge ID in the mutation.
-func (m *NotificationConfigMutation) UserID() (id string, exists bool) {
+func (m *NotificationConfigMutation) UserID() (id int, exists bool) {
 	if m.user != nil {
 		return *m.user, true
 	}
@@ -1291,7 +1291,7 @@ func (m *NotificationConfigMutation) UserID() (id string, exists bool) {
 // UserIDs returns the "user" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UserID instead. It exists only for internal usage by the builders.
-func (m *NotificationConfigMutation) UserIDs() (ids []string) {
+func (m *NotificationConfigMutation) UserIDs() (ids []int) {
 	if id := m.user; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1980,12 +1980,13 @@ type UserMutation struct {
 	config
 	op                         Op
 	typ                        string
-	id                         *string
+	id                         *int
 	nickname                   *string
 	height                     *int
 	addheight                  *int
 	weight                     *int
 	addweight                  *int
+	_type                      *user.Type
 	created_at                 *time.Time
 	clearedFields              map[string]struct{}
 	device                     map[int]struct{}
@@ -2022,7 +2023,7 @@ func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
 }
 
 // withUserID sets the ID field of the mutation.
-func withUserID(id string) userOption {
+func withUserID(id int) userOption {
 	return func(m *UserMutation) {
 		var (
 			err   error
@@ -2074,13 +2075,13 @@ func (m UserMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of User entities.
-func (m *UserMutation) SetID(id string) {
+func (m *UserMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserMutation) ID() (id string, exists bool) {
+func (m *UserMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2141,7 +2142,7 @@ func (m *UserMutation) Height() (r int, exists bool) {
 // OldHeight returns the old "height" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldHeight(ctx context.Context) (v int, err error) {
+func (m *UserMutation) OldHeight(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldHeight is only allowed on UpdateOne operations")
 	}
@@ -2173,10 +2174,24 @@ func (m *UserMutation) AddedHeight() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearHeight clears the value of the "height" field.
+func (m *UserMutation) ClearHeight() {
+	m.height = nil
+	m.addheight = nil
+	m.clearedFields[user.FieldHeight] = struct{}{}
+}
+
+// HeightCleared returns if the "height" field was cleared in this mutation.
+func (m *UserMutation) HeightCleared() bool {
+	_, ok := m.clearedFields[user.FieldHeight]
+	return ok
+}
+
 // ResetHeight resets all changes to the "height" field.
 func (m *UserMutation) ResetHeight() {
 	m.height = nil
 	m.addheight = nil
+	delete(m.clearedFields, user.FieldHeight)
 }
 
 // SetWeight sets the "weight" field.
@@ -2197,7 +2212,7 @@ func (m *UserMutation) Weight() (r int, exists bool) {
 // OldWeight returns the old "weight" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldWeight(ctx context.Context) (v int, err error) {
+func (m *UserMutation) OldWeight(ctx context.Context) (v *int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldWeight is only allowed on UpdateOne operations")
 	}
@@ -2229,10 +2244,60 @@ func (m *UserMutation) AddedWeight() (r int, exists bool) {
 	return *v, true
 }
 
+// ClearWeight clears the value of the "weight" field.
+func (m *UserMutation) ClearWeight() {
+	m.weight = nil
+	m.addweight = nil
+	m.clearedFields[user.FieldWeight] = struct{}{}
+}
+
+// WeightCleared returns if the "weight" field was cleared in this mutation.
+func (m *UserMutation) WeightCleared() bool {
+	_, ok := m.clearedFields[user.FieldWeight]
+	return ok
+}
+
 // ResetWeight resets all changes to the "weight" field.
 func (m *UserMutation) ResetWeight() {
 	m.weight = nil
 	m.addweight = nil
+	delete(m.clearedFields, user.FieldWeight)
+}
+
+// SetType sets the "type" field.
+func (m *UserMutation) SetType(u user.Type) {
+	m._type = &u
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *UserMutation) GetType() (r user.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldType(ctx context.Context) (v user.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *UserMutation) ResetType() {
+	m._type = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -2452,7 +2517,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.nickname != nil {
 		fields = append(fields, user.FieldNickname)
 	}
@@ -2461,6 +2526,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.weight != nil {
 		fields = append(fields, user.FieldWeight)
+	}
+	if m._type != nil {
+		fields = append(fields, user.FieldType)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -2479,6 +2547,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Height()
 	case user.FieldWeight:
 		return m.Weight()
+	case user.FieldType:
+		return m.GetType()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -2496,6 +2566,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldHeight(ctx)
 	case user.FieldWeight:
 		return m.OldWeight(ctx)
+	case user.FieldType:
+		return m.OldType(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -2527,6 +2599,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWeight(v)
+		return nil
+	case user.FieldType:
+		v, ok := value.(user.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
 		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -2591,7 +2670,14 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(user.FieldHeight) {
+		fields = append(fields, user.FieldHeight)
+	}
+	if m.FieldCleared(user.FieldWeight) {
+		fields = append(fields, user.FieldWeight)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -2604,6 +2690,14 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
+	switch name {
+	case user.FieldHeight:
+		m.ClearHeight()
+		return nil
+	case user.FieldWeight:
+		m.ClearWeight()
+		return nil
+	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
 
@@ -2619,6 +2713,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldWeight:
 		m.ResetWeight()
+		return nil
+	case user.FieldType:
+		m.ResetType()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()

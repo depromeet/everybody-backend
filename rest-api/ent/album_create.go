@@ -43,13 +43,13 @@ func (ac *AlbumCreate) SetNillableCreatedAt(t *time.Time) *AlbumCreate {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (ac *AlbumCreate) SetUserID(id string) *AlbumCreate {
+func (ac *AlbumCreate) SetUserID(id int) *AlbumCreate {
 	ac.mutation.SetUserID(id)
 	return ac
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ac *AlbumCreate) SetNillableUserID(id *string) *AlbumCreate {
+func (ac *AlbumCreate) SetNillableUserID(id *int) *AlbumCreate {
 	if id != nil {
 		ac = ac.SetUserID(*id)
 	}
@@ -213,7 +213,7 @@ func (ac *AlbumCreate) createSpec() (*Album, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},

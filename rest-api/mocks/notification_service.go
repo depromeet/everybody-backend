@@ -4,8 +4,6 @@ package mocks
 
 import (
 	dto "github.com/depromeet/everybody-backend/rest-api/dto"
-	ent "github.com/depromeet/everybody-backend/rest-api/ent"
-
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,20 +13,20 @@ type NotificationService struct {
 }
 
 // Configure provides a mock function with given fields: requestUser, body
-func (_m *NotificationService) Configure(requestUser string, body *dto.ConfigureNotificationRequest) (*ent.NotificationConfig, error) {
+func (_m *NotificationService) Configure(requestUser int, body *dto.ConfigureNotificationRequest) (*dto.NotificationConfigDto, error) {
 	ret := _m.Called(requestUser, body)
 
-	var r0 *ent.NotificationConfig
-	if rf, ok := ret.Get(0).(func(string, *dto.ConfigureNotificationRequest) *ent.NotificationConfig); ok {
+	var r0 *dto.NotificationConfigDto
+	if rf, ok := ret.Get(0).(func(int, *dto.ConfigureNotificationRequest) *dto.NotificationConfigDto); ok {
 		r0 = rf(requestUser, body)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.NotificationConfig)
+			r0 = ret.Get(0).(*dto.NotificationConfigDto)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string, *dto.ConfigureNotificationRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(int, *dto.ConfigureNotificationRequest) error); ok {
 		r1 = rf(requestUser, body)
 	} else {
 		r1 = ret.Error(1)
@@ -38,15 +36,15 @@ func (_m *NotificationService) Configure(requestUser string, body *dto.Configure
 }
 
 // GetConfig provides a mock function with given fields: id
-func (_m *NotificationService) GetConfig(id int) (*ent.NotificationConfig, error) {
+func (_m *NotificationService) GetConfig(id int) (*dto.NotificationConfigDto, error) {
 	ret := _m.Called(id)
 
-	var r0 *ent.NotificationConfig
-	if rf, ok := ret.Get(0).(func(int) *ent.NotificationConfig); ok {
+	var r0 *dto.NotificationConfigDto
+	if rf, ok := ret.Get(0).(func(int) *dto.NotificationConfigDto); ok {
 		r0 = rf(id)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.NotificationConfig)
+			r0 = ret.Get(0).(*dto.NotificationConfigDto)
 		}
 	}
 
@@ -61,20 +59,20 @@ func (_m *NotificationService) GetConfig(id int) (*ent.NotificationConfig, error
 }
 
 // GetConfigByUser provides a mock function with given fields: user
-func (_m *NotificationService) GetConfigByUser(user string) (*ent.NotificationConfig, error) {
+func (_m *NotificationService) GetConfigByUser(user int) (*dto.NotificationConfigDto, error) {
 	ret := _m.Called(user)
 
-	var r0 *ent.NotificationConfig
-	if rf, ok := ret.Get(0).(func(string) *ent.NotificationConfig); ok {
+	var r0 *dto.NotificationConfigDto
+	if rf, ok := ret.Get(0).(func(int) *dto.NotificationConfigDto); ok {
 		r0 = rf(user)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.NotificationConfig)
+			r0 = ret.Get(0).(*dto.NotificationConfigDto)
 		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
+	if rf, ok := ret.Get(1).(func(int) error); ok {
 		r1 = rf(user)
 	} else {
 		r1 = ret.Error(1)

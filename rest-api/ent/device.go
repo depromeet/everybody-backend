@@ -25,7 +25,7 @@ type Device struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DeviceQuery when eager-loading is set.
 	Edges       DeviceEdges `json:"edges"`
-	user_device *string
+	user_device *int
 }
 
 // DeviceEdges holds the relations/edges for other nodes in the graph.
@@ -61,7 +61,7 @@ func (*Device) scanValues(columns []string) ([]interface{}, error) {
 		case device.FieldDeviceToken, device.FieldPushToken, device.FieldDeviceOs:
 			values[i] = new(sql.NullString)
 		case device.ForeignKeys[0]: // user_device
-			values[i] = new(sql.NullString)
+			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Device", columns[i])
 		}
@@ -102,11 +102,11 @@ func (d *Device) assignValues(columns []string, values []interface{}) error {
 				d.DeviceOs = device.DeviceOs(value.String)
 			}
 		case device.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_device", values[i])
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field user_device", value)
 			} else if value.Valid {
-				d.user_device = new(string)
-				*d.user_device = value.String
+				d.user_device = new(int)
+				*d.user_device = int(value.Int64)
 			}
 		}
 	}

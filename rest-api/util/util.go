@@ -1,9 +1,12 @@
 package util
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"strconv"
+)
 
-func GetRequestUserID(ctx *fiber.Ctx) string {
-	return ctx.Get("user", "")
+func GetRequestUserID(ctx *fiber.Ctx) (int, error) {
+	return strconv.Atoi(ctx.Get("user", ""))
 }
 
 func GetParams(ctx *fiber.Ctx, params string) string {

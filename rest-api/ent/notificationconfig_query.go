@@ -382,8 +382,8 @@ func (ncq *NotificationConfigQuery) sqlAll(ctx context.Context) ([]*Notification
 	}
 
 	if query := ncq.withUser; query != nil {
-		ids := make([]string, 0, len(nodes))
-		nodeids := make(map[string][]*NotificationConfig)
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*NotificationConfig)
 		for i := range nodes {
 			if nodes[i].user_notification_config == nil {
 				continue

@@ -70,13 +70,13 @@ func (ncc *NotificationConfigCreate) SetID(i int) *NotificationConfigCreate {
 }
 
 // SetUserID sets the "user" edge to the User entity by ID.
-func (ncc *NotificationConfigCreate) SetUserID(id string) *NotificationConfigCreate {
+func (ncc *NotificationConfigCreate) SetUserID(id int) *NotificationConfigCreate {
 	ncc.mutation.SetUserID(id)
 	return ncc
 }
 
 // SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ncc *NotificationConfigCreate) SetNillableUserID(id *string) *NotificationConfigCreate {
+func (ncc *NotificationConfigCreate) SetNillableUserID(id *int) *NotificationConfigCreate {
 	if id != nil {
 		ncc = ncc.SetUserID(*id)
 	}
@@ -236,7 +236,7 @@ func (ncc *NotificationConfigCreate) createSpec() (*NotificationConfig, *sqlgrap
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeString,
+					Type:   field.TypeInt,
 					Column: user.FieldID,
 				},
 			},
