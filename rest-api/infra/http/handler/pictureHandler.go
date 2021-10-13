@@ -21,48 +21,49 @@ func NewPictureHandler(pictureService service.PictureServiceInterface) *PictureH
 }
 
 func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
-	var pictureReq dto.PictureRequest
-	err := ctx.BodyParser(&pictureReq)
+	// var pictureReq dto.PictureRequest
+	// err := ctx.BodyParser(&pictureReq)
+	// if err != nil {
+	// 	return err
+	// }
+	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
 		return err
 	}
 
-	result, err := h.pictureService.SavePicture(&pictureReq)
+	form, err := ctx.MultipartForm()
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(result)
+	pictureReq := dto.PictureMultiPart{
+		AlbumID:  form.Value["album_id"],
+		BodyPart: form.Value["body_part"],
+		File:     form.File["picture"],
+	}
+
+	picture, err := h.pictureService.SavePicture(userID, &pictureReq)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(picture)
 }
 
+// GetAllPictures는 user가 가지고 있는 모든 사진 조회
 func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
-	param := util.GetParams(ctx, "album_id")
-	if param == "" {
-		return errors.New("params should be provided")
-	}
-
-	albumID, err := strconv.Atoi(param)
+	// TODO: albumid가 아니라 userid로 전체 사진 조회하도록 수정
+	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
 		return err
 	}
 
-	pictures, err := h.pictureService.GetAllPictures(albumID)
+	pictures, err := h.pictureService.GetAllPictures(userID)
 	if err != nil {
 		return err
 	}
 
-	picturesResponse := make(dto.PicturesResponse, 0)
-	for _, picture := range pictures {
-		var pictureResponse *dto.PictureResponse
-
-		pictureResponse.ID = picture.ID
-		pictureResponse.CreatedAt = picture.CreatedAt
-		// s3 url 이나 hashed file name 등등 picture의 메타 데이터 주어야 함.
-
-		picturesResponse = append(picturesResponse, *pictureResponse)
-	}
-
-	return ctx.JSON(picturesResponse)
+	return ctx.JSON(pictures)
 }
 
 func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
@@ -81,8 +82,5 @@ func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(dto.PictureResponse{
-		CreatedAt: picture.CreatedAt,
-		// picture의 메타 데이터 주어야 함.
-	})
+	return ctx.JSON(picture)
 }
