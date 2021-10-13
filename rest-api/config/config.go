@@ -53,4 +53,10 @@ type config struct {
 			Password     string `yaml:"password"`
 		} `yaml:"mySql"`
 	} `yaml:"db"`
+
+	AWS struct {
+		Profile string `yaml:"profile"`
+		Region  string `yaml:"region"`
+		Bucket  string `yaml:"bucket"`
+	} `yaml:"aws"`
 }
