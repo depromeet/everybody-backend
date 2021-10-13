@@ -17,6 +17,8 @@ type Picture struct {
 func (Picture) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("body_part"),
+		field.String("location"),
+		field.Int("album_id"),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),
@@ -27,6 +29,11 @@ func (Picture) Fields() []ent.Field {
 func (Picture) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("album", Album.Type).
+			Ref("picture").
+			Unique().
+			Required().
+			Field("album_id"),
+		edge.From("user", User.Type).
 			Ref("picture").
 			Unique(),
 	}

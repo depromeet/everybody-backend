@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
+	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
 // PictureCreate is the builder for creating a Picture entity.
@@ -24,6 +25,18 @@ type PictureCreate struct {
 // SetBodyPart sets the "body_part" field.
 func (pc *PictureCreate) SetBodyPart(s string) *PictureCreate {
 	pc.mutation.SetBodyPart(s)
+	return pc
+}
+
+// SetLocation sets the "location" field.
+func (pc *PictureCreate) SetLocation(s string) *PictureCreate {
+	pc.mutation.SetLocation(s)
+	return pc
+}
+
+// SetAlbumID sets the "album_id" field.
+func (pc *PictureCreate) SetAlbumID(i int) *PictureCreate {
+	pc.mutation.SetAlbumID(i)
 	return pc
 }
 
@@ -41,23 +54,28 @@ func (pc *PictureCreate) SetNillableCreatedAt(t *time.Time) *PictureCreate {
 	return pc
 }
 
-// SetAlbumID sets the "album" edge to the Album entity by ID.
-func (pc *PictureCreate) SetAlbumID(id int) *PictureCreate {
-	pc.mutation.SetAlbumID(id)
+// SetAlbum sets the "album" edge to the Album entity.
+func (pc *PictureCreate) SetAlbum(a *Album) *PictureCreate {
+	return pc.SetAlbumID(a.ID)
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (pc *PictureCreate) SetUserID(id int) *PictureCreate {
+	pc.mutation.SetUserID(id)
 	return pc
 }
 
-// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
-func (pc *PictureCreate) SetNillableAlbumID(id *int) *PictureCreate {
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (pc *PictureCreate) SetNillableUserID(id *int) *PictureCreate {
 	if id != nil {
-		pc = pc.SetAlbumID(*id)
+		pc = pc.SetUserID(*id)
 	}
 	return pc
 }
 
-// SetAlbum sets the "album" edge to the Album entity.
-func (pc *PictureCreate) SetAlbum(a *Album) *PictureCreate {
-	return pc.SetAlbumID(a.ID)
+// SetUser sets the "user" edge to the User entity.
+func (pc *PictureCreate) SetUser(u *User) *PictureCreate {
+	return pc.SetUserID(u.ID)
 }
 
 // Mutation returns the PictureMutation object of the builder.
@@ -142,8 +160,17 @@ func (pc *PictureCreate) check() error {
 	if _, ok := pc.mutation.BodyPart(); !ok {
 		return &ValidationError{Name: "body_part", err: errors.New(`ent: missing required field "body_part"`)}
 	}
+	if _, ok := pc.mutation.Location(); !ok {
+		return &ValidationError{Name: "location", err: errors.New(`ent: missing required field "location"`)}
+	}
+	if _, ok := pc.mutation.AlbumID(); !ok {
+		return &ValidationError{Name: "album_id", err: errors.New(`ent: missing required field "album_id"`)}
+	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
+	}
+	if _, ok := pc.mutation.AlbumID(); !ok {
+		return &ValidationError{Name: "album", err: errors.New("ent: missing required edge \"album\"")}
 	}
 	return nil
 }
@@ -180,6 +207,14 @@ func (pc *PictureCreate) createSpec() (*Picture, *sqlgraph.CreateSpec) {
 		})
 		_node.BodyPart = value
 	}
+	if value, ok := pc.mutation.Location(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: picture.FieldLocation,
+		})
+		_node.Location = value
+	}
 	if value, ok := pc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -205,7 +240,27 @@ func (pc *PictureCreate) createSpec() (*Picture, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.album_picture = &nodes[0]
+		_node.AlbumID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   picture.UserTable,
+			Columns: []string{picture.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_picture = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

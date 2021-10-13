@@ -35,5 +35,6 @@ func (User) Edges() []ent.Edge {
 		edge.To("device", Device.Type),
 		edge.To("notification_config", NotificationConfig.Type),
 		edge.To("album", Album.Type),
+		edge.To("picture", Picture.Type),
 	}
 }

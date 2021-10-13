@@ -13,10 +13,16 @@ const (
 	FieldID = "id"
 	// FieldBodyPart holds the string denoting the body_part field in the database.
 	FieldBodyPart = "body_part"
+	// FieldLocation holds the string denoting the location field in the database.
+	FieldLocation = "location"
+	// FieldAlbumID holds the string denoting the album_id field in the database.
+	FieldAlbumID = "album_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// EdgeAlbum holds the string denoting the album edge name in mutations.
 	EdgeAlbum = "album"
+	// EdgeUser holds the string denoting the user edge name in mutations.
+	EdgeUser = "user"
 	// Table holds the table name of the picture in the database.
 	Table = "pictures"
 	// AlbumTable is the table that holds the album relation/edge.
@@ -25,20 +31,29 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "album" package.
 	AlbumInverseTable = "albums"
 	// AlbumColumn is the table column denoting the album relation/edge.
-	AlbumColumn = "album_picture"
+	AlbumColumn = "album_id"
+	// UserTable is the table that holds the user relation/edge.
+	UserTable = "pictures"
+	// UserInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UserInverseTable = "users"
+	// UserColumn is the table column denoting the user relation/edge.
+	UserColumn = "user_picture"
 )
 
 // Columns holds all SQL columns for picture fields.
 var Columns = []string{
 	FieldID,
 	FieldBodyPart,
+	FieldLocation,
+	FieldAlbumID,
 	FieldCreatedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "pictures"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"album_picture",
+	"user_picture",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

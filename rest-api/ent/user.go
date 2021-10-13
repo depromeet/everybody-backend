@@ -39,9 +39,11 @@ type UserEdges struct {
 	NotificationConfig []*NotificationConfig `json:"notification_config,omitempty"`
 	// Album holds the value of the album edge.
 	Album []*Album `json:"album,omitempty"`
+	// Picture holds the value of the picture edge.
+	Picture []*Picture `json:"picture,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // DeviceOrErr returns the Device value or an error if the edge
@@ -69,6 +71,15 @@ func (e UserEdges) AlbumOrErr() ([]*Album, error) {
 		return e.Album, nil
 	}
 	return nil, &NotLoadedError{edge: "album"}
+}
+
+// PictureOrErr returns the Picture value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) PictureOrErr() ([]*Picture, error) {
+	if e.loadedTypes[3] {
+		return e.Picture, nil
+	}
+	return nil, &NotLoadedError{edge: "picture"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -153,6 +164,11 @@ func (u *User) QueryNotificationConfig() *NotificationConfigQuery {
 // QueryAlbum queries the "album" edge of the User entity.
 func (u *User) QueryAlbum() *AlbumQuery {
 	return (&UserClient{config: u.config}).QueryAlbum(u)
+}
+
+// QueryPicture queries the "picture" edge of the User entity.
+func (u *User) QueryPicture() *PictureQuery {
+	return (&UserClient{config: u.config}).QueryPicture(u)
 }
 
 // Update returns a builder for updating this User.

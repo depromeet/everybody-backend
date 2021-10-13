@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
+	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
 // PictureUpdate is the builder for updating Picture entities.
@@ -34,6 +36,18 @@ func (pu *PictureUpdate) SetBodyPart(s string) *PictureUpdate {
 	return pu
 }
 
+// SetLocation sets the "location" field.
+func (pu *PictureUpdate) SetLocation(s string) *PictureUpdate {
+	pu.mutation.SetLocation(s)
+	return pu
+}
+
+// SetAlbumID sets the "album_id" field.
+func (pu *PictureUpdate) SetAlbumID(i int) *PictureUpdate {
+	pu.mutation.SetAlbumID(i)
+	return pu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (pu *PictureUpdate) SetCreatedAt(t time.Time) *PictureUpdate {
 	pu.mutation.SetCreatedAt(t)
@@ -48,23 +62,28 @@ func (pu *PictureUpdate) SetNillableCreatedAt(t *time.Time) *PictureUpdate {
 	return pu
 }
 
-// SetAlbumID sets the "album" edge to the Album entity by ID.
-func (pu *PictureUpdate) SetAlbumID(id int) *PictureUpdate {
-	pu.mutation.SetAlbumID(id)
+// SetAlbum sets the "album" edge to the Album entity.
+func (pu *PictureUpdate) SetAlbum(a *Album) *PictureUpdate {
+	return pu.SetAlbumID(a.ID)
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (pu *PictureUpdate) SetUserID(id int) *PictureUpdate {
+	pu.mutation.SetUserID(id)
 	return pu
 }
 
-// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
-func (pu *PictureUpdate) SetNillableAlbumID(id *int) *PictureUpdate {
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (pu *PictureUpdate) SetNillableUserID(id *int) *PictureUpdate {
 	if id != nil {
-		pu = pu.SetAlbumID(*id)
+		pu = pu.SetUserID(*id)
 	}
 	return pu
 }
 
-// SetAlbum sets the "album" edge to the Album entity.
-func (pu *PictureUpdate) SetAlbum(a *Album) *PictureUpdate {
-	return pu.SetAlbumID(a.ID)
+// SetUser sets the "user" edge to the User entity.
+func (pu *PictureUpdate) SetUser(u *User) *PictureUpdate {
+	return pu.SetUserID(u.ID)
 }
 
 // Mutation returns the PictureMutation object of the builder.
@@ -78,6 +97,12 @@ func (pu *PictureUpdate) ClearAlbum() *PictureUpdate {
 	return pu
 }
 
+// ClearUser clears the "user" edge to the User entity.
+func (pu *PictureUpdate) ClearUser() *PictureUpdate {
+	pu.mutation.ClearUser()
+	return pu
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (pu *PictureUpdate) Save(ctx context.Context) (int, error) {
 	var (
@@ -85,12 +110,18 @@ func (pu *PictureUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(pu.hooks) == 0 {
+		if err = pu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = pu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PictureMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = pu.check(); err != nil {
+				return 0, err
 			}
 			pu.mutation = mutation
 			affected, err = pu.sqlSave(ctx)
@@ -132,6 +163,14 @@ func (pu *PictureUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (pu *PictureUpdate) check() error {
+	if _, ok := pu.mutation.AlbumID(); pu.mutation.AlbumCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"album\"")
+	}
+	return nil
+}
+
 func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -155,6 +194,13 @@ func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: picture.FieldBodyPart,
+		})
+	}
+	if value, ok := pu.mutation.Location(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: picture.FieldLocation,
 		})
 	}
 	if value, ok := pu.mutation.CreatedAt(); ok {
@@ -199,6 +245,41 @@ func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if pu.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   picture.UserTable,
+			Columns: []string{picture.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   picture.UserTable,
+			Columns: []string{picture.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{picture.Label}
@@ -224,6 +305,18 @@ func (puo *PictureUpdateOne) SetBodyPart(s string) *PictureUpdateOne {
 	return puo
 }
 
+// SetLocation sets the "location" field.
+func (puo *PictureUpdateOne) SetLocation(s string) *PictureUpdateOne {
+	puo.mutation.SetLocation(s)
+	return puo
+}
+
+// SetAlbumID sets the "album_id" field.
+func (puo *PictureUpdateOne) SetAlbumID(i int) *PictureUpdateOne {
+	puo.mutation.SetAlbumID(i)
+	return puo
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (puo *PictureUpdateOne) SetCreatedAt(t time.Time) *PictureUpdateOne {
 	puo.mutation.SetCreatedAt(t)
@@ -238,23 +331,28 @@ func (puo *PictureUpdateOne) SetNillableCreatedAt(t *time.Time) *PictureUpdateOn
 	return puo
 }
 
-// SetAlbumID sets the "album" edge to the Album entity by ID.
-func (puo *PictureUpdateOne) SetAlbumID(id int) *PictureUpdateOne {
-	puo.mutation.SetAlbumID(id)
+// SetAlbum sets the "album" edge to the Album entity.
+func (puo *PictureUpdateOne) SetAlbum(a *Album) *PictureUpdateOne {
+	return puo.SetAlbumID(a.ID)
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (puo *PictureUpdateOne) SetUserID(id int) *PictureUpdateOne {
+	puo.mutation.SetUserID(id)
 	return puo
 }
 
-// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
-func (puo *PictureUpdateOne) SetNillableAlbumID(id *int) *PictureUpdateOne {
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (puo *PictureUpdateOne) SetNillableUserID(id *int) *PictureUpdateOne {
 	if id != nil {
-		puo = puo.SetAlbumID(*id)
+		puo = puo.SetUserID(*id)
 	}
 	return puo
 }
 
-// SetAlbum sets the "album" edge to the Album entity.
-func (puo *PictureUpdateOne) SetAlbum(a *Album) *PictureUpdateOne {
-	return puo.SetAlbumID(a.ID)
+// SetUser sets the "user" edge to the User entity.
+func (puo *PictureUpdateOne) SetUser(u *User) *PictureUpdateOne {
+	return puo.SetUserID(u.ID)
 }
 
 // Mutation returns the PictureMutation object of the builder.
@@ -265,6 +363,12 @@ func (puo *PictureUpdateOne) Mutation() *PictureMutation {
 // ClearAlbum clears the "album" edge to the Album entity.
 func (puo *PictureUpdateOne) ClearAlbum() *PictureUpdateOne {
 	puo.mutation.ClearAlbum()
+	return puo
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (puo *PictureUpdateOne) ClearUser() *PictureUpdateOne {
+	puo.mutation.ClearUser()
 	return puo
 }
 
@@ -282,12 +386,18 @@ func (puo *PictureUpdateOne) Save(ctx context.Context) (*Picture, error) {
 		node *Picture
 	)
 	if len(puo.hooks) == 0 {
+		if err = puo.check(); err != nil {
+			return nil, err
+		}
 		node, err = puo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PictureMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = puo.check(); err != nil {
+				return nil, err
 			}
 			puo.mutation = mutation
 			node, err = puo.sqlSave(ctx)
@@ -327,6 +437,14 @@ func (puo *PictureUpdateOne) ExecX(ctx context.Context) {
 	if err := puo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (puo *PictureUpdateOne) check() error {
+	if _, ok := puo.mutation.AlbumID(); puo.mutation.AlbumCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"album\"")
+	}
+	return nil
 }
 
 func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err error) {
@@ -371,6 +489,13 @@ func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err e
 			Column: picture.FieldBodyPart,
 		})
 	}
+	if value, ok := puo.mutation.Location(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: picture.FieldLocation,
+		})
+	}
 	if value, ok := puo.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -405,6 +530,41 @@ func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err e
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: album.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   picture.UserTable,
+			Columns: []string{picture.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   picture.UserTable,
+			Columns: []string{picture.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: user.FieldID,
 				},
 			},
 		}

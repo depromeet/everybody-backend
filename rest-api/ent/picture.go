@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
+	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
 // Picture is the model entity for the Picture schema.
@@ -19,21 +20,27 @@ type Picture struct {
 	ID int `json:"id,omitempty"`
 	// BodyPart holds the value of the "body_part" field.
 	BodyPart string `json:"body_part,omitempty"`
+	// Location holds the value of the "location" field.
+	Location string `json:"location,omitempty"`
+	// AlbumID holds the value of the "album_id" field.
+	AlbumID int `json:"album_id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PictureQuery when eager-loading is set.
-	Edges         PictureEdges `json:"edges"`
-	album_picture *int
+	Edges        PictureEdges `json:"edges"`
+	user_picture *int
 }
 
 // PictureEdges holds the relations/edges for other nodes in the graph.
 type PictureEdges struct {
 	// Album holds the value of the album edge.
 	Album *Album `json:"album,omitempty"`
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // AlbumOrErr returns the Album value or an error if the edge
@@ -50,18 +57,32 @@ func (e PictureEdges) AlbumOrErr() (*Album, error) {
 	return nil, &NotLoadedError{edge: "album"}
 }
 
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PictureEdges) UserOrErr() (*User, error) {
+	if e.loadedTypes[1] {
+		if e.User == nil {
+			// The edge user was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.User, nil
+	}
+	return nil, &NotLoadedError{edge: "user"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Picture) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case picture.FieldID:
+		case picture.FieldID, picture.FieldAlbumID:
 			values[i] = new(sql.NullInt64)
-		case picture.FieldBodyPart:
+		case picture.FieldBodyPart, picture.FieldLocation:
 			values[i] = new(sql.NullString)
 		case picture.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case picture.ForeignKeys[0]: // album_picture
+		case picture.ForeignKeys[0]: // user_picture
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Picture", columns[i])
@@ -90,6 +111,18 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				pi.BodyPart = value.String
 			}
+		case picture.FieldLocation:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field location", values[i])
+			} else if value.Valid {
+				pi.Location = value.String
+			}
+		case picture.FieldAlbumID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field album_id", values[i])
+			} else if value.Valid {
+				pi.AlbumID = int(value.Int64)
+			}
 		case picture.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -98,10 +131,10 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 			}
 		case picture.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field album_picture", value)
+				return fmt.Errorf("unexpected type %T for edge-field user_picture", value)
 			} else if value.Valid {
-				pi.album_picture = new(int)
-				*pi.album_picture = int(value.Int64)
+				pi.user_picture = new(int)
+				*pi.user_picture = int(value.Int64)
 			}
 		}
 	}
@@ -111,6 +144,11 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 // QueryAlbum queries the "album" edge of the Picture entity.
 func (pi *Picture) QueryAlbum() *AlbumQuery {
 	return (&PictureClient{config: pi.config}).QueryAlbum(pi)
+}
+
+// QueryUser queries the "user" edge of the Picture entity.
+func (pi *Picture) QueryUser() *UserQuery {
+	return (&PictureClient{config: pi.config}).QueryUser(pi)
 }
 
 // Update returns a builder for updating this Picture.
@@ -138,6 +176,10 @@ func (pi *Picture) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", pi.ID))
 	builder.WriteString(", body_part=")
 	builder.WriteString(pi.BodyPart)
+	builder.WriteString(", location=")
+	builder.WriteString(pi.Location)
+	builder.WriteString(", album_id=")
+	builder.WriteString(fmt.Sprintf("%v", pi.AlbumID))
 	builder.WriteString(", created_at=")
 	builder.WriteString(pi.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

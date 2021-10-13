@@ -14,6 +14,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
+	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
 // PictureQuery is the builder for querying Picture entities.
@@ -27,6 +28,7 @@ type PictureQuery struct {
 	predicates []predicate.Picture
 	// eager-loading edges.
 	withAlbum *AlbumQuery
+	withUser  *UserQuery
 	withFKs   bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -79,6 +81,28 @@ func (pq *PictureQuery) QueryAlbum() *AlbumQuery {
 			sqlgraph.From(picture.Table, picture.FieldID, selector),
 			sqlgraph.To(album.Table, album.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, picture.AlbumTable, picture.AlbumColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUser chains the current query on the "user" edge.
+func (pq *PictureQuery) QueryUser() *UserQuery {
+	query := &UserQuery{config: pq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(picture.Table, picture.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, picture.UserTable, picture.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -268,6 +292,7 @@ func (pq *PictureQuery) Clone() *PictureQuery {
 		order:      append([]OrderFunc{}, pq.order...),
 		predicates: append([]predicate.Picture{}, pq.predicates...),
 		withAlbum:  pq.withAlbum.Clone(),
+		withUser:   pq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,
@@ -282,6 +307,17 @@ func (pq *PictureQuery) WithAlbum(opts ...func(*AlbumQuery)) *PictureQuery {
 		opt(query)
 	}
 	pq.withAlbum = query
+	return pq
+}
+
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *PictureQuery) WithUser(opts ...func(*UserQuery)) *PictureQuery {
+	query := &UserQuery{config: pq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withUser = query
 	return pq
 }
 
@@ -351,11 +387,12 @@ func (pq *PictureQuery) sqlAll(ctx context.Context) ([]*Picture, error) {
 		nodes       = []*Picture{}
 		withFKs     = pq.withFKs
 		_spec       = pq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			pq.withAlbum != nil,
+			pq.withUser != nil,
 		}
 	)
-	if pq.withAlbum != nil {
+	if pq.withAlbum != nil || pq.withUser != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -385,10 +422,7 @@ func (pq *PictureQuery) sqlAll(ctx context.Context) ([]*Picture, error) {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Picture)
 		for i := range nodes {
-			if nodes[i].album_picture == nil {
-				continue
-			}
-			fk := *nodes[i].album_picture
+			fk := nodes[i].AlbumID
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
@@ -402,10 +436,39 @@ func (pq *PictureQuery) sqlAll(ctx context.Context) ([]*Picture, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "album_picture" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "album_id" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Album = n
+			}
+		}
+	}
+
+	if query := pq.withUser; query != nil {
+		ids := make([]int, 0, len(nodes))
+		nodeids := make(map[int][]*Picture)
+		for i := range nodes {
+			if nodes[i].user_picture == nil {
+				continue
+			}
+			fk := *nodes[i].user_picture
+			if _, ok := nodeids[fk]; !ok {
+				ids = append(ids, fk)
+			}
+			nodeids[fk] = append(nodeids[fk], nodes[i])
+		}
+		query.Where(user.IDIn(ids...))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			nodes, ok := nodeids[n.ID]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_picture" returned %v`, n.ID)
+			}
+			for i := range nodes {
+				nodes[i].Edges.User = n
 			}
 		}
 	}

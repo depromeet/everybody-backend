@@ -1567,10 +1567,13 @@ type PictureMutation struct {
 	typ           string
 	id            *int
 	body_part     *string
+	location      *string
 	created_at    *time.Time
 	clearedFields map[string]struct{}
 	album         *int
 	clearedalbum  bool
+	user          *int
+	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*Picture, error)
 	predicates    []predicate.Picture
@@ -1691,6 +1694,78 @@ func (m *PictureMutation) ResetBodyPart() {
 	m.body_part = nil
 }
 
+// SetLocation sets the "location" field.
+func (m *PictureMutation) SetLocation(s string) {
+	m.location = &s
+}
+
+// Location returns the value of the "location" field in the mutation.
+func (m *PictureMutation) Location() (r string, exists bool) {
+	v := m.location
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocation returns the old "location" field's value of the Picture entity.
+// If the Picture object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PictureMutation) OldLocation(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldLocation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldLocation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocation: %w", err)
+	}
+	return oldValue.Location, nil
+}
+
+// ResetLocation resets all changes to the "location" field.
+func (m *PictureMutation) ResetLocation() {
+	m.location = nil
+}
+
+// SetAlbumID sets the "album_id" field.
+func (m *PictureMutation) SetAlbumID(i int) {
+	m.album = &i
+}
+
+// AlbumID returns the value of the "album_id" field in the mutation.
+func (m *PictureMutation) AlbumID() (r int, exists bool) {
+	v := m.album
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAlbumID returns the old "album_id" field's value of the Picture entity.
+// If the Picture object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PictureMutation) OldAlbumID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldAlbumID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldAlbumID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAlbumID: %w", err)
+	}
+	return oldValue.AlbumID, nil
+}
+
+// ResetAlbumID resets all changes to the "album_id" field.
+func (m *PictureMutation) ResetAlbumID() {
+	m.album = nil
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *PictureMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -1727,11 +1802,6 @@ func (m *PictureMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetAlbumID sets the "album" edge to the Album entity by id.
-func (m *PictureMutation) SetAlbumID(id int) {
-	m.album = &id
-}
-
 // ClearAlbum clears the "album" edge to the Album entity.
 func (m *PictureMutation) ClearAlbum() {
 	m.clearedalbum = true
@@ -1740,14 +1810,6 @@ func (m *PictureMutation) ClearAlbum() {
 // AlbumCleared reports if the "album" edge to the Album entity was cleared.
 func (m *PictureMutation) AlbumCleared() bool {
 	return m.clearedalbum
-}
-
-// AlbumID returns the "album" edge ID in the mutation.
-func (m *PictureMutation) AlbumID() (id int, exists bool) {
-	if m.album != nil {
-		return *m.album, true
-	}
-	return
 }
 
 // AlbumIDs returns the "album" edge IDs in the mutation.
@@ -1764,6 +1826,45 @@ func (m *PictureMutation) AlbumIDs() (ids []int) {
 func (m *PictureMutation) ResetAlbum() {
 	m.album = nil
 	m.clearedalbum = false
+}
+
+// SetUserID sets the "user" edge to the User entity by id.
+func (m *PictureMutation) SetUserID(id int) {
+	m.user = &id
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *PictureMutation) ClearUser() {
+	m.cleareduser = true
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *PictureMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserID returns the "user" edge ID in the mutation.
+func (m *PictureMutation) UserID() (id int, exists bool) {
+	if m.user != nil {
+		return *m.user, true
+	}
+	return
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *PictureMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *PictureMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
 }
 
 // Where appends a list predicates to the PictureMutation builder.
@@ -1785,9 +1886,15 @@ func (m *PictureMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PictureMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 4)
 	if m.body_part != nil {
 		fields = append(fields, picture.FieldBodyPart)
+	}
+	if m.location != nil {
+		fields = append(fields, picture.FieldLocation)
+	}
+	if m.album != nil {
+		fields = append(fields, picture.FieldAlbumID)
 	}
 	if m.created_at != nil {
 		fields = append(fields, picture.FieldCreatedAt)
@@ -1802,6 +1909,10 @@ func (m *PictureMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case picture.FieldBodyPart:
 		return m.BodyPart()
+	case picture.FieldLocation:
+		return m.Location()
+	case picture.FieldAlbumID:
+		return m.AlbumID()
 	case picture.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -1815,6 +1926,10 @@ func (m *PictureMutation) OldField(ctx context.Context, name string) (ent.Value,
 	switch name {
 	case picture.FieldBodyPart:
 		return m.OldBodyPart(ctx)
+	case picture.FieldLocation:
+		return m.OldLocation(ctx)
+	case picture.FieldAlbumID:
+		return m.OldAlbumID(ctx)
 	case picture.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -1833,6 +1948,20 @@ func (m *PictureMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBodyPart(v)
 		return nil
+	case picture.FieldLocation:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocation(v)
+		return nil
+	case picture.FieldAlbumID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAlbumID(v)
+		return nil
 	case picture.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -1847,13 +1976,16 @@ func (m *PictureMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *PictureMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *PictureMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -1892,6 +2024,12 @@ func (m *PictureMutation) ResetField(name string) error {
 	case picture.FieldBodyPart:
 		m.ResetBodyPart()
 		return nil
+	case picture.FieldLocation:
+		m.ResetLocation()
+		return nil
+	case picture.FieldAlbumID:
+		m.ResetAlbumID()
+		return nil
 	case picture.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
@@ -1901,9 +2039,12 @@ func (m *PictureMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PictureMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.album != nil {
 		edges = append(edges, picture.EdgeAlbum)
+	}
+	if m.user != nil {
+		edges = append(edges, picture.EdgeUser)
 	}
 	return edges
 }
@@ -1916,13 +2057,17 @@ func (m *PictureMutation) AddedIDs(name string) []ent.Value {
 		if id := m.album; id != nil {
 			return []ent.Value{*id}
 		}
+	case picture.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PictureMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -1936,9 +2081,12 @@ func (m *PictureMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PictureMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedalbum {
 		edges = append(edges, picture.EdgeAlbum)
+	}
+	if m.cleareduser {
+		edges = append(edges, picture.EdgeUser)
 	}
 	return edges
 }
@@ -1949,6 +2097,8 @@ func (m *PictureMutation) EdgeCleared(name string) bool {
 	switch name {
 	case picture.EdgeAlbum:
 		return m.clearedalbum
+	case picture.EdgeUser:
+		return m.cleareduser
 	}
 	return false
 }
@@ -1960,6 +2110,9 @@ func (m *PictureMutation) ClearEdge(name string) error {
 	case picture.EdgeAlbum:
 		m.ClearAlbum()
 		return nil
+	case picture.EdgeUser:
+		m.ClearUser()
+		return nil
 	}
 	return fmt.Errorf("unknown Picture unique edge %s", name)
 }
@@ -1970,6 +2123,9 @@ func (m *PictureMutation) ResetEdge(name string) error {
 	switch name {
 	case picture.EdgeAlbum:
 		m.ResetAlbum()
+		return nil
+	case picture.EdgeUser:
+		m.ResetUser()
 		return nil
 	}
 	return fmt.Errorf("unknown Picture edge %s", name)
@@ -1998,6 +2154,9 @@ type UserMutation struct {
 	album                      map[int]struct{}
 	removedalbum               map[int]struct{}
 	clearedalbum               bool
+	picture                    map[int]struct{}
+	removedpicture             map[int]struct{}
+	clearedpicture             bool
 	done                       bool
 	oldValue                   func(context.Context) (*User, error)
 	predicates                 []predicate.User
@@ -2498,6 +2657,60 @@ func (m *UserMutation) ResetAlbum() {
 	m.removedalbum = nil
 }
 
+// AddPictureIDs adds the "picture" edge to the Picture entity by ids.
+func (m *UserMutation) AddPictureIDs(ids ...int) {
+	if m.picture == nil {
+		m.picture = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.picture[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPicture clears the "picture" edge to the Picture entity.
+func (m *UserMutation) ClearPicture() {
+	m.clearedpicture = true
+}
+
+// PictureCleared reports if the "picture" edge to the Picture entity was cleared.
+func (m *UserMutation) PictureCleared() bool {
+	return m.clearedpicture
+}
+
+// RemovePictureIDs removes the "picture" edge to the Picture entity by IDs.
+func (m *UserMutation) RemovePictureIDs(ids ...int) {
+	if m.removedpicture == nil {
+		m.removedpicture = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.picture, ids[i])
+		m.removedpicture[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPicture returns the removed IDs of the "picture" edge to the Picture entity.
+func (m *UserMutation) RemovedPictureIDs() (ids []int) {
+	for id := range m.removedpicture {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PictureIDs returns the "picture" edge IDs in the mutation.
+func (m *UserMutation) PictureIDs() (ids []int) {
+	for id := range m.picture {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPicture resets all changes to the "picture" edge.
+func (m *UserMutation) ResetPicture() {
+	m.picture = nil
+	m.clearedpicture = false
+	m.removedpicture = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -2726,7 +2939,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.device != nil {
 		edges = append(edges, user.EdgeDevice)
 	}
@@ -2735,6 +2948,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.album != nil {
 		edges = append(edges, user.EdgeAlbum)
+	}
+	if m.picture != nil {
+		edges = append(edges, user.EdgePicture)
 	}
 	return edges
 }
@@ -2761,13 +2977,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePicture:
+		ids := make([]ent.Value, 0, len(m.picture))
+		for id := range m.picture {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removeddevice != nil {
 		edges = append(edges, user.EdgeDevice)
 	}
@@ -2776,6 +2998,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedalbum != nil {
 		edges = append(edges, user.EdgeAlbum)
+	}
+	if m.removedpicture != nil {
+		edges = append(edges, user.EdgePicture)
 	}
 	return edges
 }
@@ -2802,13 +3027,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgePicture:
+		ids := make([]ent.Value, 0, len(m.removedpicture))
+		for id := range m.removedpicture {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.cleareddevice {
 		edges = append(edges, user.EdgeDevice)
 	}
@@ -2817,6 +3048,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedalbum {
 		edges = append(edges, user.EdgeAlbum)
+	}
+	if m.clearedpicture {
+		edges = append(edges, user.EdgePicture)
 	}
 	return edges
 }
@@ -2831,6 +3065,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearednotification_config
 	case user.EdgeAlbum:
 		return m.clearedalbum
+	case user.EdgePicture:
+		return m.clearedpicture
 	}
 	return false
 }
@@ -2855,6 +3091,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeAlbum:
 		m.ResetAlbum()
+		return nil
+	case user.EdgePicture:
+		m.ResetPicture()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
