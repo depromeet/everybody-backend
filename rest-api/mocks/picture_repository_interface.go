@@ -81,16 +81,48 @@ func (_m *PictureRepositoryInterface) GetAllByAlbumID(albumID int) ([]*ent.Pictu
 	return r0, r1
 }
 
-// Save provides a mock function with given fields: picture
-func (_m *PictureRepositoryInterface) Save(picture *ent.Picture) error {
-	ret := _m.Called(picture)
+// GetAllByUserID provides a mock function with given fields: userID
+func (_m *PictureRepositoryInterface) GetAllByUserID(userID int) ([]*ent.Picture, error) {
+	ret := _m.Called(userID)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(*ent.Picture) error); ok {
-		r0 = rf(picture)
+	var r0 []*ent.Picture
+	if rf, ok := ret.Get(0).(func(int) []*ent.Picture); ok {
+		r0 = rf(userID)
 	} else {
-		r0 = ret.Error(0)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*ent.Picture)
+		}
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int) error); ok {
+		r1 = rf(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Save provides a mock function with given fields: picture
+func (_m *PictureRepositoryInterface) Save(picture *ent.Picture) (*ent.Picture, error) {
+	ret := _m.Called(picture)
+
+	var r0 *ent.Picture
+	if rf, ok := ret.Get(0).(func(*ent.Picture) *ent.Picture); ok {
+		r0 = rf(picture)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ent.Picture)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(*ent.Picture) error); ok {
+		r1 = rf(picture)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }

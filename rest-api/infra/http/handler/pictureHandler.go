@@ -21,11 +21,6 @@ func NewPictureHandler(pictureService service.PictureServiceInterface) *PictureH
 }
 
 func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
-	// var pictureReq dto.PictureRequest
-	// err := ctx.BodyParser(&pictureReq)
-	// if err != nil {
-	// 	return err
-	// }
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
 		return err
