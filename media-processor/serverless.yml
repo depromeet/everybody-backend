@@ -10,6 +10,12 @@ provider:
   profile: depromeet-everybody
 #  TODO: internal하게 everybody-api-gateway만이 호출할 수 있게
 #  endpointType: PRIVATE
+  tracing:
+    lambda: true
+  iam:
+    role:
+      managedPolicies:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
 
 functions:
   hello:
@@ -37,7 +43,18 @@ functions:
       - httpApi:
           path: /video
           method: get
-
+  thumbnail-generator:
+    handler: generate_thumbnail.handler.handle
+    description: INPUT_BUCKET/INPUT_OBJECT_KEY 경로에 이미지 업로드 시에 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
+    events:
+      - s3:
+          bucket: everybody-upload-original-dev-1
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: original/
+          # S3 버킷 관리를 serverless가 수행할 경우 버킷이 통째로 날아갈 수도 있다.
+          # 따라서 existing bucket으로 정의한다.
+          existing: true
 
 plugins:
   # 로컬에서 http로 핸들러를 트리거하기 위함
