@@ -22,7 +22,7 @@ functions:
           path: /
           method: get
   panorama:
-    handler: panorama_handler.handle
+    handler: generate_panorama.handler.handle
 #    layers:
 #      - { Ref: PythonRequirementsLambdaLayer }
     events:
@@ -30,11 +30,14 @@ functions:
           path: /panorama
           method: get
   video:
-    handler: generate_video_handler.handle
+    handler: generate_video.handler.handle
+#    layers:
+#      - { Ref: PythonRequirementsLambdaLayer }
     events:
       - httpApi:
           path: /video
           method: get
+
 
 plugins:
   # 로컬에서 http로 핸들러를 트리거하기 위함
@@ -46,8 +49,7 @@ package:
   patterns:
     # numpy나 open cv때문에 직접 빌드해야한다.
     - '!venv/**'
-    # 이거는 필요 없는데 용량만 잡아먹는다.
-    - '!node_modules/**'
+
 custom:
   pythonRequirements:
 #    # docker로 직접 pip build를 해야할 수 있음 numpy나 opencv 같은 것들은 (window나 mac에서는 다르게 빌드될 수 있음)
