@@ -1,0 +1,9 @@
+serverAddr:
+  restApi: http://localhost:8443/health
+db:
+  mySql:
+    host: localhost
+    port: 3306
+    databaseName: everybody
+    user: admin
+    password: admin
