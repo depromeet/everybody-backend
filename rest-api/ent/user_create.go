@@ -13,6 +13,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
@@ -126,6 +127,21 @@ func (uc *UserCreate) AddAlbum(a ...*Album) *UserCreate {
 		ids[i] = a[i].ID
 	}
 	return uc.AddAlbumIDs(ids...)
+}
+
+// AddPictureIDs adds the "picture" edge to the Picture entity by IDs.
+func (uc *UserCreate) AddPictureIDs(ids ...int) *UserCreate {
+	uc.mutation.AddPictureIDs(ids...)
+	return uc
+}
+
+// AddPicture adds the "picture" edges to the Picture entity.
+func (uc *UserCreate) AddPicture(p ...*Picture) *UserCreate {
+	ids := make([]int, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uc.AddPictureIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -343,6 +359,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: album.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.PictureIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PictureTable,
+			Columns: []string{user.PictureColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: picture.FieldID,
 				},
 			},
 		}

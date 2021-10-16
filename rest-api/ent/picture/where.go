@@ -100,6 +100,20 @@ func BodyPart(v string) predicate.Picture {
 	})
 }
 
+// Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
+func Location(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLocation), v))
+	})
+}
+
+// AlbumID applies equality check predicate on the "album_id" field. It's identical to AlbumIDEQ.
+func AlbumID(v int) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAlbumID), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
@@ -218,6 +232,165 @@ func BodyPartContainsFold(v string) predicate.Picture {
 	})
 }
 
+// LocationEQ applies the EQ predicate on the "location" field.
+func LocationEQ(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLocation), v))
+	})
+}
+
+// LocationNEQ applies the NEQ predicate on the "location" field.
+func LocationNEQ(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLocation), v))
+	})
+}
+
+// LocationIn applies the In predicate on the "location" field.
+func LocationIn(vs ...string) predicate.Picture {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Picture(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldLocation), v...))
+	})
+}
+
+// LocationNotIn applies the NotIn predicate on the "location" field.
+func LocationNotIn(vs ...string) predicate.Picture {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Picture(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldLocation), v...))
+	})
+}
+
+// LocationGT applies the GT predicate on the "location" field.
+func LocationGT(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLocation), v))
+	})
+}
+
+// LocationGTE applies the GTE predicate on the "location" field.
+func LocationGTE(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLocation), v))
+	})
+}
+
+// LocationLT applies the LT predicate on the "location" field.
+func LocationLT(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLocation), v))
+	})
+}
+
+// LocationLTE applies the LTE predicate on the "location" field.
+func LocationLTE(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLocation), v))
+	})
+}
+
+// LocationContains applies the Contains predicate on the "location" field.
+func LocationContains(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldLocation), v))
+	})
+}
+
+// LocationHasPrefix applies the HasPrefix predicate on the "location" field.
+func LocationHasPrefix(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldLocation), v))
+	})
+}
+
+// LocationHasSuffix applies the HasSuffix predicate on the "location" field.
+func LocationHasSuffix(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldLocation), v))
+	})
+}
+
+// LocationEqualFold applies the EqualFold predicate on the "location" field.
+func LocationEqualFold(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldLocation), v))
+	})
+}
+
+// LocationContainsFold applies the ContainsFold predicate on the "location" field.
+func LocationContainsFold(v string) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldLocation), v))
+	})
+}
+
+// AlbumIDEQ applies the EQ predicate on the "album_id" field.
+func AlbumIDEQ(v int) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldAlbumID), v))
+	})
+}
+
+// AlbumIDNEQ applies the NEQ predicate on the "album_id" field.
+func AlbumIDNEQ(v int) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldAlbumID), v))
+	})
+}
+
+// AlbumIDIn applies the In predicate on the "album_id" field.
+func AlbumIDIn(vs ...int) predicate.Picture {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Picture(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldAlbumID), v...))
+	})
+}
+
+// AlbumIDNotIn applies the NotIn predicate on the "album_id" field.
+func AlbumIDNotIn(vs ...int) predicate.Picture {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Picture(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldAlbumID), v...))
+	})
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
@@ -313,6 +486,34 @@ func HasAlbumWith(preds ...predicate.Album) predicate.Picture {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(AlbumInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, AlbumTable, AlbumColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUser applies the HasEdge predicate on the "user" edge.
+func HasUser() predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
+func HasUserWith(preds ...predicate.User) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(UserInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

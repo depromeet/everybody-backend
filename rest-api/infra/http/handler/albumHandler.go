@@ -37,13 +37,10 @@ func (h *AlbumHandler) CreateAlbum(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	return ctx.JSON(dto.AlbumResponse{
-		ID:        newAlbum.ID,
-		Name:      newAlbum.Name,
-		CreatedAt: newAlbum.CreatedAt,
-	})
+	return ctx.JSON(newAlbum)
 }
 
+// GetAllAlbums는 album 전체 리스트 조회
 func (h *AlbumHandler) GetAllAlbums(ctx *fiber.Ctx) error {
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
@@ -55,19 +52,10 @@ func (h *AlbumHandler) GetAllAlbums(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	albumsResponse := make(dto.AlubumsResponse, 0)
-	for _, album := range albums {
-		var albumResponse dto.AlbumResponse
-		albumResponse.ID = album.ID
-		albumResponse.Name = album.Name
-		albumResponse.CreatedAt = album.CreatedAt
-
-		albumsResponse = append(albumsResponse, albumResponse)
-	}
-
-	return ctx.JSON(albumsResponse)
+	return ctx.JSON(albums)
 }
 
+// GetAlbum은 각 album의 정보와 사진들을 조회
 func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
 	param := util.GetParams(ctx, "album_id")
 	if param == "" {
@@ -80,14 +68,10 @@ func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
 	}
 
 	// GetAlbum 에서 각 앨범에 해당하는 pictures도 조회해야 함
-	album, _, err := h.albumService.GetAlbum(albumID)
+	albumData, err := h.albumService.GetAlbum(albumID)
 	if err != nil {
 		return err
 	}
 
-	return ctx.JSON(&dto.AlbumResponse{
-		Name: album.Name,
-		// PictureList
-		CreatedAt: album.CreatedAt,
-	})
+	return ctx.JSON(albumData)
 }

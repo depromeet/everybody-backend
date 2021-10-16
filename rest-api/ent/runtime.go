@@ -31,7 +31,7 @@ func init() {
 	pictureFields := schema.Picture{}.Fields()
 	_ = pictureFields
 	// pictureDescCreatedAt is the schema descriptor for created_at field.
-	pictureDescCreatedAt := pictureFields[1].Descriptor()
+	pictureDescCreatedAt := pictureFields[3].Descriptor()
 	// picture.DefaultCreatedAt holds the default value on creation for the created_at field.
 	picture.DefaultCreatedAt = pictureDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()

@@ -34,7 +34,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "picture" package.
 	PictureInverseTable = "pictures"
 	// PictureColumn is the table column denoting the picture relation/edge.
-	PictureColumn = "album_picture"
+	PictureColumn = "album_id"
 )
 
 // Columns holds all SQL columns for album fields.

@@ -15,6 +15,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
+	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
@@ -32,6 +33,7 @@ type UserQuery struct {
 	withDevice             *DeviceQuery
 	withNotificationConfig *NotificationConfigQuery
 	withAlbum              *AlbumQuery
+	withPicture            *PictureQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -127,6 +129,28 @@ func (uq *UserQuery) QueryAlbum() *AlbumQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(album.Table, album.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.AlbumTable, user.AlbumColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPicture chains the current query on the "picture" edge.
+func (uq *UserQuery) QueryPicture() *PictureQuery {
+	query := &PictureQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(picture.Table, picture.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.PictureTable, user.PictureColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -318,6 +342,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withDevice:             uq.withDevice.Clone(),
 		withNotificationConfig: uq.withNotificationConfig.Clone(),
 		withAlbum:              uq.withAlbum.Clone(),
+		withPicture:            uq.withPicture.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -354,6 +379,17 @@ func (uq *UserQuery) WithAlbum(opts ...func(*AlbumQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withAlbum = query
+	return uq
+}
+
+// WithPicture tells the query-builder to eager-load the nodes that are connected to
+// the "picture" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithPicture(opts ...func(*PictureQuery)) *UserQuery {
+	query := &PictureQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withPicture = query
 	return uq
 }
 
@@ -422,10 +458,11 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			uq.withDevice != nil,
 			uq.withNotificationConfig != nil,
 			uq.withAlbum != nil,
+			uq.withPicture != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -532,6 +569,35 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_album" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Album = append(node.Edges.Album, n)
+		}
+	}
+
+	if query := uq.withPicture; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*User)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Picture = []*Picture{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Picture(func(s *sql.Selector) {
+			s.Where(sql.InValues(user.PictureColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.user_picture
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "user_picture" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_picture" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Picture = append(node.Edges.Picture, n)
 		}
 	}
 

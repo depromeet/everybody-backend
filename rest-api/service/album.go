@@ -12,9 +12,9 @@ type albumService struct {
 }
 
 type AlbumServiceInterface interface {
-	CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*ent.Album, error)
-	GetAllAlbums(userID int) ([]*ent.Album, error)
-	GetAlbum(albumID int) (*ent.Album, []*ent.Picture, error)
+	CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto.AlbumDto, error)
+	GetAllAlbums(userID int) (dto.AlbumsDto, error)
+	GetAlbum(albumID int) (*dto.AlbumDto, error)
 }
 
 func NewAlbumService(albumRepo repository.AlbumRepositoryInterface, pictureRepo repository.PictureRepositoryInterface) AlbumServiceInterface {
@@ -24,7 +24,7 @@ func NewAlbumService(albumRepo repository.AlbumRepositoryInterface, pictureRepo 
 	}
 }
 
-func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*ent.Album, error) {
+func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto.AlbumDto, error) {
 	album := &ent.Album{
 		Name: albumReq.Name,
 		Edges: ent.AlbumEdges{
@@ -37,29 +37,33 @@ func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*ent
 		return nil, err
 	}
 
-	return newAlbum, nil
+	return dto.AlbumToDto(newAlbum, nil), nil
 }
 
-func (s *albumService) GetAllAlbums(userID int) ([]*ent.Album, error) {
+// GetAllAlbums는 album의 전체 리스트를 조회(사진 정보는 조회X)
+func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 	albums, err := s.albumRepo.GetAllByUserID(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	return albums, nil
+	// album 각각의 사진들도 조회?
+
+	return dto.AlbumsToDto(albums), nil
 }
 
 // GetAlbum은 alubm 정보와 album의 사진 정보들도 조회
-func (s *albumService) GetAlbum(albumID int) (*ent.Album, []*ent.Picture, error) {
-	albumData, err := s.albumRepo.Get(albumID)
+func (s *albumService) GetAlbum(albumID int) (*dto.AlbumDto, error) {
+	album, err := s.albumRepo.Get(albumID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	// albumID에 해당하는 pictrues 목록 조회 기능 필요
 	pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return albumData, pictures, err
+
+	return dto.AlbumToDto(album, pictures), err
 }

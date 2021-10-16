@@ -47,9 +47,15 @@ func addNotificationHandlers(app *fiber.App, notificationHandler *handler.Notifi
 }
 
 func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {
-	app.Post("/albums", albumHandler.CreateAlbum)
+	group := app.Group("/albums")
+	group.Post("", albumHandler.CreateAlbum)
+	group.Get("", albumHandler.GetAllAlbums)
+	group.Get("/:album_id", albumHandler.GetAlbum)
 }
 
 func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) {
-	app.Post("/pictures", pictureHandler.SavePicture)
+	group := app.Group("/pictures")
+	group.Post("", pictureHandler.SavePicture)
+	group.Get("", pictureHandler.GetAllPictures)
+	group.Get("/:picture_id", pictureHandler.GetPicture)
 }

@@ -465,13 +465,10 @@ func (aq *AlbumQuery) sqlAll(ctx context.Context) ([]*Album, error) {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.album_picture
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "album_picture" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
+			fk := n.AlbumID
+			node, ok := nodeids[fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "album_picture" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "album_id" returned %v for node %v`, fk, n.ID)
 			}
 			node.Edges.Picture = append(node.Edges.Picture, n)
 		}

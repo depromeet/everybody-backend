@@ -6,6 +6,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
+	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
 type pictureRepository struct {
@@ -13,7 +14,8 @@ type pictureRepository struct {
 }
 
 type PictureRepositoryInterface interface {
-	Save(picture *ent.Picture) error
+	Save(picture *ent.Picture) (*ent.Picture, error)
+	GetAllByUserID(userID int) ([]*ent.Picture, error)
 	GetAllByAlbumID(albumID int) ([]*ent.Picture, error)
 	Get(pictureID int) (*ent.Picture, error)
 	FindByAlbumIDAndBodyPart(albumID int, bodyPart string) ([]*ent.Picture, error)
@@ -25,15 +27,29 @@ func NewPictureRepository(db *ent.Client) PictureRepositoryInterface {
 	}
 }
 
-func (r *pictureRepository) Save(picture *ent.Picture) error {
-	_, err := r.db.Picture.Create().
-		SetAlbumID(picture.Edges.Album.ID).
+func (r *pictureRepository) Save(picture *ent.Picture) (*ent.Picture, error) {
+	p, err := r.db.Picture.Create().
+		SetUser(picture.Edges.User).
+		SetAlbumID(picture.AlbumID).
 		SetBodyPart(picture.BodyPart).
+		SetLocation(picture.Location).
 		Save(context.Background())
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	return p, nil
+}
+
+func (r *pictureRepository) GetAllByUserID(userID int) ([]*ent.Picture, error) {
+	pictures, err := r.db.Picture.Query().
+		Where(picture.HasUserWith(user.ID(userID))).
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return pictures, nil
 }
 
 // GetAllByAlbumID는 각 album 안에 있는 모든 사진의 데이터를 조회
@@ -45,18 +61,25 @@ func (r *pictureRepository) GetAllByAlbumID(albumID int) ([]*ent.Picture, error)
 		return nil, err
 	}
 
+	// pictures, err := r.db.Picture.Query().
+	// 	Where(picture.AlbumID(albumID)).
+	// 	All(context.Background())
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	return pictures, nil
 }
 
 func (r *pictureRepository) Get(pictureID int) (*ent.Picture, error) {
-	picture, err := r.db.Picture.Query().
+	p, err := r.db.Picture.Query().
 		Where(picture.ID(pictureID)).
 		Only(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	return picture, nil
+	return p, nil
 }
 
 // FindByAlbumIDAndBodyParts은 albumID 와 특정 신체 부위에 해당하는 사진들을 조회

@@ -28,6 +28,8 @@ const (
 	EdgeNotificationConfig = "notification_config"
 	// EdgeAlbum holds the string denoting the album edge name in mutations.
 	EdgeAlbum = "album"
+	// EdgePicture holds the string denoting the picture edge name in mutations.
+	EdgePicture = "picture"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// DeviceTable is the table that holds the device relation/edge.
@@ -51,6 +53,13 @@ const (
 	AlbumInverseTable = "albums"
 	// AlbumColumn is the table column denoting the album relation/edge.
 	AlbumColumn = "user_album"
+	// PictureTable is the table that holds the picture relation/edge.
+	PictureTable = "pictures"
+	// PictureInverseTable is the table name for the Picture entity.
+	// It exists in this package in order to avoid circular dependency with the "picture" package.
+	PictureInverseTable = "pictures"
+	// PictureColumn is the table column denoting the picture relation/edge.
+	PictureColumn = "user_picture"
 )
 
 // Columns holds all SQL columns for user fields.
