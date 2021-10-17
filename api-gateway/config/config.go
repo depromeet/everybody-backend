@@ -45,9 +45,11 @@ func init() {
 var Config *config
 
 type config struct {
-	ServerAddr struct {
-		RestApi string `yaml:"restApi"`
-	} `yaml:"serverAddr"`
+	ApiGw struct {
+		Port            int    `yaml:"port"`
+		HealthCheckPath string `yaml:"healthCheckPath"`
+		AuthEnable      bool   `yaml:"authEnable"`
+	} `yaml:"apiGw"`
 
 	DB struct {
 		MySQL struct {
@@ -58,4 +60,11 @@ type config struct {
 			Password     string `yaml:"password"`
 		} `yaml:"mySql"`
 	} `yaml:"db"`
+
+	TargetServer struct {
+		RestApi struct {
+			Address string `yaml:"address"`
+			Prefix  string `yaml:"prefix"`
+		} `yaml:"restApi"`
+	} `yaml:"targetServer"`
 }

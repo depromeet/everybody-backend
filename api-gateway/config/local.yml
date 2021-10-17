@@ -1,5 +1,8 @@
-serverAddr:
-  restApi: http://localhost:8443/health
+apiGw:
+  port: 8080
+  healthCheckPath: /health*
+  authEnable: false
+
 db:
   mySql:
     host: localhost
@@ -7,3 +10,8 @@ db:
     databaseName: everybody
     user: admin
     password: admin
+
+targetServer:
+  restApi: 
+    address: http://localhost:8080/health
+    prefix: restapi
