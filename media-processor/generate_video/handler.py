@@ -3,7 +3,6 @@ import numpy as np
 import requests
 import base64
 
-
 def handle(event, context):
     img_array = []
     tmp_s3_url = "https://tmp-upload-1111.s3.ap-northeast-2.amazonaws.com"
