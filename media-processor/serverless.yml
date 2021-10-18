@@ -20,41 +20,27 @@ provider:
 functions:
   hello:
     handler: hello_handler.handle
-# PythonRequirementLambda로 레이어를 이용하려는 경우에만 설정
-#    layers:
-#      - { Ref: PythonRequirementsLambdaLayer }
     events:
       - httpApi:
           path: /
           method: get
-  panorama:
-    handler: generate_panorama.handler.handle
-#    layers:
-#      - { Ref: PythonRequirementsLambdaLayer }
-    events:
-      - httpApi:
-          path: /panorama
-          method: get
   video:
-    handler: generate_video.handler.handle
+    handler: handler.handle
+    module: generate_video
 #    layers:
 #      - { Ref: PythonRequirementsLambdaLayer }
     events:
       - httpApi:
           path: /video
           method: get
-  thumbnail-generator:
-    handler: generate_thumbnail.handler.handle
-    description: INPUT_BUCKET/INPUT_OBJECT_KEY 경로에 이미지 업로드 시에 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
+  upload-image:
+    handler: handler.handle
+    module: upload
+    description: 전달 받은 이미지를 리사이즈 후 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
     events:
-      - s3:
-          bucket: everybody-upload-original-dev-1
-          event: s3:ObjectCreated:*
-          rules:
-            - prefix: original/
-          # S3 버킷 관리를 serverless가 수행할 경우 버킷이 통째로 날아갈 수도 있다.
-          # 따라서 existing bucket으로 정의한다.
-          existing: true
+      - httpApi:
+          path: /upload
+          method: post
 
 plugins:
   # 로컬에서 http로 핸들러를 트리거하기 위함
@@ -66,6 +52,7 @@ package:
   patterns:
     # numpy나 open cv때문에 직접 빌드해야한다.
     - '!venv/**'
+  individually: true
 
 custom:
   pythonRequirements:
