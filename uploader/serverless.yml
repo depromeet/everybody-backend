@@ -18,25 +18,10 @@ provider:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
 
 functions:
-  hello:
-    handler: hello_handler.handle
-    events:
-      - httpApi:
-          path: /
-          method: get
-  video:
-    runtime: python3.7
-    handler: handler.handle
-    module: generate_video
-#    layers:
-#      - { Ref: PythonRequirementsLambdaLayer }
-    events:
-      - httpApi:
-          path: /video
-          method: get
   upload-image:
     handler: handler.handle
-    module: upload-image
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
     description: 전달 받은 이미지를 리사이즈 후 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
     events:
       - httpApi:
@@ -46,18 +31,16 @@ functions:
 plugins:
   - serverless-offline
   - serverless-python-requirements
+
 package:
-#  patterns:
+  patterns:
 #    # numpy나 open cv때문에 직접 빌드해야한다.
-#    - '!venv/**'
-  individually: true
+    - '!venv/**'
 
 custom:
   pythonRequirements:
-#    # docker로 직접 pip build를 해야할 수 있음 numpy나 opencv 같은 것들은 (window나 mac에서는 다르게 빌드될 수 있음)
-    dockerizePip: true
     # layer에 불필요한 애들이 다 포함되어버리는 것 같은데 venv나 node_modules 같은 거...
-#    layer: true
+    layer: true
     # zip 안해도 되나...
 #    zip: true
 
