@@ -1,4 +1,4 @@
-service: everybody-media-procesor
+service: everybody-uploader
 frameworkVersion: '2'
 
 provider:
