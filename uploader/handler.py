@@ -97,7 +97,7 @@ def handle(event, context):
 def generate_thumbnail(data) -> dict:
     img = Image.open(io.BytesIO(data))
     output = dict()
-    for w, h in (RESIZE_SIZES):
+    for w, h in RESIZE_SIZES:
         resized = img.resize((w, h))
         output[w] = resized
 
