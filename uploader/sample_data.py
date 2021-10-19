@@ -1,5 +1,6 @@
 # file upload 시에
 # API gateway가 lambda에게 보내는 event
+# binary의 file data들도 base64 encoding 되어 string으로 담겨있음!
 sample_data = {
     'version': '2.0',
     'routeKey': 'POST /upload',

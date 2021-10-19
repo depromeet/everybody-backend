@@ -7,6 +7,7 @@ import boto3
 from PIL import Image
 from requests_toolbelt.multipart import decoder
 
+RESIZE_SIZES = ((48, 64), (192, 256), (768, 1024))
 OUTPUT_BUCKET_NAME = 'everybody-upload-output-dev-1'
 OUTPUT_OBJECT_PREFIX = 'image/'
 
@@ -96,7 +97,7 @@ def handle(event, context):
 def generate_thumbnail(data) -> dict:
     img = Image.open(io.BytesIO(data))
     output = dict()
-    for w, h in ((48, 64), (192, 256), (768, 1024)):
+    for w, h in (RESIZE_SIZES):
         resized = img.resize((w, h))
         output[w] = resized
 
