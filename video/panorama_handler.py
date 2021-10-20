@@ -1,8 +1,5 @@
-try:
-    import unzip_requirements
-except ImportError:
-    pass
-
+# 파노라마는 지금 안 쓰는 중
+# 그냥 가끔 코드만 참고하게 남겨 놓음
 import cv2
 import numpy as np
 import requests

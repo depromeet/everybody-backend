@@ -1,0 +1,46 @@
+service: everybody-uploader
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: python3.7 # 3.8버전부터는 opencv나 numpy를 위한 dependency가 완전히 보장되지 않는 linux image를 쓰게 됨
+  lambdaHashingVersion: '20201221'
+  region: ap-northeast-2
+  stage: ${env:EVERYBODY_STAGE,'dev'}
+  profile: depromeet-everybody
+#  TODO: internal하게 everybody-api-gateway만이 호출할 수 있게
+#  endpointType: PRIVATE
+  tracing:
+    lambda: true
+  iam:
+    role:
+      managedPolicies:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+functions:
+  upload-image:
+    handler: handler.handle
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
+    description: 전달 받은 이미지를 리사이즈 후 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
+    events:
+      - httpApi:
+          path: /upload
+          method: post
+
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+
+package:
+  patterns:
+#    # numpy나 open cv때문에 직접 빌드해야한다.
+    - '!venv/**'
+
+custom:
+  pythonRequirements:
+    # layer에 불필요한 애들이 다 포함되어버리는 것 같은데 venv나 node_modules 같은 거...
+    layer: true
+    # zip 안해도 되나...
+#    zip: true
+
