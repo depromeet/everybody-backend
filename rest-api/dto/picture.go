@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/service/cloudfront/sign"
 	"github.com/depromeet/everybody-backend/rest-api/config"
+	log "github.com/sirupsen/logrus"
 	"mime/multipart"
 	"strings"
 	"time"
@@ -23,24 +24,46 @@ type PictureMultiPart struct {
 	File     []*multipart.FileHeader
 }
 
-type PicturesDto []PictureDto
+type PicturesDto []*PictureDto
 
 type PictureDto struct {
-	ID        int       `json:"id"`
-	AlbumID   int       `json:"album_id"`
-	BodyPart  string    `json:"body_part"`
-	CreatedAt time.Time `json:"created_at"`
+	ID           int       `json:"id"`
+	AlbumID      int       `json:"album_id"`
+	BodyPart     string    `json:"body_part"`
+	CreatedAt    time.Time `json:"created_at"`
+	ThumbnailURL string    `json:"thumbnail_url"`
+	PreviewURL   string    `json:"preview_url"`
+	ImageURL     string    `json:"image_url"`
 	// client한테 어떤 형태로 사진 정보를 줄 지 결정해야함(url, hashed file name 같은...)
 	Location string `json:"location"`
 }
 
 func PictureToDto(src *ent.Picture) *PictureDto {
+	thumbnailURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 48, src.Location))
+	// 일단 이 부분까지 하나 하나 에러처리하긴 번거로울 듯?
+	if err != nil {
+		log.Error(err)
+	}
+
+	previewURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 192, src.Location))
+	if err != nil {
+		log.Error(err)
+	}
+
+	imageURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 768, src.Location))
+	if err != nil {
+		log.Error(err)
+	}
+
 	return &PictureDto{
-		ID:        src.ID,
-		AlbumID:   src.AlbumID,
-		BodyPart:  src.BodyPart,
-		CreatedAt: src.CreatedAt,
-		Location:  src.Location,
+		ID:           src.ID,
+		AlbumID:      src.AlbumID,
+		BodyPart:     src.BodyPart,
+		CreatedAt:    src.CreatedAt,
+		ThumbnailURL: thumbnailURL,
+		PreviewURL:   previewURL,
+		ImageURL:     imageURL,
+		Location:     src.Location,
 	}
 }
 
@@ -48,14 +71,7 @@ func PicturesToDto(src []*ent.Picture) PicturesDto {
 	picturesDto := make(PicturesDto, 0)
 
 	for _, picture := range src {
-		pictureDto := PictureDto{
-			ID:        picture.ID,
-			AlbumID:   picture.AlbumID,
-			BodyPart:  picture.BodyPart,
-			CreatedAt: picture.CreatedAt,
-			Location:  picture.Location,
-		}
-
+		pictureDto := PictureToDto(picture)
 		picturesDto = append(picturesDto, pictureDto)
 	}
 
