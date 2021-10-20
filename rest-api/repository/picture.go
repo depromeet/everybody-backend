@@ -38,12 +38,19 @@ func (r *pictureRepository) Save(picture *ent.Picture) (*ent.Picture, error) {
 		return nil, err
 	}
 
+	user, err := p.QueryUser().First(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	p.Edges.User = user
+
 	return p, nil
 }
 
 func (r *pictureRepository) GetAllByUserID(userID int) ([]*ent.Picture, error) {
 	pictures, err := r.db.Picture.Query().
 		Where(picture.HasUserWith(user.ID(userID))).
+		WithUser().
 		All(context.Background())
 	if err != nil {
 		return nil, err
@@ -56,6 +63,7 @@ func (r *pictureRepository) GetAllByUserID(userID int) ([]*ent.Picture, error) {
 func (r *pictureRepository) GetAllByAlbumID(albumID int) ([]*ent.Picture, error) {
 	pictures, err := r.db.Picture.Query().
 		Where(picture.HasAlbumWith(album.ID(albumID))).
+		WithUser().
 		All(context.Background())
 	if err != nil {
 		return nil, err
@@ -74,6 +82,7 @@ func (r *pictureRepository) GetAllByAlbumID(albumID int) ([]*ent.Picture, error)
 func (r *pictureRepository) Get(pictureID int) (*ent.Picture, error) {
 	p, err := r.db.Picture.Query().
 		Where(picture.ID(pictureID)).
+		WithUser().
 		Only(context.Background())
 	if err != nil {
 		return nil, err
@@ -86,6 +95,7 @@ func (r *pictureRepository) Get(pictureID int) (*ent.Picture, error) {
 func (r *pictureRepository) FindByAlbumIDAndBodyPart(albumID int, bodyPart string) ([]*ent.Picture, error) {
 	pictures, err := r.db.Picture.Query().
 		Where(picture.And(picture.HasAlbumWith(album.ID(albumID)), picture.BodyPart(bodyPart))).
+		WithUser().
 		All(context.Background())
 	if err != nil {
 		return nil, err
