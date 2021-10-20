@@ -46,13 +46,7 @@ func TestPictureServiceGetAllByUserID(t *testing.T) {
 func TestPictureServiceGet(t *testing.T) {
 	t.Run("사진 조회 성공", func(t *testing.T) {
 		pictureSvc := initializePictureTest(t)
-		expectedPicture := &ent.Picture{
-			Location: "sample.png",
-			// dto를 제공하기 위한 URL 맵핑을 하려면 어떤 유저인지를 알아야함.
-			Edges: ent.PictureEdges{
-				User: &ent.User{ID: 0},
-			},
-		}
+		expectedPicture := new(ent.Picture)
 
 		pictureRepo.On("Get", mock.AnythingOfType("int")).Return(expectedPicture, nil)
 		picture, err := pictureSvc.GetPicture(1)

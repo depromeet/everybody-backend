@@ -12,10 +12,3 @@ aws:
   region: regionName
 # 환경에 맞춰
 # local.yml 혹은 dev.yml 등을 정의해주세요
-imageRootURL: https://some.cloudfront.net
-imagePublicKeyID: ABCDEFGHIJK
-imagePrivateKey: |
-  -----BEGIN RSA PRIVATE KEY-----
-  ...
-  -----END RSA PRIVATE KEY-----
-
