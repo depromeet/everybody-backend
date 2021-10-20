@@ -1,7 +1,11 @@
 package dto
 
 import (
+	"fmt"
+	"github.com/aws/aws-sdk-go/service/cloudfront/sign"
+	"github.com/depromeet/everybody-backend/rest-api/config"
 	"mime/multipart"
+	"strings"
 	"time"
 
 	"github.com/depromeet/everybody-backend/rest-api/ent"
@@ -56,4 +60,25 @@ func PicturesToDto(src []*ent.Picture) PicturesDto {
 	}
 
 	return picturesDto
+}
+
+func createImageURL(imageKey string) (string, error) {
+	// TODO(umi0410): Signed URL을 이용한 맵핑 최적화
+	// 사실 사진 한 장 한 장의 주소들을 맵핑할 때마다 signed url을 재생성하는 게 조금
+	// 비효율적일 것 같긴한데 일단은 간단하게 구현하느라
+	// 이렇게 매번 새로운 Signed URL을 생성하도록 해놨음.
+	// 원래는 어차피 다 같은 Signature로 제공할 수 있어서
+	// 이렇게 매번 생성할 필요는 없음.
+	pk, err := sign.LoadPEMPrivKey(strings.NewReader(config.Config.ImagePrivateKey))
+	if err != nil {
+		return "", err
+	}
+
+	signer := sign.NewURLSigner(config.Config.ImagePublicKeyID, pk)
+	url, err := signer.Sign(fmt.Sprintf("%s/%s", config.Config.ImageRootUrl, imageKey), time.Now().Add(time.Minute))
+	if err != nil {
+		return "", err
+	}
+
+	return url, nil
 }
