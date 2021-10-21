@@ -33,11 +33,25 @@ func TestAlbumServiceGetAllByUserID(t *testing.T) {
 	t.Run("전체 앨범 리스트 조회 성공", func(t *testing.T) {
 		albumSvc := initializeAlbumService(t)
 		var expectedAlbums []*ent.Album
+		var expectedPictures []*ent.Picture
 
 		albumRepo.On("GetAllByUserID", mock.AnythingOfType("int")).Return(expectedAlbums, nil)
+		pictureRepo.On("GetAllByUserID", mock.AnythingOfType("int")).Return(expectedPictures, nil)
+		expectedAlbumsWithPictures := make([]*ent.Album, 0)
+		for _, album := range expectedAlbums {
+			pictures := make([]*ent.Picture, 0)
+			for _, picture := range pictures {
+				if album.ID == picture.ID {
+					pictures = append(pictures, picture)
+				}
+			}
+			album.Edges.Picture = pictures
+			expectedAlbumsWithPictures = append(expectedAlbumsWithPictures, album)
+		}
+
 		albums, err := albumSvc.GetAllAlbums(1)
 		assert.NoError(t, err)
-		assert.Equal(t, dto.AlbumsToDto(expectedAlbums), albums)
+		assert.Equal(t, dto.AlbumsToDto(expectedAlbumsWithPictures), albums)
 	})
 
 	// TODO: error test
