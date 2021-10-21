@@ -30,9 +30,9 @@ func NewPictureRepository(db *ent.Client) PictureRepositoryInterface {
 func (r *pictureRepository) Save(picture *ent.Picture) (*ent.Picture, error) {
 	p, err := r.db.Picture.Create().
 		SetUser(picture.Edges.User).
-		SetAlbumID(picture.AlbumID).
+		SetAlbum(picture.Edges.Album).
 		SetBodyPart(picture.BodyPart).
-		SetLocation(picture.Location).
+		SetKey(picture.Key).
 		Save(context.Background())
 	if err != nil {
 		return nil, err
@@ -42,7 +42,13 @@ func (r *pictureRepository) Save(picture *ent.Picture) (*ent.Picture, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	album, err := p.QueryAlbum().First(context.Background())
+	if err != nil {
+		return nil, err
+	}
 	p.Edges.User = user
+	p.Edges.Album = album
 
 	return p, nil
 }
@@ -51,6 +57,7 @@ func (r *pictureRepository) GetAllByUserID(userID int) ([]*ent.Picture, error) {
 	pictures, err := r.db.Picture.Query().
 		Where(picture.HasUserWith(user.ID(userID))).
 		WithUser().
+		WithAlbum().
 		All(context.Background())
 	if err != nil {
 		return nil, err
@@ -64,17 +71,11 @@ func (r *pictureRepository) GetAllByAlbumID(albumID int) ([]*ent.Picture, error)
 	pictures, err := r.db.Picture.Query().
 		Where(picture.HasAlbumWith(album.ID(albumID))).
 		WithUser().
+		WithAlbum().
 		All(context.Background())
 	if err != nil {
 		return nil, err
 	}
-
-	// pictures, err := r.db.Picture.Query().
-	// 	Where(picture.AlbumID(albumID)).
-	// 	All(context.Background())
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return pictures, nil
 }
@@ -83,6 +84,7 @@ func (r *pictureRepository) Get(pictureID int) (*ent.Picture, error) {
 	p, err := r.db.Picture.Query().
 		Where(picture.ID(pictureID)).
 		WithUser().
+		WithAlbum().
 		Only(context.Background())
 	if err != nil {
 		return nil, err
@@ -96,6 +98,7 @@ func (r *pictureRepository) FindByAlbumIDAndBodyPart(albumID int, bodyPart strin
 	pictures, err := r.db.Picture.Query().
 		Where(picture.And(picture.HasAlbumWith(album.ID(albumID)), picture.BodyPart(bodyPart))).
 		WithUser().
+		WithAlbum().
 		All(context.Background())
 	if err != nil {
 		return nil, err

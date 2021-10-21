@@ -31,7 +31,7 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.PictureRequest)
 			User:  &ent.User{ID: userID},
 			Album: &ent.Album{ID: pictureReq.AlbumID},
 		},
-		Location: fileName,
+		Key: pictureReq.Key,
 	}
 
 	p, err := s.pictureRepo.Save(picture)
