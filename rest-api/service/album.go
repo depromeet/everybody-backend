@@ -4,6 +4,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
+	log "github.com/sirupsen/logrus"
 )
 
 type albumService struct {
@@ -37,6 +38,7 @@ func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto
 		return nil, err
 	}
 
+	log.Info("앨범 생성 완료")
 	return dto.AlbumToDto(newAlbum, nil), nil
 }
 
@@ -47,9 +49,28 @@ func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 		return nil, err
 	}
 
-	// album 각각의 사진들도 조회?
+	// album들의 각각의 사진들도 조회
+	allPictures, err := s.pictureRepo.GetAllByUserID(userID)
+	if err != nil {
+		return nil, err
+	}
 
-	return dto.AlbumsToDto(albums), nil
+	albumsWithPictures := make([]*ent.Album, 0)
+	for _, album := range albums {
+		pictures := make([]*ent.Picture, 0)
+		// 사용자의 전체 사진을 각 앨범에 맞게 조립...
+		for _, picture := range allPictures {
+			if album.ID == picture.Edges.Album.ID {
+				pictures = append(pictures, picture)
+			}
+		}
+
+		album.Edges.Picture = pictures
+		albumsWithPictures = append(albumsWithPictures, album)
+	}
+
+	log.Info("전체 앨범과 그 앨범들의 사진들을 조회 완료")
+	return dto.AlbumsToDto(albumsWithPictures), nil
 }
 
 // GetAlbum은 alubm 정보와 album의 사진 정보들도 조회
@@ -65,5 +86,6 @@ func (s *albumService) GetAlbum(albumID int) (*dto.AlbumDto, error) {
 		return nil, err
 	}
 
+	log.Info("앨범과 그 앨범의 사진들을 조회 완료")
 	return dto.AlbumToDto(album, pictures), err
 }
