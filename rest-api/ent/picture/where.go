@@ -100,17 +100,10 @@ func BodyPart(v string) predicate.Picture {
 	})
 }
 
-// Location applies equality check predicate on the "location" field. It's identical to LocationEQ.
-func Location(v string) predicate.Picture {
+// Key applies equality check predicate on the "key" field. It's identical to KeyEQ.
+func Key(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldLocation), v))
-	})
-}
-
-// AlbumID applies equality check predicate on the "album_id" field. It's identical to AlbumIDEQ.
-func AlbumID(v int) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlbumID), v))
+		s.Where(sql.EQ(s.C(FieldKey), v))
 	})
 }
 
@@ -232,22 +225,22 @@ func BodyPartContainsFold(v string) predicate.Picture {
 	})
 }
 
-// LocationEQ applies the EQ predicate on the "location" field.
-func LocationEQ(v string) predicate.Picture {
+// KeyEQ applies the EQ predicate on the "key" field.
+func KeyEQ(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldLocation), v))
+		s.Where(sql.EQ(s.C(FieldKey), v))
 	})
 }
 
-// LocationNEQ applies the NEQ predicate on the "location" field.
-func LocationNEQ(v string) predicate.Picture {
+// KeyNEQ applies the NEQ predicate on the "key" field.
+func KeyNEQ(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldLocation), v))
+		s.Where(sql.NEQ(s.C(FieldKey), v))
 	})
 }
 
-// LocationIn applies the In predicate on the "location" field.
-func LocationIn(vs ...string) predicate.Picture {
+// KeyIn applies the In predicate on the "key" field.
+func KeyIn(vs ...string) predicate.Picture {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -259,12 +252,12 @@ func LocationIn(vs ...string) predicate.Picture {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldLocation), v...))
+		s.Where(sql.In(s.C(FieldKey), v...))
 	})
 }
 
-// LocationNotIn applies the NotIn predicate on the "location" field.
-func LocationNotIn(vs ...string) predicate.Picture {
+// KeyNotIn applies the NotIn predicate on the "key" field.
+func KeyNotIn(vs ...string) predicate.Picture {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -276,118 +269,70 @@ func LocationNotIn(vs ...string) predicate.Picture {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldLocation), v...))
+		s.Where(sql.NotIn(s.C(FieldKey), v...))
 	})
 }
 
-// LocationGT applies the GT predicate on the "location" field.
-func LocationGT(v string) predicate.Picture {
+// KeyGT applies the GT predicate on the "key" field.
+func KeyGT(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldLocation), v))
+		s.Where(sql.GT(s.C(FieldKey), v))
 	})
 }
 
-// LocationGTE applies the GTE predicate on the "location" field.
-func LocationGTE(v string) predicate.Picture {
+// KeyGTE applies the GTE predicate on the "key" field.
+func KeyGTE(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldLocation), v))
+		s.Where(sql.GTE(s.C(FieldKey), v))
 	})
 }
 
-// LocationLT applies the LT predicate on the "location" field.
-func LocationLT(v string) predicate.Picture {
+// KeyLT applies the LT predicate on the "key" field.
+func KeyLT(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldLocation), v))
+		s.Where(sql.LT(s.C(FieldKey), v))
 	})
 }
 
-// LocationLTE applies the LTE predicate on the "location" field.
-func LocationLTE(v string) predicate.Picture {
+// KeyLTE applies the LTE predicate on the "key" field.
+func KeyLTE(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldLocation), v))
+		s.Where(sql.LTE(s.C(FieldKey), v))
 	})
 }
 
-// LocationContains applies the Contains predicate on the "location" field.
-func LocationContains(v string) predicate.Picture {
+// KeyContains applies the Contains predicate on the "key" field.
+func KeyContains(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldLocation), v))
+		s.Where(sql.Contains(s.C(FieldKey), v))
 	})
 }
 
-// LocationHasPrefix applies the HasPrefix predicate on the "location" field.
-func LocationHasPrefix(v string) predicate.Picture {
+// KeyHasPrefix applies the HasPrefix predicate on the "key" field.
+func KeyHasPrefix(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldLocation), v))
+		s.Where(sql.HasPrefix(s.C(FieldKey), v))
 	})
 }
 
-// LocationHasSuffix applies the HasSuffix predicate on the "location" field.
-func LocationHasSuffix(v string) predicate.Picture {
+// KeyHasSuffix applies the HasSuffix predicate on the "key" field.
+func KeyHasSuffix(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldLocation), v))
+		s.Where(sql.HasSuffix(s.C(FieldKey), v))
 	})
 }
 
-// LocationEqualFold applies the EqualFold predicate on the "location" field.
-func LocationEqualFold(v string) predicate.Picture {
+// KeyEqualFold applies the EqualFold predicate on the "key" field.
+func KeyEqualFold(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldLocation), v))
+		s.Where(sql.EqualFold(s.C(FieldKey), v))
 	})
 }
 
-// LocationContainsFold applies the ContainsFold predicate on the "location" field.
-func LocationContainsFold(v string) predicate.Picture {
+// KeyContainsFold applies the ContainsFold predicate on the "key" field.
+func KeyContainsFold(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldLocation), v))
-	})
-}
-
-// AlbumIDEQ applies the EQ predicate on the "album_id" field.
-func AlbumIDEQ(v int) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldAlbumID), v))
-	})
-}
-
-// AlbumIDNEQ applies the NEQ predicate on the "album_id" field.
-func AlbumIDNEQ(v int) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldAlbumID), v))
-	})
-}
-
-// AlbumIDIn applies the In predicate on the "album_id" field.
-func AlbumIDIn(vs ...int) predicate.Picture {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Picture(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldAlbumID), v...))
-	})
-}
-
-// AlbumIDNotIn applies the NotIn predicate on the "album_id" field.
-func AlbumIDNotIn(vs ...int) predicate.Picture {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Picture(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldAlbumID), v...))
+		s.Where(sql.ContainsFold(s.C(FieldKey), v))
 	})
 }
 

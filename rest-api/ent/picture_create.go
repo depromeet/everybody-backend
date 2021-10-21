@@ -28,15 +28,9 @@ func (pc *PictureCreate) SetBodyPart(s string) *PictureCreate {
 	return pc
 }
 
-// SetLocation sets the "location" field.
-func (pc *PictureCreate) SetLocation(s string) *PictureCreate {
-	pc.mutation.SetLocation(s)
-	return pc
-}
-
-// SetAlbumID sets the "album_id" field.
-func (pc *PictureCreate) SetAlbumID(i int) *PictureCreate {
-	pc.mutation.SetAlbumID(i)
+// SetKey sets the "key" field.
+func (pc *PictureCreate) SetKey(s string) *PictureCreate {
+	pc.mutation.SetKey(s)
 	return pc
 }
 
@@ -50,6 +44,20 @@ func (pc *PictureCreate) SetCreatedAt(t time.Time) *PictureCreate {
 func (pc *PictureCreate) SetNillableCreatedAt(t *time.Time) *PictureCreate {
 	if t != nil {
 		pc.SetCreatedAt(*t)
+	}
+	return pc
+}
+
+// SetAlbumID sets the "album" edge to the Album entity by ID.
+func (pc *PictureCreate) SetAlbumID(id int) *PictureCreate {
+	pc.mutation.SetAlbumID(id)
+	return pc
+}
+
+// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
+func (pc *PictureCreate) SetNillableAlbumID(id *int) *PictureCreate {
+	if id != nil {
+		pc = pc.SetAlbumID(*id)
 	}
 	return pc
 }
@@ -160,17 +168,11 @@ func (pc *PictureCreate) check() error {
 	if _, ok := pc.mutation.BodyPart(); !ok {
 		return &ValidationError{Name: "body_part", err: errors.New(`ent: missing required field "body_part"`)}
 	}
-	if _, ok := pc.mutation.Location(); !ok {
-		return &ValidationError{Name: "location", err: errors.New(`ent: missing required field "location"`)}
-	}
-	if _, ok := pc.mutation.AlbumID(); !ok {
-		return &ValidationError{Name: "album_id", err: errors.New(`ent: missing required field "album_id"`)}
+	if _, ok := pc.mutation.Key(); !ok {
+		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "key"`)}
 	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
-	}
-	if _, ok := pc.mutation.AlbumID(); !ok {
-		return &ValidationError{Name: "album", err: errors.New("ent: missing required edge \"album\"")}
 	}
 	return nil
 }
@@ -207,13 +209,13 @@ func (pc *PictureCreate) createSpec() (*Picture, *sqlgraph.CreateSpec) {
 		})
 		_node.BodyPart = value
 	}
-	if value, ok := pc.mutation.Location(); ok {
+	if value, ok := pc.mutation.Key(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: picture.FieldLocation,
+			Column: picture.FieldKey,
 		})
-		_node.Location = value
+		_node.Key = value
 	}
 	if value, ok := pc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -240,7 +242,7 @@ func (pc *PictureCreate) createSpec() (*Picture, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.AlbumID = nodes[0]
+		_node.album_picture = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := pc.mutation.UserIDs(); len(nodes) > 0 {
