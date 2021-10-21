@@ -2,10 +2,6 @@ package service
 
 import (
 	"bytes"
-	"io"
-	"net/http"
-	"strconv"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -14,6 +10,9 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
 	log "github.com/sirupsen/logrus"
+	"io"
+	"net/http"
+	"strconv"
 )
 
 type pictureService struct {

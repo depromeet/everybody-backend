@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/gofiber/fiber/v2"
+	log "github.com/sirupsen/logrus"
 	"reflect"
 )
 
@@ -15,6 +16,7 @@ type ErrorResponse struct {
 // errorHandle 은 최종적으로 리턴된 error들에 대해 적절한 응답을 생성하고
 // 예상치 못한 에러의 경우 500 에러로 응답합니다.
 func errorHandle(ctx *fiber.Ctx, err error) error {
+	log.Error(err)
 	if err != nil {
 		notFoundErr := &ent.NotFoundError{}
 		if errors.As(err, &notFoundErr) {
