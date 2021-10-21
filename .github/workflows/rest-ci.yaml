@@ -1,0 +1,51 @@
+name: Rest-CI
+on: 
+  push:
+    # rest-api에서의 변경 있을 경우 trigger
+    # paths:
+    #   - rest-api/*
+  pull_request:
+    # develop
+    branches: [ main ]
+
+jobs:
+  rest-ci:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install GO
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+
+    # Setting cache-paths
+    - name: cache-paths
+      run: |
+        echo '::set-output name=build-cache::$(go env GOCACHE)'
+        echo '::set-output name=mod-cache::$(go env GOMODCACHE)'
+      id: cache-paths
+
+    # Caching go build for test
+    - name: Go build cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.cache-paths.outputs.build-cache }}
+        key: ${{ runner.os }}-build-cache-${{ hashFiles('**/go.sum') }}
+    
+    # Caching go mod for build
+    - name: Go mod cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.cache-paths.outputs.mod-cache }}
+        key: ${{ runner.os }}-mod-cache-${{ hashFiles('**/go.sum') }}
+        
+    - name: Build rest-api
+      run: |
+        GOOS=linux GOARCH=amd64 go build -o rest-everbody main.go
+      working-directory: rest-api
+
+    - name: Test rest-api
+      run: go test -v ./...
+      working-directory: rest-api
