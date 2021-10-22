@@ -7,61 +7,47 @@ import (
 )
 
 type AlbumRequest struct {
-	// header로 받아오는 걸로?
-	// UserID     string `json:"user_id"`
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
-type AlbumPicture struct {
-	PictureID int       `json:"picture_id"`
-	BodyPart  string    `json:"body_part"`
-	CreatedAt time.Time `json:"created_at"`
-	Location  string    `json:"location"`
-}
+// PictureDto는 AlbumID 필드도 가지고 있음
+// AlbumDto 할 때 picture에도 album_id를 중복으로
+// 가지는 것이 불필요해서 AlbumPicture 구조체를 선언하려고
+// 생각하다가 우선은 PictureDto로 하는 걸로...
+// type AlbumPicture struct {
+// 	PictureID int       `json:"picture_id"`
+// 	BodyPart  string    `json:"body_part"`
+// 	CreatedAt time.Time `json:"created_at"`
+// 	Key  string    `json:"location"`
+// }
 
-type AlbumsDto []AlbumDto
+type AlbumsDto []*AlbumDto
 type AlbumDto struct {
-	ID        int            `json:"id"`
-	Name      string         `json:"name"`
-	CreatedAt time.Time      `json:"created_at"`
-	Pictures  []AlbumPicture `json:"pictures"`
+	ID        int         `json:"id"`
+	Name      string      `json:"name"`
+	CreatedAt time.Time   `json:"created_at"`
+	Pictures  PicturesDto `json:"pictures"`
 }
 
-func AlbumsToDto(src []*ent.Album) AlbumsDto {
+func AlbumsToDto(srcAlbums []*ent.Album) AlbumsDto {
 	albumsDto := make(AlbumsDto, 0)
-	for _, srcAlbum := range src {
-		albumDto := AlbumDto{
-			ID:        srcAlbum.ID,
-			Name:      srcAlbum.Name,
-			CreatedAt: srcAlbum.CreatedAt,
-		}
 
+	for _, srcAlbum := range srcAlbums {
+		albumDto := AlbumToDto(srcAlbum, srcAlbum.Edges.Picture)
 		albumsDto = append(albumsDto, albumDto)
 	}
 
 	return albumsDto
 }
 
-func AlbumToDto(src *ent.Album, srcPictures []*ent.Picture) *AlbumDto {
-	picturesDto := make([]AlbumPicture, 0)
-	if srcPictures != nil {
-		for _, srcPicture := range srcPictures {
-			pictureDto := AlbumPicture{
-				PictureID: srcPicture.ID,
-				BodyPart:  srcPicture.BodyPart,
-				CreatedAt: srcPicture.CreatedAt,
-				Location:  srcPicture.Location,
-			}
-
-			picturesDto = append(picturesDto, pictureDto)
-		}
-	}
+func AlbumToDto(srcAlbum *ent.Album, srcPictures []*ent.Picture) *AlbumDto {
+	picturesDto := PicturesToDto(srcPictures)
 
 	return &AlbumDto{
-		ID:        src.ID,
-		Name:      src.Name,
-		CreatedAt: src.CreatedAt,
+		ID:        srcAlbum.ID,
+		Name:      srcAlbum.Name,
+		CreatedAt: srcAlbum.CreatedAt,
 		Pictures:  picturesDto,
 	}
 }

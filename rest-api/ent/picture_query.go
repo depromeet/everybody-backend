@@ -422,7 +422,10 @@ func (pq *PictureQuery) sqlAll(ctx context.Context) ([]*Picture, error) {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Picture)
 		for i := range nodes {
-			fk := nodes[i].AlbumID
+			if nodes[i].album_picture == nil {
+				continue
+			}
+			fk := *nodes[i].album_picture
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
@@ -436,7 +439,7 @@ func (pq *PictureQuery) sqlAll(ctx context.Context) ([]*Picture, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "album_id" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "album_picture" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.Album = n

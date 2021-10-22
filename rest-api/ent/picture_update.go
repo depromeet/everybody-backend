@@ -4,7 +4,6 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -36,15 +35,9 @@ func (pu *PictureUpdate) SetBodyPart(s string) *PictureUpdate {
 	return pu
 }
 
-// SetLocation sets the "location" field.
-func (pu *PictureUpdate) SetLocation(s string) *PictureUpdate {
-	pu.mutation.SetLocation(s)
-	return pu
-}
-
-// SetAlbumID sets the "album_id" field.
-func (pu *PictureUpdate) SetAlbumID(i int) *PictureUpdate {
-	pu.mutation.SetAlbumID(i)
+// SetKey sets the "key" field.
+func (pu *PictureUpdate) SetKey(s string) *PictureUpdate {
+	pu.mutation.SetKey(s)
 	return pu
 }
 
@@ -58,6 +51,20 @@ func (pu *PictureUpdate) SetCreatedAt(t time.Time) *PictureUpdate {
 func (pu *PictureUpdate) SetNillableCreatedAt(t *time.Time) *PictureUpdate {
 	if t != nil {
 		pu.SetCreatedAt(*t)
+	}
+	return pu
+}
+
+// SetAlbumID sets the "album" edge to the Album entity by ID.
+func (pu *PictureUpdate) SetAlbumID(id int) *PictureUpdate {
+	pu.mutation.SetAlbumID(id)
+	return pu
+}
+
+// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
+func (pu *PictureUpdate) SetNillableAlbumID(id *int) *PictureUpdate {
+	if id != nil {
+		pu = pu.SetAlbumID(*id)
 	}
 	return pu
 }
@@ -110,18 +117,12 @@ func (pu *PictureUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(pu.hooks) == 0 {
-		if err = pu.check(); err != nil {
-			return 0, err
-		}
 		affected, err = pu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PictureMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = pu.check(); err != nil {
-				return 0, err
 			}
 			pu.mutation = mutation
 			affected, err = pu.sqlSave(ctx)
@@ -163,14 +164,6 @@ func (pu *PictureUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (pu *PictureUpdate) check() error {
-	if _, ok := pu.mutation.AlbumID(); pu.mutation.AlbumCleared() && !ok {
-		return errors.New("ent: clearing a required unique edge \"album\"")
-	}
-	return nil
-}
-
 func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := &sqlgraph.UpdateSpec{
 		Node: &sqlgraph.NodeSpec{
@@ -196,11 +189,11 @@ func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: picture.FieldBodyPart,
 		})
 	}
-	if value, ok := pu.mutation.Location(); ok {
+	if value, ok := pu.mutation.Key(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: picture.FieldLocation,
+			Column: picture.FieldKey,
 		})
 	}
 	if value, ok := pu.mutation.CreatedAt(); ok {
@@ -305,15 +298,9 @@ func (puo *PictureUpdateOne) SetBodyPart(s string) *PictureUpdateOne {
 	return puo
 }
 
-// SetLocation sets the "location" field.
-func (puo *PictureUpdateOne) SetLocation(s string) *PictureUpdateOne {
-	puo.mutation.SetLocation(s)
-	return puo
-}
-
-// SetAlbumID sets the "album_id" field.
-func (puo *PictureUpdateOne) SetAlbumID(i int) *PictureUpdateOne {
-	puo.mutation.SetAlbumID(i)
+// SetKey sets the "key" field.
+func (puo *PictureUpdateOne) SetKey(s string) *PictureUpdateOne {
+	puo.mutation.SetKey(s)
 	return puo
 }
 
@@ -327,6 +314,20 @@ func (puo *PictureUpdateOne) SetCreatedAt(t time.Time) *PictureUpdateOne {
 func (puo *PictureUpdateOne) SetNillableCreatedAt(t *time.Time) *PictureUpdateOne {
 	if t != nil {
 		puo.SetCreatedAt(*t)
+	}
+	return puo
+}
+
+// SetAlbumID sets the "album" edge to the Album entity by ID.
+func (puo *PictureUpdateOne) SetAlbumID(id int) *PictureUpdateOne {
+	puo.mutation.SetAlbumID(id)
+	return puo
+}
+
+// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
+func (puo *PictureUpdateOne) SetNillableAlbumID(id *int) *PictureUpdateOne {
+	if id != nil {
+		puo = puo.SetAlbumID(*id)
 	}
 	return puo
 }
@@ -386,18 +387,12 @@ func (puo *PictureUpdateOne) Save(ctx context.Context) (*Picture, error) {
 		node *Picture
 	)
 	if len(puo.hooks) == 0 {
-		if err = puo.check(); err != nil {
-			return nil, err
-		}
 		node, err = puo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PictureMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = puo.check(); err != nil {
-				return nil, err
 			}
 			puo.mutation = mutation
 			node, err = puo.sqlSave(ctx)
@@ -437,14 +432,6 @@ func (puo *PictureUpdateOne) ExecX(ctx context.Context) {
 	if err := puo.Exec(ctx); err != nil {
 		panic(err)
 	}
-}
-
-// check runs all checks and user-defined validators on the builder.
-func (puo *PictureUpdateOne) check() error {
-	if _, ok := puo.mutation.AlbumID(); puo.mutation.AlbumCleared() && !ok {
-		return errors.New("ent: clearing a required unique edge \"album\"")
-	}
-	return nil
 }
 
 func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err error) {
@@ -489,11 +476,11 @@ func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err e
 			Column: picture.FieldBodyPart,
 		})
 	}
-	if value, ok := puo.mutation.Location(); ok {
+	if value, ok := puo.mutation.Key(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: picture.FieldLocation,
+			Column: picture.FieldKey,
 		})
 	}
 	if value, ok := puo.mutation.CreatedAt(); ok {

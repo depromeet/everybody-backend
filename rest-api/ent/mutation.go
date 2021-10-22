@@ -1567,7 +1567,7 @@ type PictureMutation struct {
 	typ           string
 	id            *int
 	body_part     *string
-	location      *string
+	key           *string
 	created_at    *time.Time
 	clearedFields map[string]struct{}
 	album         *int
@@ -1694,76 +1694,40 @@ func (m *PictureMutation) ResetBodyPart() {
 	m.body_part = nil
 }
 
-// SetLocation sets the "location" field.
-func (m *PictureMutation) SetLocation(s string) {
-	m.location = &s
+// SetKey sets the "key" field.
+func (m *PictureMutation) SetKey(s string) {
+	m.key = &s
 }
 
-// Location returns the value of the "location" field in the mutation.
-func (m *PictureMutation) Location() (r string, exists bool) {
-	v := m.location
+// Key returns the value of the "key" field in the mutation.
+func (m *PictureMutation) Key() (r string, exists bool) {
+	v := m.key
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLocation returns the old "location" field's value of the Picture entity.
+// OldKey returns the old "key" field's value of the Picture entity.
 // If the Picture object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PictureMutation) OldLocation(ctx context.Context) (v string, err error) {
+func (m *PictureMutation) OldKey(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldLocation is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldKey is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldLocation requires an ID field in the mutation")
+		return v, fmt.Errorf("OldKey requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLocation: %w", err)
+		return v, fmt.Errorf("querying old value for OldKey: %w", err)
 	}
-	return oldValue.Location, nil
+	return oldValue.Key, nil
 }
 
-// ResetLocation resets all changes to the "location" field.
-func (m *PictureMutation) ResetLocation() {
-	m.location = nil
-}
-
-// SetAlbumID sets the "album_id" field.
-func (m *PictureMutation) SetAlbumID(i int) {
-	m.album = &i
-}
-
-// AlbumID returns the value of the "album_id" field in the mutation.
-func (m *PictureMutation) AlbumID() (r int, exists bool) {
-	v := m.album
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAlbumID returns the old "album_id" field's value of the Picture entity.
-// If the Picture object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PictureMutation) OldAlbumID(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldAlbumID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldAlbumID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAlbumID: %w", err)
-	}
-	return oldValue.AlbumID, nil
-}
-
-// ResetAlbumID resets all changes to the "album_id" field.
-func (m *PictureMutation) ResetAlbumID() {
-	m.album = nil
+// ResetKey resets all changes to the "key" field.
+func (m *PictureMutation) ResetKey() {
+	m.key = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -1802,6 +1766,11 @@ func (m *PictureMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetAlbumID sets the "album" edge to the Album entity by id.
+func (m *PictureMutation) SetAlbumID(id int) {
+	m.album = &id
+}
+
 // ClearAlbum clears the "album" edge to the Album entity.
 func (m *PictureMutation) ClearAlbum() {
 	m.clearedalbum = true
@@ -1810,6 +1779,14 @@ func (m *PictureMutation) ClearAlbum() {
 // AlbumCleared reports if the "album" edge to the Album entity was cleared.
 func (m *PictureMutation) AlbumCleared() bool {
 	return m.clearedalbum
+}
+
+// AlbumID returns the "album" edge ID in the mutation.
+func (m *PictureMutation) AlbumID() (id int, exists bool) {
+	if m.album != nil {
+		return *m.album, true
+	}
+	return
 }
 
 // AlbumIDs returns the "album" edge IDs in the mutation.
@@ -1886,15 +1863,12 @@ func (m *PictureMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PictureMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 3)
 	if m.body_part != nil {
 		fields = append(fields, picture.FieldBodyPart)
 	}
-	if m.location != nil {
-		fields = append(fields, picture.FieldLocation)
-	}
-	if m.album != nil {
-		fields = append(fields, picture.FieldAlbumID)
+	if m.key != nil {
+		fields = append(fields, picture.FieldKey)
 	}
 	if m.created_at != nil {
 		fields = append(fields, picture.FieldCreatedAt)
@@ -1909,10 +1883,8 @@ func (m *PictureMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case picture.FieldBodyPart:
 		return m.BodyPart()
-	case picture.FieldLocation:
-		return m.Location()
-	case picture.FieldAlbumID:
-		return m.AlbumID()
+	case picture.FieldKey:
+		return m.Key()
 	case picture.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -1926,10 +1898,8 @@ func (m *PictureMutation) OldField(ctx context.Context, name string) (ent.Value,
 	switch name {
 	case picture.FieldBodyPart:
 		return m.OldBodyPart(ctx)
-	case picture.FieldLocation:
-		return m.OldLocation(ctx)
-	case picture.FieldAlbumID:
-		return m.OldAlbumID(ctx)
+	case picture.FieldKey:
+		return m.OldKey(ctx)
 	case picture.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -1948,19 +1918,12 @@ func (m *PictureMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetBodyPart(v)
 		return nil
-	case picture.FieldLocation:
+	case picture.FieldKey:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLocation(v)
-		return nil
-	case picture.FieldAlbumID:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAlbumID(v)
+		m.SetKey(v)
 		return nil
 	case picture.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -1976,16 +1939,13 @@ func (m *PictureMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *PictureMutation) AddedFields() []string {
-	var fields []string
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *PictureMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	}
 	return nil, false
 }
 
@@ -2024,11 +1984,8 @@ func (m *PictureMutation) ResetField(name string) error {
 	case picture.FieldBodyPart:
 		m.ResetBodyPart()
 		return nil
-	case picture.FieldLocation:
-		m.ResetLocation()
-		return nil
-	case picture.FieldAlbumID:
-		m.ResetAlbumID()
+	case picture.FieldKey:
+		m.ResetKey()
 		return nil
 	case picture.FieldCreatedAt:
 		m.ResetCreatedAt()

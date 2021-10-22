@@ -20,16 +20,15 @@ type Picture struct {
 	ID int `json:"id,omitempty"`
 	// BodyPart holds the value of the "body_part" field.
 	BodyPart string `json:"body_part,omitempty"`
-	// Location holds the value of the "location" field.
-	Location string `json:"location,omitempty"`
-	// AlbumID holds the value of the "album_id" field.
-	AlbumID int `json:"album_id,omitempty"`
+	// Key holds the value of the "key" field.
+	Key string `json:"key,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PictureQuery when eager-loading is set.
-	Edges        PictureEdges `json:"edges"`
-	user_picture *int
+	Edges         PictureEdges `json:"edges"`
+	album_picture *int
+	user_picture  *int
 }
 
 // PictureEdges holds the relations/edges for other nodes in the graph.
@@ -76,13 +75,15 @@ func (*Picture) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case picture.FieldID, picture.FieldAlbumID:
+		case picture.FieldID:
 			values[i] = new(sql.NullInt64)
-		case picture.FieldBodyPart, picture.FieldLocation:
+		case picture.FieldBodyPart, picture.FieldKey:
 			values[i] = new(sql.NullString)
 		case picture.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case picture.ForeignKeys[0]: // user_picture
+		case picture.ForeignKeys[0]: // album_picture
+			values[i] = new(sql.NullInt64)
+		case picture.ForeignKeys[1]: // user_picture
 			values[i] = new(sql.NullInt64)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Picture", columns[i])
@@ -111,17 +112,11 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				pi.BodyPart = value.String
 			}
-		case picture.FieldLocation:
+		case picture.FieldKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field location", values[i])
+				return fmt.Errorf("unexpected type %T for field key", values[i])
 			} else if value.Valid {
-				pi.Location = value.String
-			}
-		case picture.FieldAlbumID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field album_id", values[i])
-			} else if value.Valid {
-				pi.AlbumID = int(value.Int64)
+				pi.Key = value.String
 			}
 		case picture.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -130,6 +125,13 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 				pi.CreatedAt = value.Time
 			}
 		case picture.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for edge-field album_picture", value)
+			} else if value.Valid {
+				pi.album_picture = new(int)
+				*pi.album_picture = int(value.Int64)
+			}
+		case picture.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field user_picture", value)
 			} else if value.Valid {
@@ -176,10 +178,8 @@ func (pi *Picture) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", pi.ID))
 	builder.WriteString(", body_part=")
 	builder.WriteString(pi.BodyPart)
-	builder.WriteString(", location=")
-	builder.WriteString(pi.Location)
-	builder.WriteString(", album_id=")
-	builder.WriteString(fmt.Sprintf("%v", pi.AlbumID))
+	builder.WriteString(", key=")
+	builder.WriteString(pi.Key)
 	builder.WriteString(", created_at=")
 	builder.WriteString(pi.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

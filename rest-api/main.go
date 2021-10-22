@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/depromeet/everybody-backend/rest-api/config"
 	_ "github.com/depromeet/everybody-backend/rest-api/config"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http/handler"
@@ -44,17 +42,6 @@ func main() {
 
 func initialize() {
 	dbClient := repository.Connect()
-	// Aws session 연결하는 부분
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		// enable AWS_SDK_LOAD_CONFIG
-		SharedConfigState: session.SharedConfigEnable,
-		// Profile name
-		Profile: config.Config.AWS.Profile,
-	}))
-	_, err := sess.Config.Credentials.Get()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	notificationRepo = repository.NewNotificationRepository(dbClient)
 	deviceRepo = repository.NewDeviceRepository(dbClient)
@@ -66,7 +53,7 @@ func initialize() {
 	deviceService = service.NewDeviceService(deviceRepo)
 	userService = service.NewUserService(userRepo, notificationService, deviceService)
 	albumService = service.NewAlbumService(albumRepo, pictureRepo)
-	pictureService = service.NewPictureService(pictureRepo, sess)
+	pictureService = service.NewPictureService(pictureRepo)
 
 	userHandler = handler.NewUserHandler(userService)
 	notificationHandler = handler.NewNotificationHandler(notificationService)

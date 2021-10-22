@@ -26,18 +26,13 @@ func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	form, err := ctx.MultipartForm()
+	pictureReq := new(dto.PictureRequest)
+	err = ctx.BodyParser(pictureReq)
 	if err != nil {
 		return err
 	}
 
-	pictureReq := dto.PictureMultiPart{
-		AlbumID:  form.Value["album_id"],
-		BodyPart: form.Value["body_part"],
-		File:     form.File["picture"],
-	}
-
-	picture, err := h.pictureService.SavePicture(userID, &pictureReq)
+	picture, err := h.pictureService.SavePicture(userID, pictureReq)
 	if err != nil {
 		return err
 	}
@@ -47,7 +42,6 @@ func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
 
 // GetAllPictures는 user가 가지고 있는 모든 사진 조회
 func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
-	// TODO: albumid가 아니라 userid로 전체 사진 조회하도록 수정
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
 		return err

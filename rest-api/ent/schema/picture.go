@@ -18,8 +18,7 @@ func (Picture) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("body_part"),
 		// TODO: 이 부분은 location보다는 key가 좋을 것 같은데 어떨까요
-		field.String("location"),
-		field.Int("album_id"),
+		field.String("key"),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),
@@ -31,9 +30,7 @@ func (Picture) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("album", Album.Type).
 			Ref("picture").
-			Unique().
-			Required().
-			Field("album_id"),
+			Unique(),
 		edge.From("user", User.Type).
 			Ref("picture").
 			Unique(),

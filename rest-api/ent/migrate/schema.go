@@ -77,9 +77,9 @@ var (
 	PicturesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "body_part", Type: field.TypeString},
-		{Name: "location", Type: field.TypeString},
+		{Name: "key", Type: field.TypeString},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "album_id", Type: field.TypeInt, Nullable: true},
+		{Name: "album_picture", Type: field.TypeInt, Nullable: true},
 		{Name: "user_picture", Type: field.TypeInt, Nullable: true},
 	}
 	// PicturesTable holds the schema information for the "pictures" table.

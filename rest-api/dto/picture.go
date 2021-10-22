@@ -2,12 +2,12 @@ package dto
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/aws/aws-sdk-go/service/cloudfront/sign"
 	"github.com/depromeet/everybody-backend/rest-api/config"
 	log "github.com/sirupsen/logrus"
-	"mime/multipart"
-	"strings"
-	"time"
 
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 )
@@ -16,13 +16,15 @@ type PictureRequest struct {
 	ID       int    `json:"id"`
 	AlbumID  int    `json:"album_id"`
 	BodyPart string `json:"body_part"`
+	// Gateway에서 image key 값도 같이 받음
+	Key string `json:"key"`
 }
 
-type PictureMultiPart struct {
-	AlbumID  []string
-	BodyPart []string
-	File     []*multipart.FileHeader
-}
+// type PictureMultiPart struct {
+// 	AlbumID  []string
+// 	BodyPart []string
+// 	File     []*multipart.FileHeader
+// }
 
 type PicturesDto []*PictureDto
 
@@ -34,36 +36,35 @@ type PictureDto struct {
 	ThumbnailURL string    `json:"thumbnail_url"`
 	PreviewURL   string    `json:"preview_url"`
 	ImageURL     string    `json:"image_url"`
-	// client한테 어떤 형태로 사진 정보를 줄 지 결정해야함(url, hashed file name 같은...)
-	Location string `json:"location"`
+	// image의 object key
+	Key string `json:"key"`
 }
 
 func PictureToDto(src *ent.Picture) *PictureDto {
-	thumbnailURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 48, src.Location))
+	thumbnailURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 48, src.Key))
 	// 일단 이 부분까지 하나 하나 에러처리하긴 번거로울 듯?
 	if err != nil {
 		log.Error(err)
 	}
 
-	previewURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 192, src.Location))
+	previewURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 192, src.Key))
 	if err != nil {
 		log.Error(err)
 	}
 
-	imageURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 768, src.Location))
+	imageURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 768, src.Key))
 	if err != nil {
 		log.Error(err)
 	}
-
 	return &PictureDto{
 		ID:           src.ID,
-		AlbumID:      src.AlbumID,
+		AlbumID:      src.Edges.Album.ID,
 		BodyPart:     src.BodyPart,
 		CreatedAt:    src.CreatedAt,
 		ThumbnailURL: thumbnailURL,
 		PreviewURL:   previewURL,
 		ImageURL:     imageURL,
-		Location:     src.Location,
+		Key:          src.Key,
 	}
 }
 

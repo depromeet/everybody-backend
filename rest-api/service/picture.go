@@ -1,87 +1,37 @@
 package service
 
 import (
-	"bytes"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/depromeet/everybody-backend/rest-api/config"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
 	log "github.com/sirupsen/logrus"
-	"io"
-	"net/http"
-	"strconv"
 )
 
 type pictureService struct {
 	pictureRepo repository.PictureRepositoryInterface
-	sess        *session.Session
 }
 
 type PictureServiceInterface interface {
-	SavePicture(userID int, pictureReq *dto.PictureMultiPart) (*dto.PictureDto, error)
+	SavePicture(userID int, pictureReq *dto.PictureRequest) (*dto.PictureDto, error)
 	GetAllPictures(userID int) (dto.PicturesDto, error)
 	GetPicture(pictureID int) (*dto.PictureDto, error)
 }
 
-func NewPictureService(pictureRepo repository.PictureRepositoryInterface, sess *session.Session) PictureServiceInterface {
+func NewPictureService(pictureRepo repository.PictureRepositoryInterface) PictureServiceInterface {
 	return &pictureService{
 		pictureRepo: pictureRepo,
-		sess:        sess,
 	}
 }
 
-func (s *pictureService) SavePicture(userID int, pictureReq *dto.PictureMultiPart) (*dto.PictureDto, error) {
-
-	svc := s3.New(s.sess, &aws.Config{
-		DisableRestProtocolURICleaning: aws.Bool(true),
-		// Region: config.Config.AWS.Region,
-	})
-
-	for _, fileHeader := range pictureReq.File {
-		f, err := fileHeader.Open()
-		if err != nil {
-			return nil, err
-		}
-		fileBytes, err := io.ReadAll(f)
-		if err != nil {
-			return nil, err
-		}
-		// uploader := s3manager.NewUploader(sess)
-		output, err := svc.PutObject(&s3.PutObjectInput{
-			Bucket: aws.String(config.Config.AWS.Bucket),
-			// TODO: key(object 이름) 값을 어떤 식으로 할 지를 정해야 됨...
-			// 임시로 key 값을 filename으로 설정
-			Key:         aws.String(fileHeader.Filename),
-			Body:        bytes.NewReader(fileBytes),
-			ContentType: aws.String(http.DetectContentType(fileBytes)),
-		})
-		if err != nil {
-			return nil, err
-		}
-		// output 값은 ETag(hash 값) 리턴
-		log.Println(output)
-	}
-
-	// TODO: 다중 form data 올 경우도 handling 해주어야 할 듯?
-	// 현재는 하나씩 온다고 가정하고 구현...
-	fileName := pictureReq.File[0].Filename
-	bodyPart := pictureReq.BodyPart[0]
-	albumID, err := strconv.Atoi(pictureReq.AlbumID[0])
-	if err != nil {
-		return nil, err
-	}
-
+// SavePicture는 API Gateway에서 보낸 picture 정보를(key값 포함) 저장하는 역할
+func (s *pictureService) SavePicture(userID int, pictureReq *dto.PictureRequest) (*dto.PictureDto, error) {
 	picture := &ent.Picture{
-		BodyPart: bodyPart,
-		AlbumID:  albumID,
+		BodyPart: pictureReq.BodyPart,
 		Edges: ent.PictureEdges{
 			User:  &ent.User{ID: userID},
-			Album: &ent.Album{ID: albumID},
+			Album: &ent.Album{ID: pictureReq.AlbumID},
 		},
-		Location: fileName,
+		Key: pictureReq.Key,
 	}
 
 	p, err := s.pictureRepo.Save(picture)
@@ -89,6 +39,7 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.PictureMultiPar
 		return nil, err
 	}
 
+	log.Info("사진 저장 완료")
 	return dto.PictureToDto(p), nil
 }
 
@@ -99,6 +50,7 @@ func (s *pictureService) GetAllPictures(userID int) (dto.PicturesDto, error) {
 		return nil, err
 	}
 
+	log.Info("사용자의 모든 사진들을 조회 완료")
 	return dto.PicturesToDto(pictures), nil
 }
 
@@ -108,5 +60,6 @@ func (s *pictureService) GetPicture(pictureID int) (*dto.PictureDto, error) {
 		return nil, err
 	}
 
+	log.Info("하나의 사진 조회 완료")
 	return dto.PictureToDto(picture), nil
 }
