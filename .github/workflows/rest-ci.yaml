@@ -47,5 +47,7 @@ jobs:
       working-directory: rest-api
 
     - name: Test rest-api
-      run: go test -v ./...
+      # go test -v ./...()
+      run: |
+        go test -v ./service
       working-directory: rest-api
