@@ -1,10 +1,10 @@
 package service
 
 import (
-	"errors"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
+	"github.com/pkg/errors"
 )
 
 type NotificationService interface {
@@ -39,24 +39,24 @@ func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNoti
 				},
 			})
 			if err != nil {
-				return nil, err
+				return nil, errors.WithStack(err)
 			}
 
 			return dto.NotificationConfigToDto(result), nil
 		} else {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
 	}
 
 	// 수정
 	_, err = s.notificationRepo.UpdateInterval(config.ID, body.Interval)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	result, err := s.notificationRepo.UpdateIsActivated(config.ID, body.IsActivated)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return dto.NotificationConfigToDto(result), nil
@@ -66,7 +66,7 @@ func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNoti
 func (s *notificationService) GetConfig(id int) (*dto.NotificationConfigDto, error) {
 	config, err := s.notificationRepo.FindById(id)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return dto.NotificationConfigToDto(config), err
@@ -76,7 +76,7 @@ func (s *notificationService) GetConfig(id int) (*dto.NotificationConfigDto, err
 func (s *notificationService) GetConfigByUser(user int) (*dto.NotificationConfigDto, error) {
 	config, err := s.notificationRepo.FindByUser(user)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return dto.NotificationConfigToDto(config), nil

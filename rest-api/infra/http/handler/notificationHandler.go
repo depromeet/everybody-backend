@@ -5,6 +5,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pkg/errors"
 )
 
 func NewNotificationHandler(notificationService service.NotificationService) *NotificationHandler {
@@ -20,12 +21,12 @@ type NotificationHandler struct {
 //func (h *NotificationHandler) GetConfig(ctx *fiber.Ctx) error {
 //	configID, err := strconv.Atoi(ctx.Params("id"))
 //	if err != nil {
-//		return err
+//		return errors.WithStack(err)
 //	}
 //
 //	config, err := h.notificationService.GetConfig(configID)
 //	if err != nil {
-//		return err
+//		return errors.WithStack(err)
 //	}
 //
 //	return ctx.JSON(config)
@@ -35,12 +36,12 @@ type NotificationHandler struct {
 func (h *NotificationHandler) GetConfig(ctx *fiber.Ctx) error {
 	user, err := util.GetRequestUserID(ctx)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	config, err := h.notificationService.GetConfigByUser(user)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return ctx.JSON(config)
@@ -50,18 +51,18 @@ func (h *NotificationHandler) GetConfig(ctx *fiber.Ctx) error {
 func (h *NotificationHandler) UpdateConfig(ctx *fiber.Ctx) error {
 	user, err := util.GetRequestUserID(ctx)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	body := new(dto.ConfigureNotificationRequest)
 	err = ctx.BodyParser(body)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	config, err := h.notificationService.Configure(user, body)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return ctx.JSON(config)

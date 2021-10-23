@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/pkg/errors"
 
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
@@ -35,12 +36,12 @@ func (r *pictureRepository) Save(picture *ent.Picture) (*ent.Picture, error) {
 		SetKey(picture.Key).
 		Save(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	user, err := p.QueryUser().First(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	album, err := p.QueryAlbum().First(context.Background())
@@ -60,7 +61,7 @@ func (r *pictureRepository) GetAllByUserID(userID int) ([]*ent.Picture, error) {
 		WithAlbum().
 		All(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return pictures, nil
@@ -74,7 +75,7 @@ func (r *pictureRepository) GetAllByAlbumID(albumID int) ([]*ent.Picture, error)
 		WithAlbum().
 		All(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return pictures, nil
@@ -87,7 +88,7 @@ func (r *pictureRepository) Get(pictureID int) (*ent.Picture, error) {
 		WithAlbum().
 		Only(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return p, nil
@@ -101,7 +102,7 @@ func (r *pictureRepository) FindByAlbumIDAndBodyPart(albumID int, bodyPart strin
 		WithAlbum().
 		All(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return pictures, nil

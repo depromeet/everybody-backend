@@ -1,11 +1,11 @@
 package service
 
 import (
-	"errors"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -52,7 +52,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 		Type:     user.Type(body.Type),
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	log.Infof("유저를 생성했습니다. User(id=%d)", user.ID)
 
@@ -65,7 +65,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 		IsActivated: true,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	log.Infof("알림 설정을 생성했습니다. NotificaitonConfig(user.id=%d)", user.ID)
 
@@ -75,7 +75,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 		DeviceOS:    body.DeviceOS,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 	log.Infof("디바이스 정보를 생성했습니다. Device(id=%d)", device.ID)
 
@@ -86,7 +86,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 func (s *userService) GetUser(id int) (*dto.UserDto, error) {
 	user, err := s.userRepo.FindById(id)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return dto.UserToDto(user), err

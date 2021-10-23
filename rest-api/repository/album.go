@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/pkg/errors"
 
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
@@ -31,7 +32,7 @@ func (r *albumRepository) Create(album *ent.Album) (*ent.Album, error) {
 		Save(context.Background())
 
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return newAlbum, nil
@@ -42,7 +43,7 @@ func (r *albumRepository) GetAllByUserID(userID int) ([]*ent.Album, error) {
 		Where(album.HasUserWith(user.ID(userID))).
 		All(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return albums, nil
@@ -53,7 +54,7 @@ func (r *albumRepository) Get(albumID int) (*ent.Album, error) {
 		Where(album.ID(albumID)).
 		Only(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return albumData, nil

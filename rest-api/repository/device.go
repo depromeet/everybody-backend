@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
+	"github.com/pkg/errors"
 )
 
 type DeviceRepository interface {
@@ -30,7 +31,7 @@ func (repo *deviceRepository) CreateDevice(device *ent.Device) (*ent.Device, err
 		SetDeviceOs(device.DeviceOs).
 		Save(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return result, nil
@@ -41,7 +42,7 @@ func (repo *deviceRepository) FindById(id int) (*ent.Device, error) {
 		Where(device.ID(id)).
 		Only(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return u, nil
@@ -52,7 +53,7 @@ func (repo *deviceRepository) FindByDeviceToken(deviceToken string) (*ent.Device
 		Where(device.DeviceToken(deviceToken)).
 		Only(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return u, nil

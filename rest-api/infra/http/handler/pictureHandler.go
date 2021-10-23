@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 	"strconv"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
@@ -23,18 +23,18 @@ func NewPictureHandler(pictureService service.PictureServiceInterface) *PictureH
 func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	pictureReq := new(dto.PictureRequest)
 	err = ctx.BodyParser(pictureReq)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	picture, err := h.pictureService.SavePicture(userID, pictureReq)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return ctx.JSON(picture)
@@ -44,12 +44,12 @@ func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
 func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	pictures, err := h.pictureService.GetAllPictures(userID)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return ctx.JSON(pictures)
@@ -63,12 +63,12 @@ func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
 
 	pictureID, err := strconv.Atoi(param)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	picture, err := h.pictureService.GetPicture(pictureID)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return ctx.JSON(picture)

@@ -1,11 +1,11 @@
 package service
 
 import (
-	"errors"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -40,7 +40,7 @@ func (s *deviceService) Register(requestUser int, body *dto.RegisterDeviceReques
 			// 해당 device token의 기기가 존재하지 않으면 생성
 			os := device.DeviceOs(body.DeviceOS)
 			if err = device.DeviceOsValidator(os); err != nil {
-				return nil, err
+				return nil, errors.WithStack(err)
 			}
 			// 생성
 			return s.deviceRepo.CreateDevice(&ent.Device{
@@ -51,7 +51,7 @@ func (s *deviceService) Register(requestUser int, body *dto.RegisterDeviceReques
 			})
 		}
 
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	// 기존의 정보 리턴
@@ -63,7 +63,7 @@ func (s *deviceService) Register(requestUser int, body *dto.RegisterDeviceReques
 func (s *deviceService) GetDevice(id int) (*ent.Device, error) {
 	device, err := s.deviceRepo.FindById(id)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return device, err

@@ -5,6 +5,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/pkg/errors"
 	"time"
 )
 
@@ -34,7 +35,7 @@ func (repo *notificationRepository) CreateNotificationConfig(config *ent.Notific
 		SetIsActivated(config.IsActivated).
 		Save(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return result, nil
@@ -45,7 +46,7 @@ func (repo *notificationRepository) FindById(id int) (*ent.NotificationConfig, e
 		Where(notificationconfig.ID(id)).
 		Only(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return u, nil
@@ -56,7 +57,7 @@ func (repo *notificationRepository) FindByUser(userID int) (*ent.NotificationCon
 		Where(notificationconfig.HasUserWith(user.ID(userID))).
 		First(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return u, nil
