@@ -17,14 +17,14 @@ type ErrorResponse struct {
 // 예상치 못한 에러의 경우 500 에러로 응답합니다.
 func errorHandle(ctx *fiber.Ctx, err error) error {
 	log.Error(err)
-	if err != nil {
-		notFoundErr := &ent.NotFoundError{}
-		if errors.As(err, &notFoundErr) {
-			return ctx.Status(404).JSON(e("리소스를 찾을 수 없습니다.", reflect.TypeOf(err).Name()))
-		}
+	notFoundErr := &ent.NotFoundError{}
+	if errors.As(err, &notFoundErr) {
+		return ctx.Status(404).JSON(e("리소스를 찾을 수 없습니다.", reflect.TypeOf(err).Name()))
+	} else {
+		log.Errorf("%+v", err)
+		return ctx.Status(500).JSON(e("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internalError"))
 	}
 
-	return ctx.Status(500).JSON(e("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internalError"))
 }
 
 // e 는 ErrorResponse를 간단히 생성하기 위한 Shortcut

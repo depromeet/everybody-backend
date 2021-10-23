@@ -5,6 +5,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
 	log "github.com/sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
 type albumService struct {
@@ -35,7 +36,7 @@ func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto
 
 	newAlbum, err := s.albumRepo.Create(album)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	log.Info("앨범 생성 완료")
@@ -46,7 +47,7 @@ func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto
 func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 	albums, err := s.albumRepo.GetAllByUserID(userID)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	// album들의 각각의 사진들도 조회
@@ -77,13 +78,13 @@ func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 func (s *albumService) GetAlbum(albumID int) (*dto.AlbumDto, error) {
 	album, err := s.albumRepo.Get(albumID)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	// albumID에 해당하는 pictrues 목록 조회 기능 필요
 	pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	log.Info("앨범과 그 앨범의 사진들을 조회 완료")

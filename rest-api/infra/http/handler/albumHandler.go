@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"errors"
+	"github.com/pkg/errors"
 	"strconv"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
@@ -24,17 +24,17 @@ func (h *AlbumHandler) CreateAlbum(ctx *fiber.Ctx) error {
 	var albumReq dto.AlbumRequest
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	err = ctx.BodyParser(&albumReq)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	newAlbum, err := h.albumService.CreateAlbum(userID, &albumReq)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return ctx.JSON(newAlbum)
@@ -44,12 +44,12 @@ func (h *AlbumHandler) CreateAlbum(ctx *fiber.Ctx) error {
 func (h *AlbumHandler) GetAllAlbums(ctx *fiber.Ctx) error {
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	albums, err := h.albumService.GetAllAlbums(userID)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return ctx.JSON(albums)
@@ -64,13 +64,13 @@ func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
 
 	albumID, err := strconv.Atoi(param)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	// GetAlbum 에서 각 앨범에 해당하는 pictures도 조회해야 함
 	albumData, err := h.albumService.GetAlbum(albumID)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	return ctx.JSON(albumData)

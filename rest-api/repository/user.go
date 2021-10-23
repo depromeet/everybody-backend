@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/pkg/errors"
 )
 
 type UserRepository interface {
@@ -27,7 +28,7 @@ func (repo *userRepository) Create(user *ent.User) (*ent.User, error) {
 		SetType(user.Type).
 		Save(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return result, nil
@@ -38,7 +39,7 @@ func (repo *userRepository) FindById(id int) (*ent.User, error) {
 		Where(user.ID(id)).
 		Only(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return u, nil

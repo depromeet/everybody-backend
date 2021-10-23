@@ -4,6 +4,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -36,7 +37,7 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.PictureRequest)
 
 	p, err := s.pictureRepo.Save(picture)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	log.Info("사진 저장 완료")
@@ -47,7 +48,7 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.PictureRequest)
 func (s *pictureService) GetAllPictures(userID int) (dto.PicturesDto, error) {
 	pictures, err := s.pictureRepo.GetAllByUserID(userID)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	log.Info("사용자의 모든 사진들을 조회 완료")
@@ -57,7 +58,7 @@ func (s *pictureService) GetAllPictures(userID int) (dto.PicturesDto, error) {
 func (s *pictureService) GetPicture(pictureID int) (*dto.PictureDto, error) {
 	picture, err := s.pictureRepo.Get(pictureID)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	log.Info("하나의 사진 조회 완료")
