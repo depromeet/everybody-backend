@@ -11,25 +11,21 @@ import (
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
 	"github.com/depromeet/everybody-backend/api-gateway/controller"
+	"github.com/depromeet/everybody-backend/api-gateway/util"
 )
 
 func main() {
 	log.Info("SERVER START.....")
 
-	// TODO: DB init함수 구현필요
-	/*
-		db, err := initDB(c.Database.Driver, c.Database.Connection)
-		if err != nil {
-			panic(err)
-		}
-		defer db.Close()
-	*/
+	// DB Connectivity test
+	db := util.CreateDBConn()
+	db.Close()
 
 	e := echo.New()
 
 	// register API GATEWAY's api...
 	controller.RestApiController{}.Init(e.Group("/restapi"))
-	//controller.AuthController{}.Init(e.Group("/auth"))
+	controller.AuthController{}.Init(e.Group("/auth"))
 
 	// register server health check api
 	e.GET(config.Config.ApiGw.HealthCheckPath, func(c echo.Context) error { // TODO: 연동테스트 완료되면 * 제거
@@ -44,8 +40,4 @@ func main() {
 	if err := e.Start(":" + strconv.Itoa(config.Config.ApiGw.Port)); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func initDB() {
-	// TODO:
 }

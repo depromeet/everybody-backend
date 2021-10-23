@@ -50,10 +50,10 @@ func callRestApi(c echo.Context, method string) error {
 		req.Header.Del("Authorization")
 		// TODO: jwt 검증/해독/에러처리 + DB 연결해서 user_id 가져오기
 		userId := strconv.Itoa(123) // ### temp....
-		req.Header.Add("user_id", userId)
+		req.Header.Add("user", userId)
 		log.Info("Token Decoding Success -> user_id=", userId)
 	}
-	req.Header.Add("user_id", "12") // ### temp.... TODO: this line should be deleted
+	req.Header.Add("user", "2") // ### temp.... TODO: this line should be deleted
 
 	// 수신한 원본req의 destnation 조작
 	targetAddress := config.Config.TargetServer.RestApi.Address

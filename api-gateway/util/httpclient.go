@@ -2,6 +2,7 @@
 // ref: https://joycecoder.tistory.com/82
 package util
 
+/*
 import (
 	"bytes"
 	"fmt"
@@ -167,3 +168,4 @@ func (r *HttpReq) rawCall(httpClient *http.Client) (*http.Response, error) {
 	return resp, nil
 
 }
+*/
