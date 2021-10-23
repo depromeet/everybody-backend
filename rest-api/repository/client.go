@@ -13,11 +13,12 @@ import (
 )
 
 func Connect() *ent.Client {
-	drv, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true",
+	drv, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true&loc=%s",
 		config.Config.DB.MySQL.User,
 		config.Config.DB.MySQL.Password,
 		config.Config.DB.MySQL.Host,
 		config.Config.DB.MySQL.DatabaseName,
+		"Asia%2FSeoul",
 	))
 	if err != nil {
 		log.Fatal(err)
