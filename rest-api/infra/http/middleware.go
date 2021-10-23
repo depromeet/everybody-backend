@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
 	"reflect"
+	"strings"
 )
 
 type ErrorResponse struct {
@@ -24,7 +25,14 @@ func errorHandle(ctx *fiber.Ctx, err error) error {
 		log.Errorf("%+v", err)
 		return ctx.Status(500).JSON(e("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internalError"))
 	}
+}
 
+func defaultLog(ctx *fiber.Ctx) error {
+	log.Infof("Request Headers: %s\n", ctx.Request().Header.String())
+	if strings.HasPrefix(ctx.Get("Content-Type", ""), "application/json") {
+		log.Infof("Request JSON Body: %s\n", ctx.Body())
+	}
+	return ctx.Next()
 }
 
 // e 는 ErrorResponse를 간단히 생성하기 위한 Shortcut

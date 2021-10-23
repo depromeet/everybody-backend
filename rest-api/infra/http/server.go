@@ -20,6 +20,7 @@ func NewServer(
 		AllowOrigins: "*",
 	}))
 	app.Use(logger.New())
+	app.Use(defaultLog)
 	app.Get("/", index)
 
 	addUserHandlers(app, userHandler)
