@@ -21,6 +21,8 @@ type NotificationConfig struct {
 	Monday bool `json:"monday,omitempty"`
 	// Tuesday holds the value of the "tuesday" field.
 	Tuesday bool `json:"tuesday,omitempty"`
+	// Wednesday holds the value of the "wednesday" field.
+	Wednesday bool `json:"wednesday,omitempty"`
 	// Thursday holds the value of the "thursday" field.
 	Thursday bool `json:"thursday,omitempty"`
 	// Friday holds the value of the "friday" field.
@@ -30,11 +32,11 @@ type NotificationConfig struct {
 	// Sunday holds the value of the "sunday" field.
 	Sunday bool `json:"sunday,omitempty"`
 	// PreferredTimeHour holds the value of the "preferred_time_hour" field.
-	PreferredTimeHour string `json:"preferred_time_hour,omitempty"`
+	PreferredTimeHour int `json:"preferred_time_hour,omitempty"`
 	// PreferredTimeMinute holds the value of the "preferred_time_minute" field.
-	PreferredTimeMinute string `json:"preferred_time_minute,omitempty"`
+	PreferredTimeMinute int `json:"preferred_time_minute,omitempty"`
 	// LastNotifiedAt holds the value of the "last_notified_at" field.
-	LastNotifiedAt time.Time `json:"last_notified_at,omitempty"`
+	LastNotifiedAt *time.Time `json:"last_notified_at,omitempty"`
 	// IsActivated holds the value of the "is_activated" field.
 	IsActivated bool `json:"is_activated,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -71,12 +73,10 @@ func (*NotificationConfig) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case notificationconfig.FieldMonday, notificationconfig.FieldTuesday, notificationconfig.FieldThursday, notificationconfig.FieldFriday, notificationconfig.FieldSaturday, notificationconfig.FieldSunday, notificationconfig.FieldIsActivated:
+		case notificationconfig.FieldMonday, notificationconfig.FieldTuesday, notificationconfig.FieldWednesday, notificationconfig.FieldThursday, notificationconfig.FieldFriday, notificationconfig.FieldSaturday, notificationconfig.FieldSunday, notificationconfig.FieldIsActivated:
 			values[i] = new(sql.NullBool)
-		case notificationconfig.FieldID:
+		case notificationconfig.FieldID, notificationconfig.FieldPreferredTimeHour, notificationconfig.FieldPreferredTimeMinute:
 			values[i] = new(sql.NullInt64)
-		case notificationconfig.FieldPreferredTimeHour, notificationconfig.FieldPreferredTimeMinute:
-			values[i] = new(sql.NullString)
 		case notificationconfig.FieldLastNotifiedAt:
 			values[i] = new(sql.NullTime)
 		case notificationconfig.ForeignKeys[0]: // user_notification_config
@@ -114,6 +114,12 @@ func (nc *NotificationConfig) assignValues(columns []string, values []interface{
 			} else if value.Valid {
 				nc.Tuesday = value.Bool
 			}
+		case notificationconfig.FieldWednesday:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field wednesday", values[i])
+			} else if value.Valid {
+				nc.Wednesday = value.Bool
+			}
 		case notificationconfig.FieldThursday:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field thursday", values[i])
@@ -139,22 +145,23 @@ func (nc *NotificationConfig) assignValues(columns []string, values []interface{
 				nc.Sunday = value.Bool
 			}
 		case notificationconfig.FieldPreferredTimeHour:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field preferred_time_hour", values[i])
 			} else if value.Valid {
-				nc.PreferredTimeHour = value.String
+				nc.PreferredTimeHour = int(value.Int64)
 			}
 		case notificationconfig.FieldPreferredTimeMinute:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field preferred_time_minute", values[i])
 			} else if value.Valid {
-				nc.PreferredTimeMinute = value.String
+				nc.PreferredTimeMinute = int(value.Int64)
 			}
 		case notificationconfig.FieldLastNotifiedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field last_notified_at", values[i])
 			} else if value.Valid {
-				nc.LastNotifiedAt = value.Time
+				nc.LastNotifiedAt = new(time.Time)
+				*nc.LastNotifiedAt = value.Time
 			}
 		case notificationconfig.FieldIsActivated:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -206,6 +213,8 @@ func (nc *NotificationConfig) String() string {
 	builder.WriteString(fmt.Sprintf("%v", nc.Monday))
 	builder.WriteString(", tuesday=")
 	builder.WriteString(fmt.Sprintf("%v", nc.Tuesday))
+	builder.WriteString(", wednesday=")
+	builder.WriteString(fmt.Sprintf("%v", nc.Wednesday))
 	builder.WriteString(", thursday=")
 	builder.WriteString(fmt.Sprintf("%v", nc.Thursday))
 	builder.WriteString(", friday=")
@@ -215,11 +224,13 @@ func (nc *NotificationConfig) String() string {
 	builder.WriteString(", sunday=")
 	builder.WriteString(fmt.Sprintf("%v", nc.Sunday))
 	builder.WriteString(", preferred_time_hour=")
-	builder.WriteString(nc.PreferredTimeHour)
+	builder.WriteString(fmt.Sprintf("%v", nc.PreferredTimeHour))
 	builder.WriteString(", preferred_time_minute=")
-	builder.WriteString(nc.PreferredTimeMinute)
-	builder.WriteString(", last_notified_at=")
-	builder.WriteString(nc.LastNotifiedAt.Format(time.ANSIC))
+	builder.WriteString(fmt.Sprintf("%v", nc.PreferredTimeMinute))
+	if v := nc.LastNotifiedAt; v != nil {
+		builder.WriteString(", last_notified_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", is_activated=")
 	builder.WriteString(fmt.Sprintf("%v", nc.IsActivated))
 	builder.WriteByte(')')

@@ -412,22 +412,22 @@ func WeightNotNil() predicate.User {
 	})
 }
 
-// TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.User {
+// KindEQ applies the EQ predicate on the "kind" field.
+func KindEQ(v Kind) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldType), v))
+		s.Where(sql.EQ(s.C(FieldKind), v))
 	})
 }
 
-// TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.User {
+// KindNEQ applies the NEQ predicate on the "kind" field.
+func KindNEQ(v Kind) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldType), v))
+		s.Where(sql.NEQ(s.C(FieldKind), v))
 	})
 }
 
-// TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.User {
+// KindIn applies the In predicate on the "kind" field.
+func KindIn(vs ...Kind) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -439,12 +439,12 @@ func TypeIn(vs ...Type) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldType), v...))
+		s.Where(sql.In(s.C(FieldKind), v...))
 	})
 }
 
-// TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.User {
+// KindNotIn applies the NotIn predicate on the "kind" field.
+func KindNotIn(vs ...Kind) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -456,7 +456,7 @@ func TypeNotIn(vs ...Type) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldType), v...))
+		s.Where(sql.NotIn(s.C(FieldKind), v...))
 	})
 }
 

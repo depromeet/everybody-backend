@@ -91,9 +91,9 @@ func (uu *UserUpdate) ClearWeight() *UserUpdate {
 	return uu
 }
 
-// SetType sets the "type" field.
-func (uu *UserUpdate) SetType(u user.Type) *UserUpdate {
-	uu.mutation.SetType(u)
+// SetKind sets the "kind" field.
+func (uu *UserUpdate) SetKind(u user.Kind) *UserUpdate {
+	uu.mutation.SetKind(u)
 	return uu
 }
 
@@ -322,9 +322,9 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uu *UserUpdate) check() error {
-	if v, ok := uu.mutation.GetType(); ok {
-		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+	if v, ok := uu.mutation.Kind(); ok {
+		if err := user.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf("ent: validator failed for field \"kind\": %w", err)}
 		}
 	}
 	return nil
@@ -395,11 +395,11 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldWeight,
 		})
 	}
-	if value, ok := uu.mutation.GetType(); ok {
+	if value, ok := uu.mutation.Kind(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: user.FieldType,
+			Column: user.FieldKind,
 		})
 	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
@@ -704,9 +704,9 @@ func (uuo *UserUpdateOne) ClearWeight() *UserUpdateOne {
 	return uuo
 }
 
-// SetType sets the "type" field.
-func (uuo *UserUpdateOne) SetType(u user.Type) *UserUpdateOne {
-	uuo.mutation.SetType(u)
+// SetKind sets the "kind" field.
+func (uuo *UserUpdateOne) SetKind(u user.Kind) *UserUpdateOne {
+	uuo.mutation.SetKind(u)
 	return uuo
 }
 
@@ -942,9 +942,9 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uuo *UserUpdateOne) check() error {
-	if v, ok := uuo.mutation.GetType(); ok {
-		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+	if v, ok := uuo.mutation.Kind(); ok {
+		if err := user.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf("ent: validator failed for field \"kind\": %w", err)}
 		}
 	}
 	return nil
@@ -1032,11 +1032,11 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldWeight,
 		})
 	}
-	if value, ok := uuo.mutation.GetType(); ok {
+	if value, ok := uuo.mutation.Kind(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: user.FieldType,
+			Column: user.FieldKind,
 		})
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {

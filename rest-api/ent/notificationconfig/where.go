@@ -107,6 +107,13 @@ func Tuesday(v bool) predicate.NotificationConfig {
 	})
 }
 
+// Wednesday applies equality check predicate on the "wednesday" field. It's identical to WednesdayEQ.
+func Wednesday(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWednesday), v))
+	})
+}
+
 // Thursday applies equality check predicate on the "thursday" field. It's identical to ThursdayEQ.
 func Thursday(v bool) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
@@ -136,14 +143,14 @@ func Sunday(v bool) predicate.NotificationConfig {
 }
 
 // PreferredTimeHour applies equality check predicate on the "preferred_time_hour" field. It's identical to PreferredTimeHourEQ.
-func PreferredTimeHour(v string) predicate.NotificationConfig {
+func PreferredTimeHour(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
 // PreferredTimeMinute applies equality check predicate on the "preferred_time_minute" field. It's identical to PreferredTimeMinuteEQ.
-func PreferredTimeMinute(v string) predicate.NotificationConfig {
+func PreferredTimeMinute(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPreferredTimeMinute), v))
 	})
@@ -188,6 +195,20 @@ func TuesdayEQ(v bool) predicate.NotificationConfig {
 func TuesdayNEQ(v bool) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldTuesday), v))
+	})
+}
+
+// WednesdayEQ applies the EQ predicate on the "wednesday" field.
+func WednesdayEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWednesday), v))
+	})
+}
+
+// WednesdayNEQ applies the NEQ predicate on the "wednesday" field.
+func WednesdayNEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldWednesday), v))
 	})
 }
 
@@ -248,21 +269,21 @@ func SundayNEQ(v bool) predicate.NotificationConfig {
 }
 
 // PreferredTimeHourEQ applies the EQ predicate on the "preferred_time_hour" field.
-func PreferredTimeHourEQ(v string) predicate.NotificationConfig {
+func PreferredTimeHourEQ(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
 // PreferredTimeHourNEQ applies the NEQ predicate on the "preferred_time_hour" field.
-func PreferredTimeHourNEQ(v string) predicate.NotificationConfig {
+func PreferredTimeHourNEQ(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
 // PreferredTimeHourIn applies the In predicate on the "preferred_time_hour" field.
-func PreferredTimeHourIn(vs ...string) predicate.NotificationConfig {
+func PreferredTimeHourIn(vs ...int) predicate.NotificationConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -279,7 +300,7 @@ func PreferredTimeHourIn(vs ...string) predicate.NotificationConfig {
 }
 
 // PreferredTimeHourNotIn applies the NotIn predicate on the "preferred_time_hour" field.
-func PreferredTimeHourNotIn(vs ...string) predicate.NotificationConfig {
+func PreferredTimeHourNotIn(vs ...int) predicate.NotificationConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -296,51 +317,30 @@ func PreferredTimeHourNotIn(vs ...string) predicate.NotificationConfig {
 }
 
 // PreferredTimeHourGT applies the GT predicate on the "preferred_time_hour" field.
-func PreferredTimeHourGT(v string) predicate.NotificationConfig {
+func PreferredTimeHourGT(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
 // PreferredTimeHourGTE applies the GTE predicate on the "preferred_time_hour" field.
-func PreferredTimeHourGTE(v string) predicate.NotificationConfig {
+func PreferredTimeHourGTE(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
 // PreferredTimeHourLT applies the LT predicate on the "preferred_time_hour" field.
-func PreferredTimeHourLT(v string) predicate.NotificationConfig {
+func PreferredTimeHourLT(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
 // PreferredTimeHourLTE applies the LTE predicate on the "preferred_time_hour" field.
-func PreferredTimeHourLTE(v string) predicate.NotificationConfig {
+func PreferredTimeHourLTE(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldPreferredTimeHour), v))
-	})
-}
-
-// PreferredTimeHourContains applies the Contains predicate on the "preferred_time_hour" field.
-func PreferredTimeHourContains(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldPreferredTimeHour), v))
-	})
-}
-
-// PreferredTimeHourHasPrefix applies the HasPrefix predicate on the "preferred_time_hour" field.
-func PreferredTimeHourHasPrefix(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldPreferredTimeHour), v))
-	})
-}
-
-// PreferredTimeHourHasSuffix applies the HasSuffix predicate on the "preferred_time_hour" field.
-func PreferredTimeHourHasSuffix(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
@@ -358,36 +358,22 @@ func PreferredTimeHourNotNil() predicate.NotificationConfig {
 	})
 }
 
-// PreferredTimeHourEqualFold applies the EqualFold predicate on the "preferred_time_hour" field.
-func PreferredTimeHourEqualFold(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldPreferredTimeHour), v))
-	})
-}
-
-// PreferredTimeHourContainsFold applies the ContainsFold predicate on the "preferred_time_hour" field.
-func PreferredTimeHourContainsFold(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldPreferredTimeHour), v))
-	})
-}
-
 // PreferredTimeMinuteEQ applies the EQ predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteEQ(v string) predicate.NotificationConfig {
+func PreferredTimeMinuteEQ(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldPreferredTimeMinute), v))
 	})
 }
 
 // PreferredTimeMinuteNEQ applies the NEQ predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteNEQ(v string) predicate.NotificationConfig {
+func PreferredTimeMinuteNEQ(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldPreferredTimeMinute), v))
 	})
 }
 
 // PreferredTimeMinuteIn applies the In predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteIn(vs ...string) predicate.NotificationConfig {
+func PreferredTimeMinuteIn(vs ...int) predicate.NotificationConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -404,7 +390,7 @@ func PreferredTimeMinuteIn(vs ...string) predicate.NotificationConfig {
 }
 
 // PreferredTimeMinuteNotIn applies the NotIn predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteNotIn(vs ...string) predicate.NotificationConfig {
+func PreferredTimeMinuteNotIn(vs ...int) predicate.NotificationConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -421,51 +407,30 @@ func PreferredTimeMinuteNotIn(vs ...string) predicate.NotificationConfig {
 }
 
 // PreferredTimeMinuteGT applies the GT predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteGT(v string) predicate.NotificationConfig {
+func PreferredTimeMinuteGT(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldPreferredTimeMinute), v))
 	})
 }
 
 // PreferredTimeMinuteGTE applies the GTE predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteGTE(v string) predicate.NotificationConfig {
+func PreferredTimeMinuteGTE(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldPreferredTimeMinute), v))
 	})
 }
 
 // PreferredTimeMinuteLT applies the LT predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteLT(v string) predicate.NotificationConfig {
+func PreferredTimeMinuteLT(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldPreferredTimeMinute), v))
 	})
 }
 
 // PreferredTimeMinuteLTE applies the LTE predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteLTE(v string) predicate.NotificationConfig {
+func PreferredTimeMinuteLTE(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldPreferredTimeMinute), v))
-	})
-}
-
-// PreferredTimeMinuteContains applies the Contains predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteContains(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldPreferredTimeMinute), v))
-	})
-}
-
-// PreferredTimeMinuteHasPrefix applies the HasPrefix predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteHasPrefix(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldPreferredTimeMinute), v))
-	})
-}
-
-// PreferredTimeMinuteHasSuffix applies the HasSuffix predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteHasSuffix(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldPreferredTimeMinute), v))
 	})
 }
 
@@ -480,20 +445,6 @@ func PreferredTimeMinuteIsNil() predicate.NotificationConfig {
 func PreferredTimeMinuteNotNil() predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
 		s.Where(sql.NotNull(s.C(FieldPreferredTimeMinute)))
-	})
-}
-
-// PreferredTimeMinuteEqualFold applies the EqualFold predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteEqualFold(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldPreferredTimeMinute), v))
-	})
-}
-
-// PreferredTimeMinuteContainsFold applies the ContainsFold predicate on the "preferred_time_minute" field.
-func PreferredTimeMinuteContainsFold(v string) predicate.NotificationConfig {
-	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldPreferredTimeMinute), v))
 	})
 }
 

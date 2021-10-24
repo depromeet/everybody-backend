@@ -49,6 +49,20 @@ func (ncc *NotificationConfigCreate) SetNillableTuesday(b *bool) *NotificationCo
 	return ncc
 }
 
+// SetWednesday sets the "wednesday" field.
+func (ncc *NotificationConfigCreate) SetWednesday(b bool) *NotificationConfigCreate {
+	ncc.mutation.SetWednesday(b)
+	return ncc
+}
+
+// SetNillableWednesday sets the "wednesday" field if the given value is not nil.
+func (ncc *NotificationConfigCreate) SetNillableWednesday(b *bool) *NotificationConfigCreate {
+	if b != nil {
+		ncc.SetWednesday(*b)
+	}
+	return ncc
+}
+
 // SetThursday sets the "thursday" field.
 func (ncc *NotificationConfigCreate) SetThursday(b bool) *NotificationConfigCreate {
 	ncc.mutation.SetThursday(b)
@@ -106,29 +120,29 @@ func (ncc *NotificationConfigCreate) SetNillableSunday(b *bool) *NotificationCon
 }
 
 // SetPreferredTimeHour sets the "preferred_time_hour" field.
-func (ncc *NotificationConfigCreate) SetPreferredTimeHour(s string) *NotificationConfigCreate {
-	ncc.mutation.SetPreferredTimeHour(s)
+func (ncc *NotificationConfigCreate) SetPreferredTimeHour(i int) *NotificationConfigCreate {
+	ncc.mutation.SetPreferredTimeHour(i)
 	return ncc
 }
 
 // SetNillablePreferredTimeHour sets the "preferred_time_hour" field if the given value is not nil.
-func (ncc *NotificationConfigCreate) SetNillablePreferredTimeHour(s *string) *NotificationConfigCreate {
-	if s != nil {
-		ncc.SetPreferredTimeHour(*s)
+func (ncc *NotificationConfigCreate) SetNillablePreferredTimeHour(i *int) *NotificationConfigCreate {
+	if i != nil {
+		ncc.SetPreferredTimeHour(*i)
 	}
 	return ncc
 }
 
 // SetPreferredTimeMinute sets the "preferred_time_minute" field.
-func (ncc *NotificationConfigCreate) SetPreferredTimeMinute(s string) *NotificationConfigCreate {
-	ncc.mutation.SetPreferredTimeMinute(s)
+func (ncc *NotificationConfigCreate) SetPreferredTimeMinute(i int) *NotificationConfigCreate {
+	ncc.mutation.SetPreferredTimeMinute(i)
 	return ncc
 }
 
 // SetNillablePreferredTimeMinute sets the "preferred_time_minute" field if the given value is not nil.
-func (ncc *NotificationConfigCreate) SetNillablePreferredTimeMinute(s *string) *NotificationConfigCreate {
-	if s != nil {
-		ncc.SetPreferredTimeMinute(*s)
+func (ncc *NotificationConfigCreate) SetNillablePreferredTimeMinute(i *int) *NotificationConfigCreate {
+	if i != nil {
+		ncc.SetPreferredTimeMinute(*i)
 	}
 	return ncc
 }
@@ -265,6 +279,10 @@ func (ncc *NotificationConfigCreate) defaults() {
 		v := notificationconfig.DefaultTuesday
 		ncc.mutation.SetTuesday(v)
 	}
+	if _, ok := ncc.mutation.Wednesday(); !ok {
+		v := notificationconfig.DefaultWednesday
+		ncc.mutation.SetWednesday(v)
+	}
 	if _, ok := ncc.mutation.Thursday(); !ok {
 		v := notificationconfig.DefaultThursday
 		ncc.mutation.SetThursday(v)
@@ -294,6 +312,9 @@ func (ncc *NotificationConfigCreate) check() error {
 	}
 	if _, ok := ncc.mutation.Tuesday(); !ok {
 		return &ValidationError{Name: "tuesday", err: errors.New(`ent: missing required field "tuesday"`)}
+	}
+	if _, ok := ncc.mutation.Wednesday(); !ok {
+		return &ValidationError{Name: "wednesday", err: errors.New(`ent: missing required field "wednesday"`)}
 	}
 	if _, ok := ncc.mutation.Thursday(); !ok {
 		return &ValidationError{Name: "thursday", err: errors.New(`ent: missing required field "thursday"`)}
@@ -359,6 +380,14 @@ func (ncc *NotificationConfigCreate) createSpec() (*NotificationConfig, *sqlgrap
 		})
 		_node.Tuesday = value
 	}
+	if value, ok := ncc.mutation.Wednesday(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldWednesday,
+		})
+		_node.Wednesday = value
+	}
 	if value, ok := ncc.mutation.Thursday(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
@@ -393,7 +422,7 @@ func (ncc *NotificationConfigCreate) createSpec() (*NotificationConfig, *sqlgrap
 	}
 	if value, ok := ncc.mutation.PreferredTimeHour(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
 			Column: notificationconfig.FieldPreferredTimeHour,
 		})
@@ -401,7 +430,7 @@ func (ncc *NotificationConfigCreate) createSpec() (*NotificationConfig, *sqlgrap
 	}
 	if value, ok := ncc.mutation.PreferredTimeMinute(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeString,
+			Type:   field.TypeInt,
 			Value:  value,
 			Column: notificationconfig.FieldPreferredTimeMinute,
 		})
@@ -413,7 +442,7 @@ func (ncc *NotificationConfigCreate) createSpec() (*NotificationConfig, *sqlgrap
 			Value:  value,
 			Column: notificationconfig.FieldLastNotifiedAt,
 		})
-		_node.LastNotifiedAt = value
+		_node.LastNotifiedAt = &value
 	}
 	if value, ok := ncc.mutation.IsActivated(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

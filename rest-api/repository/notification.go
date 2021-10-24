@@ -6,16 +6,13 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/pkg/errors"
-	"time"
 )
 
 type NotificationRepository interface {
 	CreateNotificationConfig(config *ent.NotificationConfig) (*ent.NotificationConfig, error)
 	FindById(id int) (*ent.NotificationConfig, error)
 	FindByUser(user int) (*ent.NotificationConfig, error)
-	UpdateInterval(id, interval int) (*ent.NotificationConfig, error)
-	UpdateLastNotifiedAt(id int, lastNotifiedAt time.Time) (*ent.NotificationConfig, error)
-	UpdateIsActivated(id int, isActivated bool) (*ent.NotificationConfig, error)
+	Update(id int, config *ent.NotificationConfig) (*ent.NotificationConfig, error)
 }
 
 func NewNotificationRepository(client *ent.Client) NotificationRepository {
@@ -31,7 +28,16 @@ type notificationRepository struct {
 func (repo *notificationRepository) CreateNotificationConfig(config *ent.NotificationConfig) (*ent.NotificationConfig, error) {
 	result, err := repo.db.NotificationConfig.Create().
 		SetUser(config.Edges.User).
-		SetInterval(config.Interval).
+		SetMonday(config.Monday).
+		SetTuesday(config.Tuesday).
+		SetWednesday(config.Wednesday).
+		SetThursday(config.Thursday).
+		SetFriday(config.Friday).
+		SetSaturday(config.Saturday).
+		SetSunday(config.Sunday).
+		SetPreferredTimeHour(config.PreferredTimeHour).
+		SetPreferredTimeMinute(config.PreferredTimeMinute).
+		SetNillableLastNotifiedAt(config.LastNotifiedAt).
 		SetIsActivated(config.IsActivated).
 		Save(context.Background())
 	if err != nil {
@@ -44,6 +50,7 @@ func (repo *notificationRepository) CreateNotificationConfig(config *ent.Notific
 func (repo *notificationRepository) FindById(id int) (*ent.NotificationConfig, error) {
 	u, err := repo.db.NotificationConfig.Query().
 		Where(notificationconfig.ID(id)).
+		WithUser().
 		Only(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -55,6 +62,7 @@ func (repo *notificationRepository) FindById(id int) (*ent.NotificationConfig, e
 func (repo *notificationRepository) FindByUser(userID int) (*ent.NotificationConfig, error) {
 	u, err := repo.db.NotificationConfig.Query().
 		Where(notificationconfig.HasUserWith(user.ID(userID))).
+		WithUser().
 		First(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -63,15 +71,19 @@ func (repo *notificationRepository) FindByUser(userID int) (*ent.NotificationCon
 	return u, nil
 }
 
-func (repo *notificationRepository) UpdateInterval(id, interval int) (*ent.NotificationConfig, error) {
-	return repo.db.NotificationConfig.UpdateOneID(id).SetInterval(interval).Save(context.Background())
-
-}
-
-func (repo *notificationRepository) UpdateLastNotifiedAt(id int, lastNotifiedAt time.Time) (*ent.NotificationConfig, error) {
-	return repo.db.NotificationConfig.UpdateOneID(id).SetLastNotifiedAt(lastNotifiedAt).Save(context.Background())
-}
-
-func (repo *notificationRepository) UpdateIsActivated(id int, isActivated bool) (*ent.NotificationConfig, error) {
-	return repo.db.NotificationConfig.UpdateOneID(id).SetIsActivated(isActivated).Save(context.Background())
+func (repo *notificationRepository) Update(id int, config *ent.NotificationConfig) (*ent.NotificationConfig, error) {
+	return repo.db.NotificationConfig.UpdateOneID(id).
+		SetUser(config.Edges.User).
+		SetMonday(config.Monday).
+		SetTuesday(config.Tuesday).
+		SetWednesday(config.Wednesday).
+		SetThursday(config.Thursday).
+		SetFriday(config.Friday).
+		SetSaturday(config.Saturday).
+		SetSunday(config.Sunday).
+		SetPreferredTimeHour(config.PreferredTimeHour).
+		SetPreferredTimeMinute(config.PreferredTimeMinute).
+		SetNillableLastNotifiedAt(config.LastNotifiedAt).
+		SetIsActivated(config.IsActivated).
+		Save(context.Background())
 }

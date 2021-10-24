@@ -32,24 +32,28 @@ func init() {
 	notificationconfigDescTuesday := notificationconfigFields[2].Descriptor()
 	// notificationconfig.DefaultTuesday holds the default value on creation for the tuesday field.
 	notificationconfig.DefaultTuesday = notificationconfigDescTuesday.Default.(bool)
+	// notificationconfigDescWednesday is the schema descriptor for wednesday field.
+	notificationconfigDescWednesday := notificationconfigFields[3].Descriptor()
+	// notificationconfig.DefaultWednesday holds the default value on creation for the wednesday field.
+	notificationconfig.DefaultWednesday = notificationconfigDescWednesday.Default.(bool)
 	// notificationconfigDescThursday is the schema descriptor for thursday field.
-	notificationconfigDescThursday := notificationconfigFields[3].Descriptor()
+	notificationconfigDescThursday := notificationconfigFields[4].Descriptor()
 	// notificationconfig.DefaultThursday holds the default value on creation for the thursday field.
 	notificationconfig.DefaultThursday = notificationconfigDescThursday.Default.(bool)
 	// notificationconfigDescFriday is the schema descriptor for friday field.
-	notificationconfigDescFriday := notificationconfigFields[4].Descriptor()
+	notificationconfigDescFriday := notificationconfigFields[5].Descriptor()
 	// notificationconfig.DefaultFriday holds the default value on creation for the friday field.
 	notificationconfig.DefaultFriday = notificationconfigDescFriday.Default.(bool)
 	// notificationconfigDescSaturday is the schema descriptor for saturday field.
-	notificationconfigDescSaturday := notificationconfigFields[5].Descriptor()
+	notificationconfigDescSaturday := notificationconfigFields[6].Descriptor()
 	// notificationconfig.DefaultSaturday holds the default value on creation for the saturday field.
 	notificationconfig.DefaultSaturday = notificationconfigDescSaturday.Default.(bool)
 	// notificationconfigDescSunday is the schema descriptor for sunday field.
-	notificationconfigDescSunday := notificationconfigFields[6].Descriptor()
+	notificationconfigDescSunday := notificationconfigFields[7].Descriptor()
 	// notificationconfig.DefaultSunday holds the default value on creation for the sunday field.
 	notificationconfig.DefaultSunday = notificationconfigDescSunday.Default.(bool)
 	// notificationconfigDescIsActivated is the schema descriptor for is_activated field.
-	notificationconfigDescIsActivated := notificationconfigFields[10].Descriptor()
+	notificationconfigDescIsActivated := notificationconfigFields[11].Descriptor()
 	// notificationconfig.DefaultIsActivated holds the default value on creation for the is_activated field.
 	notificationconfig.DefaultIsActivated = notificationconfigDescIsActivated.Default.(bool)
 	pictureFields := schema.Picture{}.Fields()

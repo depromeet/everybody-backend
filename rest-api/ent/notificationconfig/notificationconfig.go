@@ -11,6 +11,8 @@ const (
 	FieldMonday = "monday"
 	// FieldTuesday holds the string denoting the tuesday field in the database.
 	FieldTuesday = "tuesday"
+	// FieldWednesday holds the string denoting the wednesday field in the database.
+	FieldWednesday = "wednesday"
 	// FieldThursday holds the string denoting the thursday field in the database.
 	FieldThursday = "thursday"
 	// FieldFriday holds the string denoting the friday field in the database.
@@ -45,6 +47,7 @@ var Columns = []string{
 	FieldID,
 	FieldMonday,
 	FieldTuesday,
+	FieldWednesday,
 	FieldThursday,
 	FieldFriday,
 	FieldSaturday,
@@ -81,6 +84,8 @@ var (
 	DefaultMonday bool
 	// DefaultTuesday holds the default value on creation for the "tuesday" field.
 	DefaultTuesday bool
+	// DefaultWednesday holds the default value on creation for the "wednesday" field.
+	DefaultWednesday bool
 	// DefaultThursday holds the default value on creation for the "thursday" field.
 	DefaultThursday bool
 	// DefaultFriday holds the default value on creation for the "friday" field.

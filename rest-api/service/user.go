@@ -10,9 +10,10 @@ import (
 )
 
 var (
-	ErrDuplicatedUserID               = errors.New("고유한 유저 ID 생성에 실패했습니다.")
-	signUpDefaultNickname             = "끈육몬"
-	signUpDefaultNotificationInterval = 3
+	ErrDuplicatedUserID          = errors.New("고유한 유저 ID 생성에 실패했습니다.")
+	ErrMissingNotificationConfig = errors.New("알림 설정 관련 정보가 없습니다.")
+	ErrMissingDevice             = errors.New("디바이스 정보가 없습니다.")
+	signUpDefaultNickname        = "끈육몬"
 )
 
 type UserService interface {
@@ -49,31 +50,27 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 
 	user, err := s.userRepo.Create(&ent.User{
 		Nickname: body.Nickname,
-		Type:     user.Type(body.Type),
+		Kind:     user.Kind(body.Kind),
 	})
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	log.Infof("유저를 생성했습니다. User(id=%d)", user.ID)
 
-	if body.NotificationInterval == 0 {
-		body.NotificationInterval = signUpDefaultNotificationInterval
+	if body.NotificationConfig == nil {
+		return nil, errors.WithStack(ErrMissingNotificationConfig)
 	}
+	_, err = s.notificationService.Configure(user.ID, body.NotificationConfig)
 
-	_, err = s.notificationService.Configure(user.ID, &dto.ConfigureNotificationRequest{
-		Interval:    body.NotificationInterval, // 기본값
-		IsActivated: true,
-	})
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	log.Infof("알림 설정을 생성했습니다. NotificaitonConfig(user.id=%d)", user.ID)
 
-	device, err := s.deviceService.Register(user.ID, &dto.RegisterDeviceRequest{
-		DeviceToken: body.DeviceToken,
-		PushToken:   body.PushToken,
-		DeviceOS:    body.DeviceOS,
-	})
+	if body.Device == nil {
+		return nil, errors.WithStack(ErrMissingDevice)
+	}
+	device, err := s.deviceService.Register(user.ID, body.Device)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

@@ -31,9 +31,19 @@ func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNoti
 	if err != nil {
 		errNotFound := new(ent.NotFoundError)
 		if errors.As(err, &errNotFound) {
+			// 이 유저의 push 설정이 없으면 만든다.
 			result, err := s.notificationRepo.CreateNotificationConfig(&ent.NotificationConfig{
-				Interval:    body.Interval, // 기본값
-				IsActivated: body.IsActivated,
+				Monday:              body.Monday, // 기본값
+				Tuesday:             body.Tuesday,
+				Wednesday:           body.Wednesday,
+				Thursday:            body.Thursday,
+				Friday:              body.Friday,
+				Saturday:            body.Saturday,
+				Sunday:              body.Sunday,
+				PreferredTimeHour:   body.PreferredTimeHour,
+				PreferredTimeMinute: body.PreferredTimeMinute,
+				LastNotifiedAt:      nil,
+				IsActivated:         body.IsActivated,
 				Edges: ent.NotificationConfigEdges{
 					User: &ent.User{ID: requestUser},
 				},
@@ -49,15 +59,20 @@ func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNoti
 	}
 
 	// 수정
-	_, err = s.notificationRepo.UpdateInterval(config.ID, body.Interval)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	result, err := s.notificationRepo.UpdateIsActivated(config.ID, body.IsActivated)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
+	result, err := s.notificationRepo.Update(config.ID, &ent.NotificationConfig{
+		Monday:              body.Monday, // 기본값
+		Tuesday:             body.Tuesday,
+		Wednesday:           body.Wednesday,
+		Thursday:            body.Thursday,
+		Friday:              body.Friday,
+		Saturday:            body.Saturday,
+		Sunday:              body.Sunday,
+		PreferredTimeHour:   body.PreferredTimeHour,
+		PreferredTimeMinute: body.PreferredTimeMinute,
+		LastNotifiedAt:      config.LastNotifiedAt, // 이건 변하지 않는다.
+		IsActivated:         body.IsActivated,
+		Edges:               config.Edges, // 이건 변하지 않는다.
+	})
 
 	return dto.NotificationConfigToDto(result), nil
 }
