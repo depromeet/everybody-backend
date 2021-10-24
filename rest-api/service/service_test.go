@@ -13,6 +13,7 @@ var (
 	userRepo         *mocks.UserRepository
 	albumRepo        *mocks.AlbumRepositoryInterface
 	pictureRepo      *mocks.PictureRepositoryInterface
+	pushAdapter      *mocks.PushAdapter
 )
 
 // initialize 는 서비스 계층 이외의 것들을 초기화합니다.
@@ -23,4 +24,5 @@ func initialize(t *testing.T) {
 	userRepo = new(mocks.UserRepository)
 	albumRepo = new(mocks.AlbumRepositoryInterface)
 	pictureRepo = new(mocks.PictureRepositoryInterface)
+	pushAdapter = new(mocks.PushAdapter)
 }

@@ -58,7 +58,10 @@ func (s *deviceService) Register(requestUser int, body *dto.RegisterDeviceReques
 	update := d
 	update.PushToken = body.PushToken
 	update.Edges.User.ID = requestUser
-	s.deviceRepo.Update(d.ID, update)
+	err = s.deviceRepo.Update(d.ID, update)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
 	return d, nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
+	"github.com/depromeet/everybody-backend/rest-api/ent/device"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"testing"
@@ -18,14 +19,30 @@ func initializeDeviceTest(t *testing.T) *deviceService {
 }
 
 func TestDeviceService_Register(t *testing.T) {
-	t.Run("이미 같은 device token 정보가 존재하는 경우 기존 정보를 그대로 리턴", func(t *testing.T) {
-		stubDevice := new(ent.Device)
+	t.Run("이미 같은 device token 정보가 존재하는 경우 일부를 수정해서 리턴", func(t *testing.T) {
+		stubDevice := &ent.Device{
+			ID:          1,
+			DeviceToken: "beforeDeviceToken",
+			PushToken:   "beforePushToken",
+			DeviceOs:    device.DeviceOsANDROID,
+			Edges: ent.DeviceEdges{
+				User: &ent.User{ID: 1},
+			},
+		}
 		deviceSvc := initializeDeviceTest(t)
 		deviceRepo.On("FindByDeviceToken", mock.AnythingOfType("string")).Return(stubDevice, nil).Once()
+		deviceRepo.On("Update", mock.AnythingOfType("int"), mock.AnythingOfType("*ent.Device")).Return(nil).Once()
 
-		device, err := deviceSvc.Register(1, &dto.RegisterDeviceRequest{})
+		registered, err := deviceSvc.Register(2, &dto.RegisterDeviceRequest{
+			DeviceToken: "beforeDeviceToken",
+			PushToken:   "afterPushToken",
+			DeviceOS:    string(device.DeviceOsIOS),
+		})
 		assert.NoError(t, err)
-		assert.Equal(t, stubDevice, device)
+		assert.Equal(t, "beforeDeviceToken", registered.DeviceToken)
+		assert.Equal(t, "afterPushToken", registered.PushToken)
+		assert.Equal(t, device.DeviceOsANDROID, registered.DeviceOs) // 기존 안드로이드 그대로. 수정 불가
+		assert.Equal(t, 2, registered.Edges.User.ID)
 	})
 
 	t.Run("새로운 device 정보 생성", func(t *testing.T) {
