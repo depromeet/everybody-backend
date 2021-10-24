@@ -7,8 +7,22 @@ const (
 	Label = "notification_config"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldInterval holds the string denoting the interval field in the database.
-	FieldInterval = "interval"
+	// FieldMonday holds the string denoting the monday field in the database.
+	FieldMonday = "monday"
+	// FieldTuesday holds the string denoting the tuesday field in the database.
+	FieldTuesday = "tuesday"
+	// FieldThursday holds the string denoting the thursday field in the database.
+	FieldThursday = "thursday"
+	// FieldFriday holds the string denoting the friday field in the database.
+	FieldFriday = "friday"
+	// FieldSaturday holds the string denoting the saturday field in the database.
+	FieldSaturday = "saturday"
+	// FieldSunday holds the string denoting the sunday field in the database.
+	FieldSunday = "sunday"
+	// FieldPreferredTimeHour holds the string denoting the preferred_time_hour field in the database.
+	FieldPreferredTimeHour = "preferred_time_hour"
+	// FieldPreferredTimeMinute holds the string denoting the preferred_time_minute field in the database.
+	FieldPreferredTimeMinute = "preferred_time_minute"
 	// FieldLastNotifiedAt holds the string denoting the last_notified_at field in the database.
 	FieldLastNotifiedAt = "last_notified_at"
 	// FieldIsActivated holds the string denoting the is_activated field in the database.
@@ -29,7 +43,14 @@ const (
 // Columns holds all SQL columns for notificationconfig fields.
 var Columns = []string{
 	FieldID,
-	FieldInterval,
+	FieldMonday,
+	FieldTuesday,
+	FieldThursday,
+	FieldFriday,
+	FieldSaturday,
+	FieldSunday,
+	FieldPreferredTimeHour,
+	FieldPreferredTimeMinute,
 	FieldLastNotifiedAt,
 	FieldIsActivated,
 }
@@ -56,6 +77,18 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultMonday holds the default value on creation for the "monday" field.
+	DefaultMonday bool
+	// DefaultTuesday holds the default value on creation for the "tuesday" field.
+	DefaultTuesday bool
+	// DefaultThursday holds the default value on creation for the "thursday" field.
+	DefaultThursday bool
+	// DefaultFriday holds the default value on creation for the "friday" field.
+	DefaultFriday bool
+	// DefaultSaturday holds the default value on creation for the "saturday" field.
+	DefaultSaturday bool
+	// DefaultSunday holds the default value on creation for the "sunday" field.
+	DefaultSunday bool
 	// DefaultIsActivated holds the default value on creation for the "is_activated" field.
 	DefaultIsActivated bool
 )

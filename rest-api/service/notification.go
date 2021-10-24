@@ -62,7 +62,8 @@ func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNoti
 	return dto.NotificationConfigToDto(result), nil
 }
 
-// GetConfig 는 알림 설정 정보를 조회합니다.
+// GetConfig 는 알림 설정의 ID로 알림 설정 정보를 조회합니다.
+// 아직은 유저와 Config가 1대1이기에 굳이 Config ID를 이용할 필요 없습니다!
 func (s *notificationService) GetConfig(id int) (*dto.NotificationConfigDto, error) {
 	config, err := s.notificationRepo.FindById(id)
 	if err != nil {
@@ -72,7 +73,7 @@ func (s *notificationService) GetConfig(id int) (*dto.NotificationConfigDto, err
 	return dto.NotificationConfigToDto(config), err
 }
 
-// GetConfigByUser 는 알림 설정 정보를 조회합니다.
+// GetConfigByUser 는 유저의 ID로 알림 설정 정보를 조회합니다.
 func (s *notificationService) GetConfigByUser(user int) (*dto.NotificationConfigDto, error) {
 	config, err := s.notificationRepo.FindByUser(user)
 	if err != nil {

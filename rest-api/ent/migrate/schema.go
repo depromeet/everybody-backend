@@ -54,7 +54,14 @@ var (
 	// NotificationConfigsColumns holds the columns for the "notification_configs" table.
 	NotificationConfigsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "interval", Type: field.TypeInt, Nullable: true},
+		{Name: "monday", Type: field.TypeBool, Default: false},
+		{Name: "tuesday", Type: field.TypeBool, Default: false},
+		{Name: "thursday", Type: field.TypeBool, Default: false},
+		{Name: "friday", Type: field.TypeBool, Default: false},
+		{Name: "saturday", Type: field.TypeBool, Default: false},
+		{Name: "sunday", Type: field.TypeBool, Default: false},
+		{Name: "preferred_time_hour", Type: field.TypeString, Nullable: true},
+		{Name: "preferred_time_minute", Type: field.TypeString, Nullable: true},
 		{Name: "last_notified_at", Type: field.TypeTime, Nullable: true},
 		{Name: "is_activated", Type: field.TypeBool, Default: true},
 		{Name: "user_notification_config", Type: field.TypeInt, Nullable: true},
@@ -67,7 +74,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "notification_configs_users_notification_config",
-				Columns:    []*schema.Column{NotificationConfigsColumns[4]},
+				Columns:    []*schema.Column{NotificationConfigsColumns[11]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

@@ -28,30 +28,127 @@ func (ncu *NotificationConfigUpdate) Where(ps ...predicate.NotificationConfig) *
 	return ncu
 }
 
-// SetInterval sets the "interval" field.
-func (ncu *NotificationConfigUpdate) SetInterval(i int) *NotificationConfigUpdate {
-	ncu.mutation.ResetInterval()
-	ncu.mutation.SetInterval(i)
+// SetMonday sets the "monday" field.
+func (ncu *NotificationConfigUpdate) SetMonday(b bool) *NotificationConfigUpdate {
+	ncu.mutation.SetMonday(b)
 	return ncu
 }
 
-// SetNillableInterval sets the "interval" field if the given value is not nil.
-func (ncu *NotificationConfigUpdate) SetNillableInterval(i *int) *NotificationConfigUpdate {
-	if i != nil {
-		ncu.SetInterval(*i)
+// SetNillableMonday sets the "monday" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillableMonday(b *bool) *NotificationConfigUpdate {
+	if b != nil {
+		ncu.SetMonday(*b)
 	}
 	return ncu
 }
 
-// AddInterval adds i to the "interval" field.
-func (ncu *NotificationConfigUpdate) AddInterval(i int) *NotificationConfigUpdate {
-	ncu.mutation.AddInterval(i)
+// SetTuesday sets the "tuesday" field.
+func (ncu *NotificationConfigUpdate) SetTuesday(b bool) *NotificationConfigUpdate {
+	ncu.mutation.SetTuesday(b)
 	return ncu
 }
 
-// ClearInterval clears the value of the "interval" field.
-func (ncu *NotificationConfigUpdate) ClearInterval() *NotificationConfigUpdate {
-	ncu.mutation.ClearInterval()
+// SetNillableTuesday sets the "tuesday" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillableTuesday(b *bool) *NotificationConfigUpdate {
+	if b != nil {
+		ncu.SetTuesday(*b)
+	}
+	return ncu
+}
+
+// SetThursday sets the "thursday" field.
+func (ncu *NotificationConfigUpdate) SetThursday(b bool) *NotificationConfigUpdate {
+	ncu.mutation.SetThursday(b)
+	return ncu
+}
+
+// SetNillableThursday sets the "thursday" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillableThursday(b *bool) *NotificationConfigUpdate {
+	if b != nil {
+		ncu.SetThursday(*b)
+	}
+	return ncu
+}
+
+// SetFriday sets the "friday" field.
+func (ncu *NotificationConfigUpdate) SetFriday(b bool) *NotificationConfigUpdate {
+	ncu.mutation.SetFriday(b)
+	return ncu
+}
+
+// SetNillableFriday sets the "friday" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillableFriday(b *bool) *NotificationConfigUpdate {
+	if b != nil {
+		ncu.SetFriday(*b)
+	}
+	return ncu
+}
+
+// SetSaturday sets the "saturday" field.
+func (ncu *NotificationConfigUpdate) SetSaturday(b bool) *NotificationConfigUpdate {
+	ncu.mutation.SetSaturday(b)
+	return ncu
+}
+
+// SetNillableSaturday sets the "saturday" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillableSaturday(b *bool) *NotificationConfigUpdate {
+	if b != nil {
+		ncu.SetSaturday(*b)
+	}
+	return ncu
+}
+
+// SetSunday sets the "sunday" field.
+func (ncu *NotificationConfigUpdate) SetSunday(b bool) *NotificationConfigUpdate {
+	ncu.mutation.SetSunday(b)
+	return ncu
+}
+
+// SetNillableSunday sets the "sunday" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillableSunday(b *bool) *NotificationConfigUpdate {
+	if b != nil {
+		ncu.SetSunday(*b)
+	}
+	return ncu
+}
+
+// SetPreferredTimeHour sets the "preferred_time_hour" field.
+func (ncu *NotificationConfigUpdate) SetPreferredTimeHour(s string) *NotificationConfigUpdate {
+	ncu.mutation.SetPreferredTimeHour(s)
+	return ncu
+}
+
+// SetNillablePreferredTimeHour sets the "preferred_time_hour" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillablePreferredTimeHour(s *string) *NotificationConfigUpdate {
+	if s != nil {
+		ncu.SetPreferredTimeHour(*s)
+	}
+	return ncu
+}
+
+// ClearPreferredTimeHour clears the value of the "preferred_time_hour" field.
+func (ncu *NotificationConfigUpdate) ClearPreferredTimeHour() *NotificationConfigUpdate {
+	ncu.mutation.ClearPreferredTimeHour()
+	return ncu
+}
+
+// SetPreferredTimeMinute sets the "preferred_time_minute" field.
+func (ncu *NotificationConfigUpdate) SetPreferredTimeMinute(s string) *NotificationConfigUpdate {
+	ncu.mutation.SetPreferredTimeMinute(s)
+	return ncu
+}
+
+// SetNillablePreferredTimeMinute sets the "preferred_time_minute" field if the given value is not nil.
+func (ncu *NotificationConfigUpdate) SetNillablePreferredTimeMinute(s *string) *NotificationConfigUpdate {
+	if s != nil {
+		ncu.SetPreferredTimeMinute(*s)
+	}
+	return ncu
+}
+
+// ClearPreferredTimeMinute clears the value of the "preferred_time_minute" field.
+func (ncu *NotificationConfigUpdate) ClearPreferredTimeMinute() *NotificationConfigUpdate {
+	ncu.mutation.ClearPreferredTimeMinute()
 	return ncu
 }
 
@@ -191,24 +288,72 @@ func (ncu *NotificationConfigUpdate) sqlSave(ctx context.Context) (n int, err er
 			}
 		}
 	}
-	if value, ok := ncu.mutation.Interval(); ok {
+	if value, ok := ncu.mutation.Monday(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeBool,
 			Value:  value,
-			Column: notificationconfig.FieldInterval,
+			Column: notificationconfig.FieldMonday,
 		})
 	}
-	if value, ok := ncu.mutation.AddedInterval(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+	if value, ok := ncu.mutation.Tuesday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Value:  value,
-			Column: notificationconfig.FieldInterval,
+			Column: notificationconfig.FieldTuesday,
 		})
 	}
-	if ncu.mutation.IntervalCleared() {
+	if value, ok := ncu.mutation.Thursday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldThursday,
+		})
+	}
+	if value, ok := ncu.mutation.Friday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldFriday,
+		})
+	}
+	if value, ok := ncu.mutation.Saturday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldSaturday,
+		})
+	}
+	if value, ok := ncu.mutation.Sunday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldSunday,
+		})
+	}
+	if value, ok := ncu.mutation.PreferredTimeHour(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notificationconfig.FieldPreferredTimeHour,
+		})
+	}
+	if ncu.mutation.PreferredTimeHourCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: notificationconfig.FieldInterval,
+			Type:   field.TypeString,
+			Column: notificationconfig.FieldPreferredTimeHour,
+		})
+	}
+	if value, ok := ncu.mutation.PreferredTimeMinute(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notificationconfig.FieldPreferredTimeMinute,
+		})
+	}
+	if ncu.mutation.PreferredTimeMinuteCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: notificationconfig.FieldPreferredTimeMinute,
 		})
 	}
 	if value, ok := ncu.mutation.LastNotifiedAt(); ok {
@@ -285,30 +430,127 @@ type NotificationConfigUpdateOne struct {
 	mutation *NotificationConfigMutation
 }
 
-// SetInterval sets the "interval" field.
-func (ncuo *NotificationConfigUpdateOne) SetInterval(i int) *NotificationConfigUpdateOne {
-	ncuo.mutation.ResetInterval()
-	ncuo.mutation.SetInterval(i)
+// SetMonday sets the "monday" field.
+func (ncuo *NotificationConfigUpdateOne) SetMonday(b bool) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetMonday(b)
 	return ncuo
 }
 
-// SetNillableInterval sets the "interval" field if the given value is not nil.
-func (ncuo *NotificationConfigUpdateOne) SetNillableInterval(i *int) *NotificationConfigUpdateOne {
-	if i != nil {
-		ncuo.SetInterval(*i)
+// SetNillableMonday sets the "monday" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillableMonday(b *bool) *NotificationConfigUpdateOne {
+	if b != nil {
+		ncuo.SetMonday(*b)
 	}
 	return ncuo
 }
 
-// AddInterval adds i to the "interval" field.
-func (ncuo *NotificationConfigUpdateOne) AddInterval(i int) *NotificationConfigUpdateOne {
-	ncuo.mutation.AddInterval(i)
+// SetTuesday sets the "tuesday" field.
+func (ncuo *NotificationConfigUpdateOne) SetTuesday(b bool) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetTuesday(b)
 	return ncuo
 }
 
-// ClearInterval clears the value of the "interval" field.
-func (ncuo *NotificationConfigUpdateOne) ClearInterval() *NotificationConfigUpdateOne {
-	ncuo.mutation.ClearInterval()
+// SetNillableTuesday sets the "tuesday" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillableTuesday(b *bool) *NotificationConfigUpdateOne {
+	if b != nil {
+		ncuo.SetTuesday(*b)
+	}
+	return ncuo
+}
+
+// SetThursday sets the "thursday" field.
+func (ncuo *NotificationConfigUpdateOne) SetThursday(b bool) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetThursday(b)
+	return ncuo
+}
+
+// SetNillableThursday sets the "thursday" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillableThursday(b *bool) *NotificationConfigUpdateOne {
+	if b != nil {
+		ncuo.SetThursday(*b)
+	}
+	return ncuo
+}
+
+// SetFriday sets the "friday" field.
+func (ncuo *NotificationConfigUpdateOne) SetFriday(b bool) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetFriday(b)
+	return ncuo
+}
+
+// SetNillableFriday sets the "friday" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillableFriday(b *bool) *NotificationConfigUpdateOne {
+	if b != nil {
+		ncuo.SetFriday(*b)
+	}
+	return ncuo
+}
+
+// SetSaturday sets the "saturday" field.
+func (ncuo *NotificationConfigUpdateOne) SetSaturday(b bool) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetSaturday(b)
+	return ncuo
+}
+
+// SetNillableSaturday sets the "saturday" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillableSaturday(b *bool) *NotificationConfigUpdateOne {
+	if b != nil {
+		ncuo.SetSaturday(*b)
+	}
+	return ncuo
+}
+
+// SetSunday sets the "sunday" field.
+func (ncuo *NotificationConfigUpdateOne) SetSunday(b bool) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetSunday(b)
+	return ncuo
+}
+
+// SetNillableSunday sets the "sunday" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillableSunday(b *bool) *NotificationConfigUpdateOne {
+	if b != nil {
+		ncuo.SetSunday(*b)
+	}
+	return ncuo
+}
+
+// SetPreferredTimeHour sets the "preferred_time_hour" field.
+func (ncuo *NotificationConfigUpdateOne) SetPreferredTimeHour(s string) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetPreferredTimeHour(s)
+	return ncuo
+}
+
+// SetNillablePreferredTimeHour sets the "preferred_time_hour" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillablePreferredTimeHour(s *string) *NotificationConfigUpdateOne {
+	if s != nil {
+		ncuo.SetPreferredTimeHour(*s)
+	}
+	return ncuo
+}
+
+// ClearPreferredTimeHour clears the value of the "preferred_time_hour" field.
+func (ncuo *NotificationConfigUpdateOne) ClearPreferredTimeHour() *NotificationConfigUpdateOne {
+	ncuo.mutation.ClearPreferredTimeHour()
+	return ncuo
+}
+
+// SetPreferredTimeMinute sets the "preferred_time_minute" field.
+func (ncuo *NotificationConfigUpdateOne) SetPreferredTimeMinute(s string) *NotificationConfigUpdateOne {
+	ncuo.mutation.SetPreferredTimeMinute(s)
+	return ncuo
+}
+
+// SetNillablePreferredTimeMinute sets the "preferred_time_minute" field if the given value is not nil.
+func (ncuo *NotificationConfigUpdateOne) SetNillablePreferredTimeMinute(s *string) *NotificationConfigUpdateOne {
+	if s != nil {
+		ncuo.SetPreferredTimeMinute(*s)
+	}
+	return ncuo
+}
+
+// ClearPreferredTimeMinute clears the value of the "preferred_time_minute" field.
+func (ncuo *NotificationConfigUpdateOne) ClearPreferredTimeMinute() *NotificationConfigUpdateOne {
+	ncuo.mutation.ClearPreferredTimeMinute()
 	return ncuo
 }
 
@@ -472,24 +714,72 @@ func (ncuo *NotificationConfigUpdateOne) sqlSave(ctx context.Context) (_node *No
 			}
 		}
 	}
-	if value, ok := ncuo.mutation.Interval(); ok {
+	if value, ok := ncuo.mutation.Monday(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+			Type:   field.TypeBool,
 			Value:  value,
-			Column: notificationconfig.FieldInterval,
+			Column: notificationconfig.FieldMonday,
 		})
 	}
-	if value, ok := ncuo.mutation.AddedInterval(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
+	if value, ok := ncuo.mutation.Tuesday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
 			Value:  value,
-			Column: notificationconfig.FieldInterval,
+			Column: notificationconfig.FieldTuesday,
 		})
 	}
-	if ncuo.mutation.IntervalCleared() {
+	if value, ok := ncuo.mutation.Thursday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldThursday,
+		})
+	}
+	if value, ok := ncuo.mutation.Friday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldFriday,
+		})
+	}
+	if value, ok := ncuo.mutation.Saturday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldSaturday,
+		})
+	}
+	if value, ok := ncuo.mutation.Sunday(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: notificationconfig.FieldSunday,
+		})
+	}
+	if value, ok := ncuo.mutation.PreferredTimeHour(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notificationconfig.FieldPreferredTimeHour,
+		})
+	}
+	if ncuo.mutation.PreferredTimeHourCleared() {
 		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt,
-			Column: notificationconfig.FieldInterval,
+			Type:   field.TypeString,
+			Column: notificationconfig.FieldPreferredTimeHour,
+		})
+	}
+	if value, ok := ncuo.mutation.PreferredTimeMinute(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: notificationconfig.FieldPreferredTimeMinute,
+		})
+	}
+	if ncuo.mutation.PreferredTimeMinuteCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: notificationconfig.FieldPreferredTimeMinute,
 		})
 	}
 	if value, ok := ncuo.mutation.LastNotifiedAt(); ok {

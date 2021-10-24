@@ -291,12 +291,12 @@ func (ncq *NotificationConfigQuery) WithUser(opts ...func(*UserQuery)) *Notifica
 // Example:
 //
 //	var v []struct {
-//		Interval int `json:"interval,omitempty"`
+//		Monday bool `json:"monday,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.NotificationConfig.Query().
-//		GroupBy(notificationconfig.FieldInterval).
+//		GroupBy(notificationconfig.FieldMonday).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -318,11 +318,11 @@ func (ncq *NotificationConfigQuery) GroupBy(field string, fields ...string) *Not
 // Example:
 //
 //	var v []struct {
-//		Interval int `json:"interval,omitempty"`
+//		Monday bool `json:"monday,omitempty"`
 //	}
 //
 //	client.NotificationConfig.Query().
-//		Select(notificationconfig.FieldInterval).
+//		Select(notificationconfig.FieldMonday).
 //		Scan(ctx, &v)
 //
 func (ncq *NotificationConfigQuery) Select(fields ...string) *NotificationConfigSelect {
