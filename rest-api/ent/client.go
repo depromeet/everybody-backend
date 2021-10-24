@@ -691,15 +691,15 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 	return obj
 }
 
-// QueryDevice queries the device edge of a User.
-func (c *UserClient) QueryDevice(u *User) *DeviceQuery {
+// QueryDevices queries the devices edge of a User.
+func (c *UserClient) QueryDevices(u *User) *DeviceQuery {
 	query := &DeviceQuery{config: c.config}
 	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(device.Table, device.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.DeviceTable, user.DeviceColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.DevicesTable, user.DevicesColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

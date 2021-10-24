@@ -35,7 +35,7 @@ var (
 		{Name: "device_token", Type: field.TypeString},
 		{Name: "push_token", Type: field.TypeString},
 		{Name: "device_os", Type: field.TypeEnum, Enums: []string{"ANDROID", "IOS"}},
-		{Name: "user_device", Type: field.TypeInt, Nullable: true},
+		{Name: "user_devices", Type: field.TypeInt, Nullable: true},
 	}
 	// DevicesTable holds the schema information for the "devices" table.
 	DevicesTable = &schema.Table{
@@ -44,7 +44,7 @@ var (
 		PrimaryKey: []*schema.Column{DevicesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "devices_users_device",
+				Symbol:     "devices_users_devices",
 				Columns:    []*schema.Column{DevicesColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,

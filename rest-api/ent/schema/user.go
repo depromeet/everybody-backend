@@ -32,7 +32,7 @@ func (User) Fields() []ent.Field {
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("device", Device.Type),
+		edge.To("devices", Device.Type),
 		edge.To("notification_config", NotificationConfig.Type),
 		edge.To("album", Album.Type),
 		edge.To("picture", Picture.Type),

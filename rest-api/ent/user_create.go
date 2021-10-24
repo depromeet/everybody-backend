@@ -84,14 +84,14 @@ func (uc *UserCreate) SetID(i int) *UserCreate {
 	return uc
 }
 
-// AddDeviceIDs adds the "device" edge to the Device entity by IDs.
+// AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (uc *UserCreate) AddDeviceIDs(ids ...int) *UserCreate {
 	uc.mutation.AddDeviceIDs(ids...)
 	return uc
 }
 
-// AddDevice adds the "device" edges to the Device entity.
-func (uc *UserCreate) AddDevice(d ...*Device) *UserCreate {
+// AddDevices adds the "devices" edges to the Device entity.
+func (uc *UserCreate) AddDevices(d ...*Device) *UserCreate {
 	ids := make([]int, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
@@ -310,12 +310,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.CreatedAt = value
 	}
-	if nodes := uc.mutation.DeviceIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.DevicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.DeviceTable,
-			Columns: []string{user.DeviceColumn},
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

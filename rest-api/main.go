@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
+	"github.com/depromeet/everybody-backend/rest-api/config"
 	_ "github.com/depromeet/everybody-backend/rest-api/config"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http/handler"
@@ -14,6 +15,8 @@ import (
 )
 
 var (
+	pushAdapter push.PushAdapter
+
 	notificationRepo repository.NotificationRepository
 	deviceRepo       repository.DeviceRepository
 	userRepo         repository.UserRepository
@@ -31,8 +34,7 @@ var (
 	albumHandler        *handler.AlbumHandler
 	pictureHandler      *handler.PictureHandler
 
-	pushAdapter push.PushAdapter
-	server      *fiber.App
+	server *fiber.App
 
 	notifyRoutine *routine.NotifyRoutine
 )
@@ -48,6 +50,7 @@ func main() {
 
 func initialize() {
 	dbClient := repository.Connect()
+	pushAdapter = push.NewFirebasePushAdapter()
 
 	notificationRepo = repository.NewNotificationRepository(dbClient)
 	deviceRepo = repository.NewDeviceRepository(dbClient)
@@ -55,7 +58,7 @@ func initialize() {
 	albumRepo = repository.NewAlbumRepository(dbClient)
 	pictureRepo = repository.NewPictureRepository(dbClient)
 
-	notificationService = service.NewNotificationService(notificationRepo)
+	notificationService = service.NewNotificationService(notificationRepo, pushAdapter)
 	deviceService = service.NewDeviceService(deviceRepo)
 	userService = service.NewUserService(userRepo, notificationService, deviceService)
 	albumService = service.NewAlbumService(albumRepo, pictureRepo)
@@ -66,25 +69,25 @@ func initialize() {
 	albumHandler = handler.NewAlbumHandler(albumService)
 	pictureHandler = handler.NewPictureHandler(pictureService)
 
-	pushAdapter = push.NewFirebasePushAdapter()
+	if config.Config.NotifyRoutine.Enabled {
+		notifyRoutine = routine.NewNotifyRoutine(pushAdapter, notificationService)
 
-	notifyRoutine = routine.NewNotifyRoutine(pushAdapter)
+		// 우리 서버의 서브 루틴으로 알림 로직을 실행
+		go func() {
+			for {
+				if err := notifyRoutine.Run(); err != nil {
+					log.Errorf("NotifyRoutine 실행 도중 에러 발생: %+v", err)
+					log.Errorf("잠시 후 다시 notifyRoutine을 실행합니다.")
+					time.Sleep(time.Second)
 
-	// 우리 서버의 서브 루틴으로 알림 로직을 실행
-	go func() {
-		for {
-			if err := notifyRoutine.Run(); err != nil {
-				log.Errorf("NotifyRoutine 실행 도중 에러 발생: %+v", err)
-				log.Errorf("잠시 후 다시 notifyRoutine을 실행합니다.")
-				time.Sleep(time.Second)
+				} else {
+					log.Info("NotifyRoutine을 성공적으로 마쳤습니다.")
+					break
+				}
 
-			} else {
-				log.Info("NotifyRoutine을 성공적으로 마쳤습니다.")
-				break
 			}
-
-		}
-	}()
+		}()
+	}
 
 	server = http.NewServer(userHandler, notificationHandler, albumHandler, pictureHandler)
 }

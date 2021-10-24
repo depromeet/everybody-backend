@@ -6,13 +6,16 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/pkg/errors"
+	"time"
 )
 
 type NotificationRepository interface {
 	CreateNotificationConfig(config *ent.NotificationConfig) (*ent.NotificationConfig, error)
+	FindAll() ([]*ent.NotificationConfig, error)
 	FindById(id int) (*ent.NotificationConfig, error)
 	FindByUser(user int) (*ent.NotificationConfig, error)
 	Update(id int, config *ent.NotificationConfig) (*ent.NotificationConfig, error)
+	UpdateLastNotifiedAt(id int, lastNotifiedAt time.Time) (*ent.NotificationConfig, error)
 }
 
 func NewNotificationRepository(client *ent.Client) NotificationRepository {
@@ -45,6 +48,21 @@ func (repo *notificationRepository) CreateNotificationConfig(config *ent.Notific
 	}
 
 	return result, nil
+}
+
+// TODO(umi0410): 유저가 엄~청 많아지면 Pagination이 필요할 수도....
+func (repo *notificationRepository) FindAll() ([]*ent.NotificationConfig, error) {
+	users, err := repo.db.NotificationConfig.Query().
+		WithUser(func(query *ent.UserQuery) {
+			// device 정보도 같이 fetch 하자.
+			query.WithDevices()
+		}).
+		All(context.Background())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return users, nil
 }
 
 func (repo *notificationRepository) FindById(id int) (*ent.NotificationConfig, error) {
@@ -85,5 +103,11 @@ func (repo *notificationRepository) Update(id int, config *ent.NotificationConfi
 		SetPreferredTimeMinute(config.PreferredTimeMinute).
 		SetNillableLastNotifiedAt(config.LastNotifiedAt).
 		SetIsActivated(config.IsActivated).
+		Save(context.Background())
+}
+
+func (repo *notificationRepository) UpdateLastNotifiedAt(id int, lastNotifiedAt time.Time) (*ent.NotificationConfig, error) {
+	return repo.db.NotificationConfig.UpdateOneID(id).
+		SetLastNotifiedAt(lastNotifiedAt).
 		Save(context.Background())
 }

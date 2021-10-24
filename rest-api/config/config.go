@@ -68,7 +68,13 @@ type config struct {
 	ImageRootUrl     string `yaml:"imageRootUrl"`
 	ImagePublicKeyID string `yaml:"imagePublicKeyID"`
 	ImagePrivateKey  string `yaml:"imagePrivateKey"`
-	FCM              struct {
-		ServiceAccountFile string `yaml:"ServiceAccountFile"`
-	} `yaml:"fcm"`
+	Push             struct {
+		FCM struct {
+			ServiceAccountFile string `yaml:"ServiceAccountFile"`
+		} `yaml:"fcm"`
+	} `yaml:"push"`
+	NotifyRoutine struct {
+		Enabled  bool `yaml:"enabled"`
+		Interval int  `yaml:"interval"`
+	} `yaml:"notifyRoutine"`
 }

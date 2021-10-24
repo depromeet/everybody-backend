@@ -2587,9 +2587,9 @@ type UserMutation struct {
 	kind                       *user.Kind
 	created_at                 *time.Time
 	clearedFields              map[string]struct{}
-	device                     map[int]struct{}
-	removeddevice              map[int]struct{}
-	cleareddevice              bool
+	devices                    map[int]struct{}
+	removeddevices             map[int]struct{}
+	cleareddevices             bool
 	notification_config        map[int]struct{}
 	removednotification_config map[int]struct{}
 	clearednotification_config bool
@@ -2937,58 +2937,58 @@ func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// AddDeviceIDs adds the "device" edge to the Device entity by ids.
+// AddDeviceIDs adds the "devices" edge to the Device entity by ids.
 func (m *UserMutation) AddDeviceIDs(ids ...int) {
-	if m.device == nil {
-		m.device = make(map[int]struct{})
+	if m.devices == nil {
+		m.devices = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.device[ids[i]] = struct{}{}
+		m.devices[ids[i]] = struct{}{}
 	}
 }
 
-// ClearDevice clears the "device" edge to the Device entity.
-func (m *UserMutation) ClearDevice() {
-	m.cleareddevice = true
+// ClearDevices clears the "devices" edge to the Device entity.
+func (m *UserMutation) ClearDevices() {
+	m.cleareddevices = true
 }
 
-// DeviceCleared reports if the "device" edge to the Device entity was cleared.
-func (m *UserMutation) DeviceCleared() bool {
-	return m.cleareddevice
+// DevicesCleared reports if the "devices" edge to the Device entity was cleared.
+func (m *UserMutation) DevicesCleared() bool {
+	return m.cleareddevices
 }
 
-// RemoveDeviceIDs removes the "device" edge to the Device entity by IDs.
+// RemoveDeviceIDs removes the "devices" edge to the Device entity by IDs.
 func (m *UserMutation) RemoveDeviceIDs(ids ...int) {
-	if m.removeddevice == nil {
-		m.removeddevice = make(map[int]struct{})
+	if m.removeddevices == nil {
+		m.removeddevices = make(map[int]struct{})
 	}
 	for i := range ids {
-		delete(m.device, ids[i])
-		m.removeddevice[ids[i]] = struct{}{}
+		delete(m.devices, ids[i])
+		m.removeddevices[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedDevice returns the removed IDs of the "device" edge to the Device entity.
-func (m *UserMutation) RemovedDeviceIDs() (ids []int) {
-	for id := range m.removeddevice {
+// RemovedDevices returns the removed IDs of the "devices" edge to the Device entity.
+func (m *UserMutation) RemovedDevicesIDs() (ids []int) {
+	for id := range m.removeddevices {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// DeviceIDs returns the "device" edge IDs in the mutation.
-func (m *UserMutation) DeviceIDs() (ids []int) {
-	for id := range m.device {
+// DevicesIDs returns the "devices" edge IDs in the mutation.
+func (m *UserMutation) DevicesIDs() (ids []int) {
+	for id := range m.devices {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetDevice resets all changes to the "device" edge.
-func (m *UserMutation) ResetDevice() {
-	m.device = nil
-	m.cleareddevice = false
-	m.removeddevice = nil
+// ResetDevices resets all changes to the "devices" edge.
+func (m *UserMutation) ResetDevices() {
+	m.devices = nil
+	m.cleareddevices = false
+	m.removeddevices = nil
 }
 
 // AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by ids.
@@ -3382,8 +3382,8 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.device != nil {
-		edges = append(edges, user.EdgeDevice)
+	if m.devices != nil {
+		edges = append(edges, user.EdgeDevices)
 	}
 	if m.notification_config != nil {
 		edges = append(edges, user.EdgeNotificationConfig)
@@ -3401,9 +3401,9 @@ func (m *UserMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *UserMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case user.EdgeDevice:
-		ids := make([]ent.Value, 0, len(m.device))
-		for id := range m.device {
+	case user.EdgeDevices:
+		ids := make([]ent.Value, 0, len(m.devices))
+		for id := range m.devices {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3432,8 +3432,8 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.removeddevice != nil {
-		edges = append(edges, user.EdgeDevice)
+	if m.removeddevices != nil {
+		edges = append(edges, user.EdgeDevices)
 	}
 	if m.removednotification_config != nil {
 		edges = append(edges, user.EdgeNotificationConfig)
@@ -3451,9 +3451,9 @@ func (m *UserMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case user.EdgeDevice:
-		ids := make([]ent.Value, 0, len(m.removeddevice))
-		for id := range m.removeddevice {
+	case user.EdgeDevices:
+		ids := make([]ent.Value, 0, len(m.removeddevices))
+		for id := range m.removeddevices {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3482,8 +3482,8 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.cleareddevice {
-		edges = append(edges, user.EdgeDevice)
+	if m.cleareddevices {
+		edges = append(edges, user.EdgeDevices)
 	}
 	if m.clearednotification_config {
 		edges = append(edges, user.EdgeNotificationConfig)
@@ -3501,8 +3501,8 @@ func (m *UserMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
-	case user.EdgeDevice:
-		return m.cleareddevice
+	case user.EdgeDevices:
+		return m.cleareddevices
 	case user.EdgeNotificationConfig:
 		return m.clearednotification_config
 	case user.EdgeAlbum:
@@ -3525,8 +3525,8 @@ func (m *UserMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *UserMutation) ResetEdge(name string) error {
 	switch name {
-	case user.EdgeDevice:
-		m.ResetDevice()
+	case user.EdgeDevices:
+		m.ResetDevices()
 		return nil
 	case user.EdgeNotificationConfig:
 		m.ResetNotificationConfig()

@@ -385,10 +385,10 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context) ([]*Device, error) {
 		ids := make([]int, 0, len(nodes))
 		nodeids := make(map[int][]*Device)
 		for i := range nodes {
-			if nodes[i].user_device == nil {
+			if nodes[i].user_devices == nil {
 				continue
 			}
-			fk := *nodes[i].user_device
+			fk := *nodes[i].user_devices
 			if _, ok := nodeids[fk]; !ok {
 				ids = append(ids, fk)
 			}
@@ -402,7 +402,7 @@ func (dq *DeviceQuery) sqlAll(ctx context.Context) ([]*Device, error) {
 		for _, n := range neighbors {
 			nodes, ok := nodeids[n.ID]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_device" returned %v`, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "user_devices" returned %v`, n.ID)
 			}
 			for i := range nodes {
 				nodes[i].Edges.User = n

@@ -16,7 +16,7 @@ import (
 func init() {
 	// GOOGLE_APPLICATION_CREDENTIALS 환경변수를 실제 환경변수로 이용하는 것은 번거로우니
 	// config file의 path를 통해 설정.
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", config.Config.FCM.ServiceAccountFile)
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", config.Config.Push.FCM.ServiceAccountFile)
 }
 
 type firebasePushAdapter struct {
@@ -49,8 +49,7 @@ func (a *firebasePushAdapter) Send(title, content string, deviceInfo *ent.Device
 	// jinsu vm
 
 	// 우선은 개발용이니까 진수 VM 토큰 이용
-	//registrationToken := device.PushToken
-	registrationToken := "fmjdpOMzQfaJCZkMCnxXyd:APA91bEMmKsdyXLRTknsivGTQ-MHfFX-Abf8z9D1WCMi5wpVJZi98ZFXEJGW41UkD4uQc_Uzg1r6_jdAYuekkqQyoC1IsSaijLAcxQsKdJND1lOkinPIYxWAMI24t5nFqNmKDJRKwp7P"
+	registrationToken := deviceInfo.PushToken
 
 	var response string
 	if deviceInfo.DeviceOs == device.DeviceOsANDROID {

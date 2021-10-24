@@ -536,25 +536,25 @@ func CreatedAtLTE(v time.Time) predicate.User {
 	})
 }
 
-// HasDevice applies the HasEdge predicate on the "device" edge.
-func HasDevice() predicate.User {
+// HasDevices applies the HasEdge predicate on the "devices" edge.
+func HasDevices() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(DeviceTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DeviceTable, DeviceColumn),
+			sqlgraph.To(DevicesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DevicesTable, DevicesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasDeviceWith applies the HasEdge predicate on the "device" edge with a given conditions (other predicates).
-func HasDeviceWith(preds ...predicate.Device) predicate.User {
+// HasDevicesWith applies the HasEdge predicate on the "devices" edge with a given conditions (other predicates).
+func HasDevicesWith(preds ...predicate.Device) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(DeviceInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DeviceTable, DeviceColumn),
+			sqlgraph.To(DevicesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DevicesTable, DevicesColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

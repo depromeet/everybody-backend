@@ -33,8 +33,8 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
-	// Device holds the value of the device edge.
-	Device []*Device `json:"device,omitempty"`
+	// Devices holds the value of the devices edge.
+	Devices []*Device `json:"devices,omitempty"`
 	// NotificationConfig holds the value of the notification_config edge.
 	NotificationConfig []*NotificationConfig `json:"notification_config,omitempty"`
 	// Album holds the value of the album edge.
@@ -46,13 +46,13 @@ type UserEdges struct {
 	loadedTypes [4]bool
 }
 
-// DeviceOrErr returns the Device value or an error if the edge
+// DevicesOrErr returns the Devices value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) DeviceOrErr() ([]*Device, error) {
+func (e UserEdges) DevicesOrErr() ([]*Device, error) {
 	if e.loadedTypes[0] {
-		return e.Device, nil
+		return e.Devices, nil
 	}
-	return nil, &NotLoadedError{edge: "device"}
+	return nil, &NotLoadedError{edge: "devices"}
 }
 
 // NotificationConfigOrErr returns the NotificationConfig value or an error if the edge
@@ -151,9 +151,9 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 	return nil
 }
 
-// QueryDevice queries the "device" edge of the User entity.
-func (u *User) QueryDevice() *DeviceQuery {
-	return (&UserClient{config: u.config}).QueryDevice(u)
+// QueryDevices queries the "devices" edge of the User entity.
+func (u *User) QueryDevices() *DeviceQuery {
+	return (&UserClient{config: u.config}).QueryDevices(u)
 }
 
 // QueryNotificationConfig queries the "notification_config" edge of the User entity.

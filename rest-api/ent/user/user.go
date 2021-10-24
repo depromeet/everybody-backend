@@ -22,8 +22,8 @@ const (
 	FieldKind = "kind"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// EdgeDevice holds the string denoting the device edge name in mutations.
-	EdgeDevice = "device"
+	// EdgeDevices holds the string denoting the devices edge name in mutations.
+	EdgeDevices = "devices"
 	// EdgeNotificationConfig holds the string denoting the notification_config edge name in mutations.
 	EdgeNotificationConfig = "notification_config"
 	// EdgeAlbum holds the string denoting the album edge name in mutations.
@@ -32,13 +32,13 @@ const (
 	EdgePicture = "picture"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// DeviceTable is the table that holds the device relation/edge.
-	DeviceTable = "devices"
-	// DeviceInverseTable is the table name for the Device entity.
+	// DevicesTable is the table that holds the devices relation/edge.
+	DevicesTable = "devices"
+	// DevicesInverseTable is the table name for the Device entity.
 	// It exists in this package in order to avoid circular dependency with the "device" package.
-	DeviceInverseTable = "devices"
-	// DeviceColumn is the table column denoting the device relation/edge.
-	DeviceColumn = "user_device"
+	DevicesInverseTable = "devices"
+	// DevicesColumn is the table column denoting the devices relation/edge.
+	DevicesColumn = "user_devices"
 	// NotificationConfigTable is the table that holds the notification_config relation/edge.
 	NotificationConfigTable = "notification_configs"
 	// NotificationConfigInverseTable is the table name for the NotificationConfig entity.

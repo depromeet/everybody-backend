@@ -1,7 +1,7 @@
 package dto
 
 type RegisterDeviceRequest struct {
-	DeviceToken string
-	PushToken   string
-	DeviceOS    string
+	DeviceToken string `json:"device_token"`
+	PushToken   string `json:"push_token"`
+	DeviceOS    string `json:"device_os"`
 }

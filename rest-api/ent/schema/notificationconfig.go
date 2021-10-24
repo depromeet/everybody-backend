@@ -38,6 +38,7 @@ func (NotificationConfig) Fields() []ent.Field {
 func (NotificationConfig) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).Ref("notification_config").
+			Required().
 			Unique(),
 	}
 }
