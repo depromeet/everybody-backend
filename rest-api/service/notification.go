@@ -140,7 +140,7 @@ func (s *notificationService) NotifyPeriodicNoonBody(errChan chan<- error) {
 				} else {
 					devices := nc.Edges.User.Edges.Devices
 					for _, device := range devices {
-						if err := s.pushAdapter.Send("오늘의 눈바디는?!", "우리 같이 꾸준히 눈바디를 기록해나가요!", device); err != nil {
+						if err := s.pushAdapter.Send("눈바디 찍는 날이에요!", "우리 같이 꾸준히 눈바디를 기록해나가요!", device); err != nil {
 							errChan <- errors.WithStack(err)
 						}
 						logger.Infof("Device(pushToken=%s)에게 정기 눈바디 알림을 보냈습니다", device.PushToken[:int(math.Min(float64(len(device.PushToken)), 10))])
