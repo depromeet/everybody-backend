@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
 	_ "github.com/depromeet/everybody-backend/rest-api/config"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http/handler"
@@ -28,7 +29,8 @@ var (
 	albumHandler        *handler.AlbumHandler
 	pictureHandler      *handler.PictureHandler
 
-	server *fiber.App
+	pushAdapter push.PushAdapter
+	server      *fiber.App
 )
 
 func main() {
@@ -60,5 +62,6 @@ func initialize() {
 	albumHandler = handler.NewAlbumHandler(albumService)
 	pictureHandler = handler.NewPictureHandler(pictureService)
 
+	pushAdapter = push.NewFirebasePushAdapter()
 	server = http.NewServer(userHandler, notificationHandler, albumHandler, pictureHandler)
 }

@@ -18,4 +18,6 @@ imagePrivateKey: |
   -----BEGIN RSA PRIVATE KEY-----
   ...
   -----END RSA PRIVATE KEY-----
-
+# 절대 경로
+fcm:
+  serviceAccountFile: /home/everybody-backend/rest-api/config/service-account-dev.yml
