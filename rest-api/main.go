@@ -5,10 +5,12 @@ import (
 	_ "github.com/depromeet/everybody-backend/rest-api/config"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http/handler"
+	"github.com/depromeet/everybody-backend/rest-api/infra/routine"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 var (
@@ -31,6 +33,8 @@ var (
 
 	pushAdapter push.PushAdapter
 	server      *fiber.App
+
+	notifyRoutine *routine.NotifyRoutine
 )
 
 func main() {
@@ -63,5 +67,24 @@ func initialize() {
 	pictureHandler = handler.NewPictureHandler(pictureService)
 
 	pushAdapter = push.NewFirebasePushAdapter()
+
+	notifyRoutine = routine.NewNotifyRoutine(pushAdapter)
+
+	// 우리 서버의 서브 루틴으로 알림 로직을 실행
+	go func() {
+		for {
+			if err := notifyRoutine.Run(); err != nil {
+				log.Errorf("NotifyRoutine 실행 도중 에러 발생: %+v", err)
+				log.Errorf("잠시 후 다시 notifyRoutine을 실행합니다.")
+				time.Sleep(time.Second)
+
+			} else {
+				log.Info("NotifyRoutine을 성공적으로 마쳤습니다.")
+				break
+			}
+
+		}
+	}()
+
 	server = http.NewServer(userHandler, notificationHandler, albumHandler, pictureHandler)
 }
