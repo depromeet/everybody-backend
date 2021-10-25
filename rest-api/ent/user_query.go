@@ -30,7 +30,7 @@ type UserQuery struct {
 	fields     []string
 	predicates []predicate.User
 	// eager-loading edges.
-	withDevice             *DeviceQuery
+	withDevices            *DeviceQuery
 	withNotificationConfig *NotificationConfigQuery
 	withAlbum              *AlbumQuery
 	withPicture            *PictureQuery
@@ -70,8 +70,8 @@ func (uq *UserQuery) Order(o ...OrderFunc) *UserQuery {
 	return uq
 }
 
-// QueryDevice chains the current query on the "device" edge.
-func (uq *UserQuery) QueryDevice() *DeviceQuery {
+// QueryDevices chains the current query on the "devices" edge.
+func (uq *UserQuery) QueryDevices() *DeviceQuery {
 	query := &DeviceQuery{config: uq.config}
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
@@ -84,7 +84,7 @@ func (uq *UserQuery) QueryDevice() *DeviceQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(device.Table, device.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.DeviceTable, user.DeviceColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.DevicesTable, user.DevicesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -339,7 +339,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		offset:                 uq.offset,
 		order:                  append([]OrderFunc{}, uq.order...),
 		predicates:             append([]predicate.User{}, uq.predicates...),
-		withDevice:             uq.withDevice.Clone(),
+		withDevices:            uq.withDevices.Clone(),
 		withNotificationConfig: uq.withNotificationConfig.Clone(),
 		withAlbum:              uq.withAlbum.Clone(),
 		withPicture:            uq.withPicture.Clone(),
@@ -349,14 +349,14 @@ func (uq *UserQuery) Clone() *UserQuery {
 	}
 }
 
-// WithDevice tells the query-builder to eager-load the nodes that are connected to
-// the "device" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithDevice(opts ...func(*DeviceQuery)) *UserQuery {
+// WithDevices tells the query-builder to eager-load the nodes that are connected to
+// the "devices" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithDevices(opts ...func(*DeviceQuery)) *UserQuery {
 	query := &DeviceQuery{config: uq.config}
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withDevice = query
+	uq.withDevices = query
 	return uq
 }
 
@@ -459,7 +459,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
 		loadedTypes = [4]bool{
-			uq.withDevice != nil,
+			uq.withDevices != nil,
 			uq.withNotificationConfig != nil,
 			uq.withAlbum != nil,
 			uq.withPicture != nil,
@@ -485,32 +485,32 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		return nodes, nil
 	}
 
-	if query := uq.withDevice; query != nil {
+	if query := uq.withDevices; query != nil {
 		fks := make([]driver.Value, 0, len(nodes))
 		nodeids := make(map[int]*User)
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Device = []*Device{}
+			nodes[i].Edges.Devices = []*Device{}
 		}
 		query.withFKs = true
 		query.Where(predicate.Device(func(s *sql.Selector) {
-			s.Where(sql.InValues(user.DeviceColumn, fks...))
+			s.Where(sql.InValues(user.DevicesColumn, fks...))
 		}))
 		neighbors, err := query.All(ctx)
 		if err != nil {
 			return nil, err
 		}
 		for _, n := range neighbors {
-			fk := n.user_device
+			fk := n.user_devices
 			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "user_device" is nil for node %v`, n.ID)
+				return nil, fmt.Errorf(`foreign-key "user_devices" is nil for node %v`, n.ID)
 			}
 			node, ok := nodeids[*fk]
 			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "user_device" returned %v for node %v`, *fk, n.ID)
+				return nil, fmt.Errorf(`unexpected foreign-key "user_devices" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.Device = append(node.Edges.Device, n)
+			node.Edges.Devices = append(node.Edges.Devices, n)
 		}
 	}
 

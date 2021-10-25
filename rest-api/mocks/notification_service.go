@@ -80,3 +80,8 @@ func (_m *NotificationService) GetConfigByUser(user int) (*dto.NotificationConfi
 
 	return r0, r1
 }
+
+// NotifyPeriodicNoonBody provides a mock function with given fields: errChan
+func (_m *NotificationService) NotifyPeriodicNoonBody(errChan chan<- error) {
+	_m.Called(errChan)
+}

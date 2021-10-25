@@ -80,3 +80,17 @@ func (_m *DeviceRepository) FindById(id int) (*ent.Device, error) {
 
 	return r0, r1
 }
+
+// Update provides a mock function with given fields: id, device
+func (_m *DeviceRepository) Update(id int, device *ent.Device) error {
+	ret := _m.Called(id, device)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int, *ent.Device) error); ok {
+		r0 = rf(id, device)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}

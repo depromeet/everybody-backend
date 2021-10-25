@@ -18,12 +18,12 @@ const (
 	FieldHeight = "height"
 	// FieldWeight holds the string denoting the weight field in the database.
 	FieldWeight = "weight"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
+	// FieldKind holds the string denoting the kind field in the database.
+	FieldKind = "kind"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// EdgeDevice holds the string denoting the device edge name in mutations.
-	EdgeDevice = "device"
+	// EdgeDevices holds the string denoting the devices edge name in mutations.
+	EdgeDevices = "devices"
 	// EdgeNotificationConfig holds the string denoting the notification_config edge name in mutations.
 	EdgeNotificationConfig = "notification_config"
 	// EdgeAlbum holds the string denoting the album edge name in mutations.
@@ -32,13 +32,13 @@ const (
 	EdgePicture = "picture"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// DeviceTable is the table that holds the device relation/edge.
-	DeviceTable = "devices"
-	// DeviceInverseTable is the table name for the Device entity.
+	// DevicesTable is the table that holds the devices relation/edge.
+	DevicesTable = "devices"
+	// DevicesInverseTable is the table name for the Device entity.
 	// It exists in this package in order to avoid circular dependency with the "device" package.
-	DeviceInverseTable = "devices"
-	// DeviceColumn is the table column denoting the device relation/edge.
-	DeviceColumn = "user_device"
+	DevicesInverseTable = "devices"
+	// DevicesColumn is the table column denoting the devices relation/edge.
+	DevicesColumn = "user_devices"
 	// NotificationConfigTable is the table that holds the notification_config relation/edge.
 	NotificationConfigTable = "notification_configs"
 	// NotificationConfigInverseTable is the table name for the NotificationConfig entity.
@@ -68,7 +68,7 @@ var Columns = []string{
 	FieldNickname,
 	FieldHeight,
 	FieldWeight,
-	FieldType,
+	FieldKind,
 	FieldCreatedAt,
 }
 
@@ -87,28 +87,28 @@ var (
 	DefaultCreatedAt func() time.Time
 )
 
-// Type defines the type for the "type" enum field.
-type Type string
+// Kind defines the type for the "kind" enum field.
+type Kind string
 
-// Type values.
+// Kind values.
 const (
-	TypeSIMPLE Type = "SIMPLE"
-	TypeKAKAO  Type = "KAKAO"
-	TypeAPPLE  Type = "APPLE"
-	TypeNAVER  Type = "NAVER"
-	TypeGOOGLE Type = "GOOGLE"
+	KindSIMPLE Kind = "SIMPLE"
+	KindKAKAO  Kind = "KAKAO"
+	KindAPPLE  Kind = "APPLE"
+	KindNAVER  Kind = "NAVER"
+	KindGOOGLE Kind = "GOOGLE"
 )
 
-func (_type Type) String() string {
-	return string(_type)
+func (k Kind) String() string {
+	return string(k)
 }
 
-// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
-	switch _type {
-	case TypeSIMPLE, TypeKAKAO, TypeAPPLE, TypeNAVER, TypeGOOGLE:
+// KindValidator is a validator for the "kind" field enum values. It is called by the builders before save.
+func KindValidator(k Kind) error {
+	switch k {
+	case KindSIMPLE, KindKAKAO, KindAPPLE, KindNAVER, KindGOOGLE:
 		return nil
 	default:
-		return fmt.Errorf("user: invalid enum value for type field: %q", _type)
+		return fmt.Errorf("user: invalid enum value for kind field: %q", k)
 	}
 }

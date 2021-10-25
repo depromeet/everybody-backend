@@ -33,13 +33,13 @@ func Connect() *ent.Client {
 	// ping
 	conn, err := db.Conn(context.TODO())
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 	defer conn.Close()
 
 	ent.Debug()
 	ent.Log(func(i ...interface{}) {
-		log.Warning(i...)
+		log.Debug(i...)
 	})
 
 	client := ent.NewClient(ent.Driver(drv))

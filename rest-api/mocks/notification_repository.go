@@ -37,6 +37,29 @@ func (_m *NotificationRepository) CreateNotificationConfig(config *ent.Notificat
 	return r0, r1
 }
 
+// FindAll provides a mock function with given fields:
+func (_m *NotificationRepository) FindAll() ([]*ent.NotificationConfig, error) {
+	ret := _m.Called()
+
+	var r0 []*ent.NotificationConfig
+	if rf, ok := ret.Get(0).(func() []*ent.NotificationConfig); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*ent.NotificationConfig)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // FindById provides a mock function with given fields: id
 func (_m *NotificationRepository) FindById(id int) (*ent.NotificationConfig, error) {
 	ret := _m.Called(id)
@@ -83,13 +106,13 @@ func (_m *NotificationRepository) FindByUser(user int) (*ent.NotificationConfig,
 	return r0, r1
 }
 
-// UpdateInterval provides a mock function with given fields: id, interval
-func (_m *NotificationRepository) UpdateInterval(id int, interval int) (*ent.NotificationConfig, error) {
-	ret := _m.Called(id, interval)
+// Update provides a mock function with given fields: id, config
+func (_m *NotificationRepository) Update(id int, config *ent.NotificationConfig) (*ent.NotificationConfig, error) {
+	ret := _m.Called(id, config)
 
 	var r0 *ent.NotificationConfig
-	if rf, ok := ret.Get(0).(func(int, int) *ent.NotificationConfig); ok {
-		r0 = rf(id, interval)
+	if rf, ok := ret.Get(0).(func(int, *ent.NotificationConfig) *ent.NotificationConfig); ok {
+		r0 = rf(id, config)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*ent.NotificationConfig)
@@ -97,31 +120,8 @@ func (_m *NotificationRepository) UpdateInterval(id int, interval int) (*ent.Not
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int, int) error); ok {
-		r1 = rf(id, interval)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// UpdateIsActivated provides a mock function with given fields: id, isActivated
-func (_m *NotificationRepository) UpdateIsActivated(id int, isActivated bool) (*ent.NotificationConfig, error) {
-	ret := _m.Called(id, isActivated)
-
-	var r0 *ent.NotificationConfig
-	if rf, ok := ret.Get(0).(func(int, bool) *ent.NotificationConfig); ok {
-		r0 = rf(id, isActivated)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.NotificationConfig)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(int, bool) error); ok {
-		r1 = rf(id, isActivated)
+	if rf, ok := ret.Get(1).(func(int, *ent.NotificationConfig) error); ok {
+		r1 = rf(id, config)
 	} else {
 		r1 = ret.Error(1)
 	}

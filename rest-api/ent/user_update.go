@@ -91,9 +91,9 @@ func (uu *UserUpdate) ClearWeight() *UserUpdate {
 	return uu
 }
 
-// SetType sets the "type" field.
-func (uu *UserUpdate) SetType(u user.Type) *UserUpdate {
-	uu.mutation.SetType(u)
+// SetKind sets the "kind" field.
+func (uu *UserUpdate) SetKind(u user.Kind) *UserUpdate {
+	uu.mutation.SetKind(u)
 	return uu
 }
 
@@ -111,14 +111,14 @@ func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
 	return uu
 }
 
-// AddDeviceIDs adds the "device" edge to the Device entity by IDs.
+// AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (uu *UserUpdate) AddDeviceIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddDeviceIDs(ids...)
 	return uu
 }
 
-// AddDevice adds the "device" edges to the Device entity.
-func (uu *UserUpdate) AddDevice(d ...*Device) *UserUpdate {
+// AddDevices adds the "devices" edges to the Device entity.
+func (uu *UserUpdate) AddDevices(d ...*Device) *UserUpdate {
 	ids := make([]int, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
@@ -176,20 +176,20 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
 }
 
-// ClearDevice clears all "device" edges to the Device entity.
-func (uu *UserUpdate) ClearDevice() *UserUpdate {
-	uu.mutation.ClearDevice()
+// ClearDevices clears all "devices" edges to the Device entity.
+func (uu *UserUpdate) ClearDevices() *UserUpdate {
+	uu.mutation.ClearDevices()
 	return uu
 }
 
-// RemoveDeviceIDs removes the "device" edge to Device entities by IDs.
+// RemoveDeviceIDs removes the "devices" edge to Device entities by IDs.
 func (uu *UserUpdate) RemoveDeviceIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveDeviceIDs(ids...)
 	return uu
 }
 
-// RemoveDevice removes "device" edges to Device entities.
-func (uu *UserUpdate) RemoveDevice(d ...*Device) *UserUpdate {
+// RemoveDevices removes "devices" edges to Device entities.
+func (uu *UserUpdate) RemoveDevices(d ...*Device) *UserUpdate {
 	ids := make([]int, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
@@ -322,9 +322,9 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uu *UserUpdate) check() error {
-	if v, ok := uu.mutation.GetType(); ok {
-		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+	if v, ok := uu.mutation.Kind(); ok {
+		if err := user.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf("ent: validator failed for field \"kind\": %w", err)}
 		}
 	}
 	return nil
@@ -395,11 +395,11 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldWeight,
 		})
 	}
-	if value, ok := uu.mutation.GetType(); ok {
+	if value, ok := uu.mutation.Kind(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: user.FieldType,
+			Column: user.FieldKind,
 		})
 	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
@@ -409,12 +409,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldCreatedAt,
 		})
 	}
-	if uu.mutation.DeviceCleared() {
+	if uu.mutation.DevicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.DeviceTable,
-			Columns: []string{user.DeviceColumn},
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -425,12 +425,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.RemovedDeviceIDs(); len(nodes) > 0 && !uu.mutation.DeviceCleared() {
+	if nodes := uu.mutation.RemovedDevicesIDs(); len(nodes) > 0 && !uu.mutation.DevicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.DeviceTable,
-			Columns: []string{user.DeviceColumn},
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -444,12 +444,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uu.mutation.DeviceIDs(); len(nodes) > 0 {
+	if nodes := uu.mutation.DevicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.DeviceTable,
-			Columns: []string{user.DeviceColumn},
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -704,9 +704,9 @@ func (uuo *UserUpdateOne) ClearWeight() *UserUpdateOne {
 	return uuo
 }
 
-// SetType sets the "type" field.
-func (uuo *UserUpdateOne) SetType(u user.Type) *UserUpdateOne {
-	uuo.mutation.SetType(u)
+// SetKind sets the "kind" field.
+func (uuo *UserUpdateOne) SetKind(u user.Kind) *UserUpdateOne {
+	uuo.mutation.SetKind(u)
 	return uuo
 }
 
@@ -724,14 +724,14 @@ func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
 	return uuo
 }
 
-// AddDeviceIDs adds the "device" edge to the Device entity by IDs.
+// AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (uuo *UserUpdateOne) AddDeviceIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddDeviceIDs(ids...)
 	return uuo
 }
 
-// AddDevice adds the "device" edges to the Device entity.
-func (uuo *UserUpdateOne) AddDevice(d ...*Device) *UserUpdateOne {
+// AddDevices adds the "devices" edges to the Device entity.
+func (uuo *UserUpdateOne) AddDevices(d ...*Device) *UserUpdateOne {
 	ids := make([]int, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
@@ -789,20 +789,20 @@ func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
 }
 
-// ClearDevice clears all "device" edges to the Device entity.
-func (uuo *UserUpdateOne) ClearDevice() *UserUpdateOne {
-	uuo.mutation.ClearDevice()
+// ClearDevices clears all "devices" edges to the Device entity.
+func (uuo *UserUpdateOne) ClearDevices() *UserUpdateOne {
+	uuo.mutation.ClearDevices()
 	return uuo
 }
 
-// RemoveDeviceIDs removes the "device" edge to Device entities by IDs.
+// RemoveDeviceIDs removes the "devices" edge to Device entities by IDs.
 func (uuo *UserUpdateOne) RemoveDeviceIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveDeviceIDs(ids...)
 	return uuo
 }
 
-// RemoveDevice removes "device" edges to Device entities.
-func (uuo *UserUpdateOne) RemoveDevice(d ...*Device) *UserUpdateOne {
+// RemoveDevices removes "devices" edges to Device entities.
+func (uuo *UserUpdateOne) RemoveDevices(d ...*Device) *UserUpdateOne {
 	ids := make([]int, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
@@ -942,9 +942,9 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uuo *UserUpdateOne) check() error {
-	if v, ok := uuo.mutation.GetType(); ok {
-		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf("ent: validator failed for field \"type\": %w", err)}
+	if v, ok := uuo.mutation.Kind(); ok {
+		if err := user.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf("ent: validator failed for field \"kind\": %w", err)}
 		}
 	}
 	return nil
@@ -1032,11 +1032,11 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldWeight,
 		})
 	}
-	if value, ok := uuo.mutation.GetType(); ok {
+	if value, ok := uuo.mutation.Kind(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: user.FieldType,
+			Column: user.FieldKind,
 		})
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {
@@ -1046,12 +1046,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Column: user.FieldCreatedAt,
 		})
 	}
-	if uuo.mutation.DeviceCleared() {
+	if uuo.mutation.DevicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.DeviceTable,
-			Columns: []string{user.DeviceColumn},
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1062,12 +1062,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.RemovedDeviceIDs(); len(nodes) > 0 && !uuo.mutation.DeviceCleared() {
+	if nodes := uuo.mutation.RemovedDevicesIDs(); len(nodes) > 0 && !uuo.mutation.DevicesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.DeviceTable,
-			Columns: []string{user.DeviceColumn},
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
@@ -1081,12 +1081,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := uuo.mutation.DeviceIDs(); len(nodes) > 0 {
+	if nodes := uuo.mutation.DevicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.DeviceTable,
-			Columns: []string{user.DeviceColumn},
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

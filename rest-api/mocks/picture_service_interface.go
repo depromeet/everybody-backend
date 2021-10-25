@@ -4,8 +4,6 @@ package mocks
 
 import (
 	dto "github.com/depromeet/everybody-backend/rest-api/dto"
-	ent "github.com/depromeet/everybody-backend/rest-api/ent"
-
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -14,22 +12,22 @@ type PictureServiceInterface struct {
 	mock.Mock
 }
 
-// GetAllPictures provides a mock function with given fields: albumID
-func (_m *PictureServiceInterface) GetAllPictures(albumID int) ([]*ent.Picture, error) {
-	ret := _m.Called(albumID)
+// GetAllPictures provides a mock function with given fields: userID
+func (_m *PictureServiceInterface) GetAllPictures(userID int) (dto.PicturesDto, error) {
+	ret := _m.Called(userID)
 
-	var r0 []*ent.Picture
-	if rf, ok := ret.Get(0).(func(int) []*ent.Picture); ok {
-		r0 = rf(albumID)
+	var r0 dto.PicturesDto
+	if rf, ok := ret.Get(0).(func(int) dto.PicturesDto); ok {
+		r0 = rf(userID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*ent.Picture)
+			r0 = ret.Get(0).(dto.PicturesDto)
 		}
 	}
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(albumID)
+		r1 = rf(userID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -38,15 +36,15 @@ func (_m *PictureServiceInterface) GetAllPictures(albumID int) ([]*ent.Picture, 
 }
 
 // GetPicture provides a mock function with given fields: pictureID
-func (_m *PictureServiceInterface) GetPicture(pictureID int) (*ent.Picture, error) {
+func (_m *PictureServiceInterface) GetPicture(pictureID int) (*dto.PictureDto, error) {
 	ret := _m.Called(pictureID)
 
-	var r0 *ent.Picture
-	if rf, ok := ret.Get(0).(func(int) *ent.Picture); ok {
+	var r0 *dto.PictureDto
+	if rf, ok := ret.Get(0).(func(int) *dto.PictureDto); ok {
 		r0 = rf(pictureID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.Picture)
+			r0 = ret.Get(0).(*dto.PictureDto)
 		}
 	}
 
@@ -60,20 +58,22 @@ func (_m *PictureServiceInterface) GetPicture(pictureID int) (*ent.Picture, erro
 	return r0, r1
 }
 
-// SavePicture provides a mock function with given fields: pictureReq
-func (_m *PictureServiceInterface) SavePicture(pictureReq *dto.PictureRequest) (bool, error) {
-	ret := _m.Called(pictureReq)
+// SavePicture provides a mock function with given fields: userID, pictureReq
+func (_m *PictureServiceInterface) SavePicture(userID int, pictureReq *dto.PictureRequest) (*dto.PictureDto, error) {
+	ret := _m.Called(userID, pictureReq)
 
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(*dto.PictureRequest) bool); ok {
-		r0 = rf(pictureReq)
+	var r0 *dto.PictureDto
+	if rf, ok := ret.Get(0).(func(int, *dto.PictureRequest) *dto.PictureDto); ok {
+		r0 = rf(userID, pictureReq)
 	} else {
-		r0 = ret.Get(0).(bool)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*dto.PictureDto)
+		}
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*dto.PictureRequest) error); ok {
-		r1 = rf(pictureReq)
+	if rf, ok := ret.Get(1).(func(int, *dto.PictureRequest) error); ok {
+		r1 = rf(userID, pictureReq)
 	} else {
 		r1 = ret.Error(1)
 	}

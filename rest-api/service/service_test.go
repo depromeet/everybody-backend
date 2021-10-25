@@ -9,18 +9,20 @@ import (
 
 var (
 	deviceRepo       *mocks.DeviceRepository
-	notificationRepo *mocks.DeviceRepository
+	notificationRepo *mocks.NotificationRepository
 	userRepo         *mocks.UserRepository
 	albumRepo        *mocks.AlbumRepositoryInterface
 	pictureRepo      *mocks.PictureRepositoryInterface
+	pushAdapter      *mocks.PushAdapter
 )
 
 // initialize 는 서비스 계층 이외의 것들을 초기화합니다.
 // 주로 repository 계층을 mocking 합니다.
 func initialize(t *testing.T) {
 	deviceRepo = new(mocks.DeviceRepository)
-	notificationRepo = new(mocks.DeviceRepository)
+	notificationRepo = new(mocks.NotificationRepository)
 	userRepo = new(mocks.UserRepository)
 	albumRepo = new(mocks.AlbumRepositoryInterface)
 	pictureRepo = new(mocks.PictureRepositoryInterface)
+	pushAdapter = new(mocks.PushAdapter)
 }

@@ -4,8 +4,6 @@ package mocks
 
 import (
 	dto "github.com/depromeet/everybody-backend/rest-api/dto"
-	ent "github.com/depromeet/everybody-backend/rest-api/ent"
-
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,15 +13,15 @@ type AlbumServiceInterface struct {
 }
 
 // CreateAlbum provides a mock function with given fields: userID, albumReq
-func (_m *AlbumServiceInterface) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*ent.Album, error) {
+func (_m *AlbumServiceInterface) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto.AlbumDto, error) {
 	ret := _m.Called(userID, albumReq)
 
-	var r0 *ent.Album
-	if rf, ok := ret.Get(0).(func(int, *dto.AlbumRequest) *ent.Album); ok {
+	var r0 *dto.AlbumDto
+	if rf, ok := ret.Get(0).(func(int, *dto.AlbumRequest) *dto.AlbumDto); ok {
 		r0 = rf(userID, albumReq)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.Album)
+			r0 = ret.Get(0).(*dto.AlbumDto)
 		}
 	}
 
@@ -38,47 +36,38 @@ func (_m *AlbumServiceInterface) CreateAlbum(userID int, albumReq *dto.AlbumRequ
 }
 
 // GetAlbum provides a mock function with given fields: albumID
-func (_m *AlbumServiceInterface) GetAlbum(albumID int) (*ent.Album, []*ent.Picture, error) {
+func (_m *AlbumServiceInterface) GetAlbum(albumID int) (*dto.AlbumDto, error) {
 	ret := _m.Called(albumID)
 
-	var r0 *ent.Album
-	if rf, ok := ret.Get(0).(func(int) *ent.Album); ok {
+	var r0 *dto.AlbumDto
+	if rf, ok := ret.Get(0).(func(int) *dto.AlbumDto); ok {
 		r0 = rf(albumID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*ent.Album)
+			r0 = ret.Get(0).(*dto.AlbumDto)
 		}
 	}
 
-	var r1 []*ent.Picture
-	if rf, ok := ret.Get(1).(func(int) []*ent.Picture); ok {
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int) error); ok {
 		r1 = rf(albumID)
 	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).([]*ent.Picture)
-		}
+		r1 = ret.Error(1)
 	}
 
-	var r2 error
-	if rf, ok := ret.Get(2).(func(int) error); ok {
-		r2 = rf(albumID)
-	} else {
-		r2 = ret.Error(2)
-	}
-
-	return r0, r1, r2
+	return r0, r1
 }
 
 // GetAllAlbums provides a mock function with given fields: userID
-func (_m *AlbumServiceInterface) GetAllAlbums(userID int) ([]*ent.Album, error) {
+func (_m *AlbumServiceInterface) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 	ret := _m.Called(userID)
 
-	var r0 []*ent.Album
-	if rf, ok := ret.Get(0).(func(int) []*ent.Album); ok {
+	var r0 dto.AlbumsDto
+	if rf, ok := ret.Get(0).(func(int) dto.AlbumsDto); ok {
 		r0 = rf(userID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*ent.Album)
+			r0 = ret.Get(0).(dto.AlbumsDto)
 		}
 	}
 

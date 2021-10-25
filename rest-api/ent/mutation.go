@@ -1010,19 +1010,28 @@ func (m *DeviceMutation) ResetEdge(name string) error {
 // NotificationConfigMutation represents an operation that mutates the NotificationConfig nodes in the graph.
 type NotificationConfigMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *int
-	interval         *int
-	addinterval      *int
-	last_notified_at *time.Time
-	is_activated     *bool
-	clearedFields    map[string]struct{}
-	user             *int
-	cleareduser      bool
-	done             bool
-	oldValue         func(context.Context) (*NotificationConfig, error)
-	predicates       []predicate.NotificationConfig
+	op                       Op
+	typ                      string
+	id                       *int
+	monday                   *bool
+	tuesday                  *bool
+	wednesday                *bool
+	thursday                 *bool
+	friday                   *bool
+	saturday                 *bool
+	sunday                   *bool
+	preferred_time_hour      *int
+	addpreferred_time_hour   *int
+	preferred_time_minute    *int
+	addpreferred_time_minute *int
+	last_notified_at         *time.Time
+	is_activated             *bool
+	clearedFields            map[string]struct{}
+	user                     *int
+	cleareduser              bool
+	done                     bool
+	oldValue                 func(context.Context) (*NotificationConfig, error)
+	predicates               []predicate.NotificationConfig
 }
 
 var _ ent.Mutation = (*NotificationConfigMutation)(nil)
@@ -1110,74 +1119,396 @@ func (m *NotificationConfigMutation) ID() (id int, exists bool) {
 	return *m.id, true
 }
 
-// SetInterval sets the "interval" field.
-func (m *NotificationConfigMutation) SetInterval(i int) {
-	m.interval = &i
-	m.addinterval = nil
+// SetMonday sets the "monday" field.
+func (m *NotificationConfigMutation) SetMonday(b bool) {
+	m.monday = &b
 }
 
-// Interval returns the value of the "interval" field in the mutation.
-func (m *NotificationConfigMutation) Interval() (r int, exists bool) {
-	v := m.interval
+// Monday returns the value of the "monday" field in the mutation.
+func (m *NotificationConfigMutation) Monday() (r bool, exists bool) {
+	v := m.monday
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldInterval returns the old "interval" field's value of the NotificationConfig entity.
+// OldMonday returns the old "monday" field's value of the NotificationConfig entity.
 // If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NotificationConfigMutation) OldInterval(ctx context.Context) (v int, err error) {
+func (m *NotificationConfigMutation) OldMonday(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldInterval is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldMonday is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldInterval requires an ID field in the mutation")
+		return v, fmt.Errorf("OldMonday requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldInterval: %w", err)
+		return v, fmt.Errorf("querying old value for OldMonday: %w", err)
 	}
-	return oldValue.Interval, nil
+	return oldValue.Monday, nil
 }
 
-// AddInterval adds i to the "interval" field.
-func (m *NotificationConfigMutation) AddInterval(i int) {
-	if m.addinterval != nil {
-		*m.addinterval += i
-	} else {
-		m.addinterval = &i
-	}
+// ResetMonday resets all changes to the "monday" field.
+func (m *NotificationConfigMutation) ResetMonday() {
+	m.monday = nil
 }
 
-// AddedInterval returns the value that was added to the "interval" field in this mutation.
-func (m *NotificationConfigMutation) AddedInterval() (r int, exists bool) {
-	v := m.addinterval
+// SetTuesday sets the "tuesday" field.
+func (m *NotificationConfigMutation) SetTuesday(b bool) {
+	m.tuesday = &b
+}
+
+// Tuesday returns the value of the "tuesday" field in the mutation.
+func (m *NotificationConfigMutation) Tuesday() (r bool, exists bool) {
+	v := m.tuesday
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearInterval clears the value of the "interval" field.
-func (m *NotificationConfigMutation) ClearInterval() {
-	m.interval = nil
-	m.addinterval = nil
-	m.clearedFields[notificationconfig.FieldInterval] = struct{}{}
+// OldTuesday returns the old "tuesday" field's value of the NotificationConfig entity.
+// If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationConfigMutation) OldTuesday(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTuesday is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTuesday requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTuesday: %w", err)
+	}
+	return oldValue.Tuesday, nil
 }
 
-// IntervalCleared returns if the "interval" field was cleared in this mutation.
-func (m *NotificationConfigMutation) IntervalCleared() bool {
-	_, ok := m.clearedFields[notificationconfig.FieldInterval]
+// ResetTuesday resets all changes to the "tuesday" field.
+func (m *NotificationConfigMutation) ResetTuesday() {
+	m.tuesday = nil
+}
+
+// SetWednesday sets the "wednesday" field.
+func (m *NotificationConfigMutation) SetWednesday(b bool) {
+	m.wednesday = &b
+}
+
+// Wednesday returns the value of the "wednesday" field in the mutation.
+func (m *NotificationConfigMutation) Wednesday() (r bool, exists bool) {
+	v := m.wednesday
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWednesday returns the old "wednesday" field's value of the NotificationConfig entity.
+// If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationConfigMutation) OldWednesday(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldWednesday is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldWednesday requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWednesday: %w", err)
+	}
+	return oldValue.Wednesday, nil
+}
+
+// ResetWednesday resets all changes to the "wednesday" field.
+func (m *NotificationConfigMutation) ResetWednesday() {
+	m.wednesday = nil
+}
+
+// SetThursday sets the "thursday" field.
+func (m *NotificationConfigMutation) SetThursday(b bool) {
+	m.thursday = &b
+}
+
+// Thursday returns the value of the "thursday" field in the mutation.
+func (m *NotificationConfigMutation) Thursday() (r bool, exists bool) {
+	v := m.thursday
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldThursday returns the old "thursday" field's value of the NotificationConfig entity.
+// If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationConfigMutation) OldThursday(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldThursday is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldThursday requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldThursday: %w", err)
+	}
+	return oldValue.Thursday, nil
+}
+
+// ResetThursday resets all changes to the "thursday" field.
+func (m *NotificationConfigMutation) ResetThursday() {
+	m.thursday = nil
+}
+
+// SetFriday sets the "friday" field.
+func (m *NotificationConfigMutation) SetFriday(b bool) {
+	m.friday = &b
+}
+
+// Friday returns the value of the "friday" field in the mutation.
+func (m *NotificationConfigMutation) Friday() (r bool, exists bool) {
+	v := m.friday
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFriday returns the old "friday" field's value of the NotificationConfig entity.
+// If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationConfigMutation) OldFriday(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldFriday is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldFriday requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFriday: %w", err)
+	}
+	return oldValue.Friday, nil
+}
+
+// ResetFriday resets all changes to the "friday" field.
+func (m *NotificationConfigMutation) ResetFriday() {
+	m.friday = nil
+}
+
+// SetSaturday sets the "saturday" field.
+func (m *NotificationConfigMutation) SetSaturday(b bool) {
+	m.saturday = &b
+}
+
+// Saturday returns the value of the "saturday" field in the mutation.
+func (m *NotificationConfigMutation) Saturday() (r bool, exists bool) {
+	v := m.saturday
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSaturday returns the old "saturday" field's value of the NotificationConfig entity.
+// If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationConfigMutation) OldSaturday(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSaturday is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSaturday requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSaturday: %w", err)
+	}
+	return oldValue.Saturday, nil
+}
+
+// ResetSaturday resets all changes to the "saturday" field.
+func (m *NotificationConfigMutation) ResetSaturday() {
+	m.saturday = nil
+}
+
+// SetSunday sets the "sunday" field.
+func (m *NotificationConfigMutation) SetSunday(b bool) {
+	m.sunday = &b
+}
+
+// Sunday returns the value of the "sunday" field in the mutation.
+func (m *NotificationConfigMutation) Sunday() (r bool, exists bool) {
+	v := m.sunday
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSunday returns the old "sunday" field's value of the NotificationConfig entity.
+// If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationConfigMutation) OldSunday(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSunday is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSunday requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSunday: %w", err)
+	}
+	return oldValue.Sunday, nil
+}
+
+// ResetSunday resets all changes to the "sunday" field.
+func (m *NotificationConfigMutation) ResetSunday() {
+	m.sunday = nil
+}
+
+// SetPreferredTimeHour sets the "preferred_time_hour" field.
+func (m *NotificationConfigMutation) SetPreferredTimeHour(i int) {
+	m.preferred_time_hour = &i
+	m.addpreferred_time_hour = nil
+}
+
+// PreferredTimeHour returns the value of the "preferred_time_hour" field in the mutation.
+func (m *NotificationConfigMutation) PreferredTimeHour() (r int, exists bool) {
+	v := m.preferred_time_hour
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPreferredTimeHour returns the old "preferred_time_hour" field's value of the NotificationConfig entity.
+// If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationConfigMutation) OldPreferredTimeHour(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPreferredTimeHour is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPreferredTimeHour requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPreferredTimeHour: %w", err)
+	}
+	return oldValue.PreferredTimeHour, nil
+}
+
+// AddPreferredTimeHour adds i to the "preferred_time_hour" field.
+func (m *NotificationConfigMutation) AddPreferredTimeHour(i int) {
+	if m.addpreferred_time_hour != nil {
+		*m.addpreferred_time_hour += i
+	} else {
+		m.addpreferred_time_hour = &i
+	}
+}
+
+// AddedPreferredTimeHour returns the value that was added to the "preferred_time_hour" field in this mutation.
+func (m *NotificationConfigMutation) AddedPreferredTimeHour() (r int, exists bool) {
+	v := m.addpreferred_time_hour
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPreferredTimeHour clears the value of the "preferred_time_hour" field.
+func (m *NotificationConfigMutation) ClearPreferredTimeHour() {
+	m.preferred_time_hour = nil
+	m.addpreferred_time_hour = nil
+	m.clearedFields[notificationconfig.FieldPreferredTimeHour] = struct{}{}
+}
+
+// PreferredTimeHourCleared returns if the "preferred_time_hour" field was cleared in this mutation.
+func (m *NotificationConfigMutation) PreferredTimeHourCleared() bool {
+	_, ok := m.clearedFields[notificationconfig.FieldPreferredTimeHour]
 	return ok
 }
 
-// ResetInterval resets all changes to the "interval" field.
-func (m *NotificationConfigMutation) ResetInterval() {
-	m.interval = nil
-	m.addinterval = nil
-	delete(m.clearedFields, notificationconfig.FieldInterval)
+// ResetPreferredTimeHour resets all changes to the "preferred_time_hour" field.
+func (m *NotificationConfigMutation) ResetPreferredTimeHour() {
+	m.preferred_time_hour = nil
+	m.addpreferred_time_hour = nil
+	delete(m.clearedFields, notificationconfig.FieldPreferredTimeHour)
+}
+
+// SetPreferredTimeMinute sets the "preferred_time_minute" field.
+func (m *NotificationConfigMutation) SetPreferredTimeMinute(i int) {
+	m.preferred_time_minute = &i
+	m.addpreferred_time_minute = nil
+}
+
+// PreferredTimeMinute returns the value of the "preferred_time_minute" field in the mutation.
+func (m *NotificationConfigMutation) PreferredTimeMinute() (r int, exists bool) {
+	v := m.preferred_time_minute
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPreferredTimeMinute returns the old "preferred_time_minute" field's value of the NotificationConfig entity.
+// If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationConfigMutation) OldPreferredTimeMinute(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPreferredTimeMinute is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPreferredTimeMinute requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPreferredTimeMinute: %w", err)
+	}
+	return oldValue.PreferredTimeMinute, nil
+}
+
+// AddPreferredTimeMinute adds i to the "preferred_time_minute" field.
+func (m *NotificationConfigMutation) AddPreferredTimeMinute(i int) {
+	if m.addpreferred_time_minute != nil {
+		*m.addpreferred_time_minute += i
+	} else {
+		m.addpreferred_time_minute = &i
+	}
+}
+
+// AddedPreferredTimeMinute returns the value that was added to the "preferred_time_minute" field in this mutation.
+func (m *NotificationConfigMutation) AddedPreferredTimeMinute() (r int, exists bool) {
+	v := m.addpreferred_time_minute
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPreferredTimeMinute clears the value of the "preferred_time_minute" field.
+func (m *NotificationConfigMutation) ClearPreferredTimeMinute() {
+	m.preferred_time_minute = nil
+	m.addpreferred_time_minute = nil
+	m.clearedFields[notificationconfig.FieldPreferredTimeMinute] = struct{}{}
+}
+
+// PreferredTimeMinuteCleared returns if the "preferred_time_minute" field was cleared in this mutation.
+func (m *NotificationConfigMutation) PreferredTimeMinuteCleared() bool {
+	_, ok := m.clearedFields[notificationconfig.FieldPreferredTimeMinute]
+	return ok
+}
+
+// ResetPreferredTimeMinute resets all changes to the "preferred_time_minute" field.
+func (m *NotificationConfigMutation) ResetPreferredTimeMinute() {
+	m.preferred_time_minute = nil
+	m.addpreferred_time_minute = nil
+	delete(m.clearedFields, notificationconfig.FieldPreferredTimeMinute)
 }
 
 // SetLastNotifiedAt sets the "last_notified_at" field.
@@ -1197,7 +1528,7 @@ func (m *NotificationConfigMutation) LastNotifiedAt() (r time.Time, exists bool)
 // OldLastNotifiedAt returns the old "last_notified_at" field's value of the NotificationConfig entity.
 // If the NotificationConfig object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *NotificationConfigMutation) OldLastNotifiedAt(ctx context.Context) (v time.Time, err error) {
+func (m *NotificationConfigMutation) OldLastNotifiedAt(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldLastNotifiedAt is only allowed on UpdateOne operations")
 	}
@@ -1323,9 +1654,33 @@ func (m *NotificationConfigMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotificationConfigMutation) Fields() []string {
-	fields := make([]string, 0, 3)
-	if m.interval != nil {
-		fields = append(fields, notificationconfig.FieldInterval)
+	fields := make([]string, 0, 11)
+	if m.monday != nil {
+		fields = append(fields, notificationconfig.FieldMonday)
+	}
+	if m.tuesday != nil {
+		fields = append(fields, notificationconfig.FieldTuesday)
+	}
+	if m.wednesday != nil {
+		fields = append(fields, notificationconfig.FieldWednesday)
+	}
+	if m.thursday != nil {
+		fields = append(fields, notificationconfig.FieldThursday)
+	}
+	if m.friday != nil {
+		fields = append(fields, notificationconfig.FieldFriday)
+	}
+	if m.saturday != nil {
+		fields = append(fields, notificationconfig.FieldSaturday)
+	}
+	if m.sunday != nil {
+		fields = append(fields, notificationconfig.FieldSunday)
+	}
+	if m.preferred_time_hour != nil {
+		fields = append(fields, notificationconfig.FieldPreferredTimeHour)
+	}
+	if m.preferred_time_minute != nil {
+		fields = append(fields, notificationconfig.FieldPreferredTimeMinute)
 	}
 	if m.last_notified_at != nil {
 		fields = append(fields, notificationconfig.FieldLastNotifiedAt)
@@ -1341,8 +1696,24 @@ func (m *NotificationConfigMutation) Fields() []string {
 // schema.
 func (m *NotificationConfigMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case notificationconfig.FieldInterval:
-		return m.Interval()
+	case notificationconfig.FieldMonday:
+		return m.Monday()
+	case notificationconfig.FieldTuesday:
+		return m.Tuesday()
+	case notificationconfig.FieldWednesday:
+		return m.Wednesday()
+	case notificationconfig.FieldThursday:
+		return m.Thursday()
+	case notificationconfig.FieldFriday:
+		return m.Friday()
+	case notificationconfig.FieldSaturday:
+		return m.Saturday()
+	case notificationconfig.FieldSunday:
+		return m.Sunday()
+	case notificationconfig.FieldPreferredTimeHour:
+		return m.PreferredTimeHour()
+	case notificationconfig.FieldPreferredTimeMinute:
+		return m.PreferredTimeMinute()
 	case notificationconfig.FieldLastNotifiedAt:
 		return m.LastNotifiedAt()
 	case notificationconfig.FieldIsActivated:
@@ -1356,8 +1727,24 @@ func (m *NotificationConfigMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *NotificationConfigMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case notificationconfig.FieldInterval:
-		return m.OldInterval(ctx)
+	case notificationconfig.FieldMonday:
+		return m.OldMonday(ctx)
+	case notificationconfig.FieldTuesday:
+		return m.OldTuesday(ctx)
+	case notificationconfig.FieldWednesday:
+		return m.OldWednesday(ctx)
+	case notificationconfig.FieldThursday:
+		return m.OldThursday(ctx)
+	case notificationconfig.FieldFriday:
+		return m.OldFriday(ctx)
+	case notificationconfig.FieldSaturday:
+		return m.OldSaturday(ctx)
+	case notificationconfig.FieldSunday:
+		return m.OldSunday(ctx)
+	case notificationconfig.FieldPreferredTimeHour:
+		return m.OldPreferredTimeHour(ctx)
+	case notificationconfig.FieldPreferredTimeMinute:
+		return m.OldPreferredTimeMinute(ctx)
 	case notificationconfig.FieldLastNotifiedAt:
 		return m.OldLastNotifiedAt(ctx)
 	case notificationconfig.FieldIsActivated:
@@ -1371,12 +1758,68 @@ func (m *NotificationConfigMutation) OldField(ctx context.Context, name string) 
 // type.
 func (m *NotificationConfigMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case notificationconfig.FieldInterval:
+	case notificationconfig.FieldMonday:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMonday(v)
+		return nil
+	case notificationconfig.FieldTuesday:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTuesday(v)
+		return nil
+	case notificationconfig.FieldWednesday:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWednesday(v)
+		return nil
+	case notificationconfig.FieldThursday:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetThursday(v)
+		return nil
+	case notificationconfig.FieldFriday:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFriday(v)
+		return nil
+	case notificationconfig.FieldSaturday:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSaturday(v)
+		return nil
+	case notificationconfig.FieldSunday:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSunday(v)
+		return nil
+	case notificationconfig.FieldPreferredTimeHour:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetInterval(v)
+		m.SetPreferredTimeHour(v)
+		return nil
+	case notificationconfig.FieldPreferredTimeMinute:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPreferredTimeMinute(v)
 		return nil
 	case notificationconfig.FieldLastNotifiedAt:
 		v, ok := value.(time.Time)
@@ -1400,8 +1843,11 @@ func (m *NotificationConfigMutation) SetField(name string, value ent.Value) erro
 // this mutation.
 func (m *NotificationConfigMutation) AddedFields() []string {
 	var fields []string
-	if m.addinterval != nil {
-		fields = append(fields, notificationconfig.FieldInterval)
+	if m.addpreferred_time_hour != nil {
+		fields = append(fields, notificationconfig.FieldPreferredTimeHour)
+	}
+	if m.addpreferred_time_minute != nil {
+		fields = append(fields, notificationconfig.FieldPreferredTimeMinute)
 	}
 	return fields
 }
@@ -1411,8 +1857,10 @@ func (m *NotificationConfigMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *NotificationConfigMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case notificationconfig.FieldInterval:
-		return m.AddedInterval()
+	case notificationconfig.FieldPreferredTimeHour:
+		return m.AddedPreferredTimeHour()
+	case notificationconfig.FieldPreferredTimeMinute:
+		return m.AddedPreferredTimeMinute()
 	}
 	return nil, false
 }
@@ -1422,12 +1870,19 @@ func (m *NotificationConfigMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *NotificationConfigMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case notificationconfig.FieldInterval:
+	case notificationconfig.FieldPreferredTimeHour:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddInterval(v)
+		m.AddPreferredTimeHour(v)
+		return nil
+	case notificationconfig.FieldPreferredTimeMinute:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPreferredTimeMinute(v)
 		return nil
 	}
 	return fmt.Errorf("unknown NotificationConfig numeric field %s", name)
@@ -1437,8 +1892,11 @@ func (m *NotificationConfigMutation) AddField(name string, value ent.Value) erro
 // mutation.
 func (m *NotificationConfigMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(notificationconfig.FieldInterval) {
-		fields = append(fields, notificationconfig.FieldInterval)
+	if m.FieldCleared(notificationconfig.FieldPreferredTimeHour) {
+		fields = append(fields, notificationconfig.FieldPreferredTimeHour)
+	}
+	if m.FieldCleared(notificationconfig.FieldPreferredTimeMinute) {
+		fields = append(fields, notificationconfig.FieldPreferredTimeMinute)
 	}
 	if m.FieldCleared(notificationconfig.FieldLastNotifiedAt) {
 		fields = append(fields, notificationconfig.FieldLastNotifiedAt)
@@ -1457,8 +1915,11 @@ func (m *NotificationConfigMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *NotificationConfigMutation) ClearField(name string) error {
 	switch name {
-	case notificationconfig.FieldInterval:
-		m.ClearInterval()
+	case notificationconfig.FieldPreferredTimeHour:
+		m.ClearPreferredTimeHour()
+		return nil
+	case notificationconfig.FieldPreferredTimeMinute:
+		m.ClearPreferredTimeMinute()
 		return nil
 	case notificationconfig.FieldLastNotifiedAt:
 		m.ClearLastNotifiedAt()
@@ -1471,8 +1932,32 @@ func (m *NotificationConfigMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *NotificationConfigMutation) ResetField(name string) error {
 	switch name {
-	case notificationconfig.FieldInterval:
-		m.ResetInterval()
+	case notificationconfig.FieldMonday:
+		m.ResetMonday()
+		return nil
+	case notificationconfig.FieldTuesday:
+		m.ResetTuesday()
+		return nil
+	case notificationconfig.FieldWednesday:
+		m.ResetWednesday()
+		return nil
+	case notificationconfig.FieldThursday:
+		m.ResetThursday()
+		return nil
+	case notificationconfig.FieldFriday:
+		m.ResetFriday()
+		return nil
+	case notificationconfig.FieldSaturday:
+		m.ResetSaturday()
+		return nil
+	case notificationconfig.FieldSunday:
+		m.ResetSunday()
+		return nil
+	case notificationconfig.FieldPreferredTimeHour:
+		m.ResetPreferredTimeHour()
+		return nil
+	case notificationconfig.FieldPreferredTimeMinute:
+		m.ResetPreferredTimeMinute()
 		return nil
 	case notificationconfig.FieldLastNotifiedAt:
 		m.ResetLastNotifiedAt()
@@ -2099,12 +2584,12 @@ type UserMutation struct {
 	addheight                  *int
 	weight                     *int
 	addweight                  *int
-	_type                      *user.Type
+	kind                       *user.Kind
 	created_at                 *time.Time
 	clearedFields              map[string]struct{}
-	device                     map[int]struct{}
-	removeddevice              map[int]struct{}
-	cleareddevice              bool
+	devices                    map[int]struct{}
+	removeddevices             map[int]struct{}
+	cleareddevices             bool
 	notification_config        map[int]struct{}
 	removednotification_config map[int]struct{}
 	clearednotification_config bool
@@ -2380,40 +2865,40 @@ func (m *UserMutation) ResetWeight() {
 	delete(m.clearedFields, user.FieldWeight)
 }
 
-// SetType sets the "type" field.
-func (m *UserMutation) SetType(u user.Type) {
-	m._type = &u
+// SetKind sets the "kind" field.
+func (m *UserMutation) SetKind(u user.Kind) {
+	m.kind = &u
 }
 
-// GetType returns the value of the "type" field in the mutation.
-func (m *UserMutation) GetType() (r user.Type, exists bool) {
-	v := m._type
+// Kind returns the value of the "kind" field in the mutation.
+func (m *UserMutation) Kind() (r user.Kind, exists bool) {
+	v := m.kind
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldType returns the old "type" field's value of the User entity.
+// OldKind returns the old "kind" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldType(ctx context.Context) (v user.Type, err error) {
+func (m *UserMutation) OldKind(ctx context.Context) (v user.Kind, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldType is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldKind is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldType requires an ID field in the mutation")
+		return v, fmt.Errorf("OldKind requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldType: %w", err)
+		return v, fmt.Errorf("querying old value for OldKind: %w", err)
 	}
-	return oldValue.Type, nil
+	return oldValue.Kind, nil
 }
 
-// ResetType resets all changes to the "type" field.
-func (m *UserMutation) ResetType() {
-	m._type = nil
+// ResetKind resets all changes to the "kind" field.
+func (m *UserMutation) ResetKind() {
+	m.kind = nil
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -2452,58 +2937,58 @@ func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// AddDeviceIDs adds the "device" edge to the Device entity by ids.
+// AddDeviceIDs adds the "devices" edge to the Device entity by ids.
 func (m *UserMutation) AddDeviceIDs(ids ...int) {
-	if m.device == nil {
-		m.device = make(map[int]struct{})
+	if m.devices == nil {
+		m.devices = make(map[int]struct{})
 	}
 	for i := range ids {
-		m.device[ids[i]] = struct{}{}
+		m.devices[ids[i]] = struct{}{}
 	}
 }
 
-// ClearDevice clears the "device" edge to the Device entity.
-func (m *UserMutation) ClearDevice() {
-	m.cleareddevice = true
+// ClearDevices clears the "devices" edge to the Device entity.
+func (m *UserMutation) ClearDevices() {
+	m.cleareddevices = true
 }
 
-// DeviceCleared reports if the "device" edge to the Device entity was cleared.
-func (m *UserMutation) DeviceCleared() bool {
-	return m.cleareddevice
+// DevicesCleared reports if the "devices" edge to the Device entity was cleared.
+func (m *UserMutation) DevicesCleared() bool {
+	return m.cleareddevices
 }
 
-// RemoveDeviceIDs removes the "device" edge to the Device entity by IDs.
+// RemoveDeviceIDs removes the "devices" edge to the Device entity by IDs.
 func (m *UserMutation) RemoveDeviceIDs(ids ...int) {
-	if m.removeddevice == nil {
-		m.removeddevice = make(map[int]struct{})
+	if m.removeddevices == nil {
+		m.removeddevices = make(map[int]struct{})
 	}
 	for i := range ids {
-		delete(m.device, ids[i])
-		m.removeddevice[ids[i]] = struct{}{}
+		delete(m.devices, ids[i])
+		m.removeddevices[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedDevice returns the removed IDs of the "device" edge to the Device entity.
-func (m *UserMutation) RemovedDeviceIDs() (ids []int) {
-	for id := range m.removeddevice {
+// RemovedDevices returns the removed IDs of the "devices" edge to the Device entity.
+func (m *UserMutation) RemovedDevicesIDs() (ids []int) {
+	for id := range m.removeddevices {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// DeviceIDs returns the "device" edge IDs in the mutation.
-func (m *UserMutation) DeviceIDs() (ids []int) {
-	for id := range m.device {
+// DevicesIDs returns the "devices" edge IDs in the mutation.
+func (m *UserMutation) DevicesIDs() (ids []int) {
+	for id := range m.devices {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetDevice resets all changes to the "device" edge.
-func (m *UserMutation) ResetDevice() {
-	m.device = nil
-	m.cleareddevice = false
-	m.removeddevice = nil
+// ResetDevices resets all changes to the "devices" edge.
+func (m *UserMutation) ResetDevices() {
+	m.devices = nil
+	m.cleareddevices = false
+	m.removeddevices = nil
 }
 
 // AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by ids.
@@ -2697,8 +3182,8 @@ func (m *UserMutation) Fields() []string {
 	if m.weight != nil {
 		fields = append(fields, user.FieldWeight)
 	}
-	if m._type != nil {
-		fields = append(fields, user.FieldType)
+	if m.kind != nil {
+		fields = append(fields, user.FieldKind)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -2717,8 +3202,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Height()
 	case user.FieldWeight:
 		return m.Weight()
-	case user.FieldType:
-		return m.GetType()
+	case user.FieldKind:
+		return m.Kind()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	}
@@ -2736,8 +3221,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldHeight(ctx)
 	case user.FieldWeight:
 		return m.OldWeight(ctx)
-	case user.FieldType:
-		return m.OldType(ctx)
+	case user.FieldKind:
+		return m.OldKind(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	}
@@ -2770,12 +3255,12 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetWeight(v)
 		return nil
-	case user.FieldType:
-		v, ok := value.(user.Type)
+	case user.FieldKind:
+		v, ok := value.(user.Kind)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetType(v)
+		m.SetKind(v)
 		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -2884,8 +3369,8 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldWeight:
 		m.ResetWeight()
 		return nil
-	case user.FieldType:
-		m.ResetType()
+	case user.FieldKind:
+		m.ResetKind()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
@@ -2897,8 +3382,8 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.device != nil {
-		edges = append(edges, user.EdgeDevice)
+	if m.devices != nil {
+		edges = append(edges, user.EdgeDevices)
 	}
 	if m.notification_config != nil {
 		edges = append(edges, user.EdgeNotificationConfig)
@@ -2916,9 +3401,9 @@ func (m *UserMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *UserMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case user.EdgeDevice:
-		ids := make([]ent.Value, 0, len(m.device))
-		for id := range m.device {
+	case user.EdgeDevices:
+		ids := make([]ent.Value, 0, len(m.devices))
+		for id := range m.devices {
 			ids = append(ids, id)
 		}
 		return ids
@@ -2947,8 +3432,8 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.removeddevice != nil {
-		edges = append(edges, user.EdgeDevice)
+	if m.removeddevices != nil {
+		edges = append(edges, user.EdgeDevices)
 	}
 	if m.removednotification_config != nil {
 		edges = append(edges, user.EdgeNotificationConfig)
@@ -2966,9 +3451,9 @@ func (m *UserMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
-	case user.EdgeDevice:
-		ids := make([]ent.Value, 0, len(m.removeddevice))
-		for id := range m.removeddevice {
+	case user.EdgeDevices:
+		ids := make([]ent.Value, 0, len(m.removeddevices))
+		for id := range m.removeddevices {
 			ids = append(ids, id)
 		}
 		return ids
@@ -2997,8 +3482,8 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 4)
-	if m.cleareddevice {
-		edges = append(edges, user.EdgeDevice)
+	if m.cleareddevices {
+		edges = append(edges, user.EdgeDevices)
 	}
 	if m.clearednotification_config {
 		edges = append(edges, user.EdgeNotificationConfig)
@@ -3016,8 +3501,8 @@ func (m *UserMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
-	case user.EdgeDevice:
-		return m.cleareddevice
+	case user.EdgeDevices:
+		return m.cleareddevices
 	case user.EdgeNotificationConfig:
 		return m.clearednotification_config
 	case user.EdgeAlbum:
@@ -3040,8 +3525,8 @@ func (m *UserMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *UserMutation) ResetEdge(name string) error {
 	switch name {
-	case user.EdgeDevice:
-		m.ResetDevice()
+	case user.EdgeDevices:
+		m.ResetDevices()
 		return nil
 	case user.EdgeNotificationConfig:
 		m.ResetNotificationConfig()

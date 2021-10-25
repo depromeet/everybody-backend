@@ -29,7 +29,8 @@ func (Device) Fields() []ent.Field {
 // Edges of the Device.
 func (Device) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("device").
+		edge.From("user", User.Type).Ref("devices").
+			Required().
 			Unique(),
 	}
 }

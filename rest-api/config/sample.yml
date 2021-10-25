@@ -19,3 +19,15 @@ imagePrivateKey: |
   ...
   -----END RSA PRIVATE KEY-----
 
+push:
+  fcm:
+    # 절대 경로
+    serviceAccountFile: /home/everybody-backend/rest-api/config/service-account-dev.yml
+
+# 눈바디 독려 알림을 보내는 루틴
+notifyRoutine:
+  enabled: false
+  # 루틴을 반복할 떄의 interval. 초 단위
+  interval: 60 # e.g. 60 = 60초
+
+

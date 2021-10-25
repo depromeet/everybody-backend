@@ -15,7 +15,11 @@ func init() {
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("config")
 	// TODO: test code에서는 상대경로를 자신으로 잡아서 최상위 코드가 아니면 ../config, ../../config 이런 식으로 설정해줘야하네...
+	// 안그러면 config를 못 찾음 ㅜㅜ
 	viper.AddConfigPath("../config")
+	viper.AddConfigPath("../../config")
+	viper.AddConfigPath("../../../config")
+	viper.AddConfigPath("../../../../config")
 	viper.SetEnvPrefix("EVERYBODY")
 	viper.AutomaticEnv()
 
@@ -64,4 +68,13 @@ type config struct {
 	ImageRootUrl     string `yaml:"imageRootUrl"`
 	ImagePublicKeyID string `yaml:"imagePublicKeyID"`
 	ImagePrivateKey  string `yaml:"imagePrivateKey"`
+	Push             struct {
+		FCM struct {
+			ServiceAccountFile string `yaml:"ServiceAccountFile"`
+		} `yaml:"fcm"`
+	} `yaml:"push"`
+	NotifyRoutine struct {
+		Enabled  bool `yaml:"enabled"`
+		Interval int  `yaml:"interval"`
+	} `yaml:"notifyRoutine"`
 }

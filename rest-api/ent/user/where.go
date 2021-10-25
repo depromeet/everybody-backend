@@ -412,22 +412,22 @@ func WeightNotNil() predicate.User {
 	})
 }
 
-// TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.User {
+// KindEQ applies the EQ predicate on the "kind" field.
+func KindEQ(v Kind) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldType), v))
+		s.Where(sql.EQ(s.C(FieldKind), v))
 	})
 }
 
-// TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.User {
+// KindNEQ applies the NEQ predicate on the "kind" field.
+func KindNEQ(v Kind) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldType), v))
+		s.Where(sql.NEQ(s.C(FieldKind), v))
 	})
 }
 
-// TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.User {
+// KindIn applies the In predicate on the "kind" field.
+func KindIn(vs ...Kind) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -439,12 +439,12 @@ func TypeIn(vs ...Type) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldType), v...))
+		s.Where(sql.In(s.C(FieldKind), v...))
 	})
 }
 
-// TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.User {
+// KindNotIn applies the NotIn predicate on the "kind" field.
+func KindNotIn(vs ...Kind) predicate.User {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -456,7 +456,7 @@ func TypeNotIn(vs ...Type) predicate.User {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldType), v...))
+		s.Where(sql.NotIn(s.C(FieldKind), v...))
 	})
 }
 
@@ -536,25 +536,25 @@ func CreatedAtLTE(v time.Time) predicate.User {
 	})
 }
 
-// HasDevice applies the HasEdge predicate on the "device" edge.
-func HasDevice() predicate.User {
+// HasDevices applies the HasEdge predicate on the "devices" edge.
+func HasDevices() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(DeviceTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DeviceTable, DeviceColumn),
+			sqlgraph.To(DevicesTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DevicesTable, DevicesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasDeviceWith applies the HasEdge predicate on the "device" edge with a given conditions (other predicates).
-func HasDeviceWith(preds ...predicate.Device) predicate.User {
+// HasDevicesWith applies the HasEdge predicate on the "devices" edge with a given conditions (other predicates).
+func HasDevicesWith(preds ...predicate.Device) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(DeviceInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, DeviceTable, DeviceColumn),
+			sqlgraph.To(DevicesInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, DevicesTable, DevicesColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

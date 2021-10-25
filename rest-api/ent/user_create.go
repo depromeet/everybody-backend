@@ -58,9 +58,9 @@ func (uc *UserCreate) SetNillableWeight(i *int) *UserCreate {
 	return uc
 }
 
-// SetType sets the "type" field.
-func (uc *UserCreate) SetType(u user.Type) *UserCreate {
-	uc.mutation.SetType(u)
+// SetKind sets the "kind" field.
+func (uc *UserCreate) SetKind(u user.Kind) *UserCreate {
+	uc.mutation.SetKind(u)
 	return uc
 }
 
@@ -84,14 +84,14 @@ func (uc *UserCreate) SetID(i int) *UserCreate {
 	return uc
 }
 
-// AddDeviceIDs adds the "device" edge to the Device entity by IDs.
+// AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (uc *UserCreate) AddDeviceIDs(ids ...int) *UserCreate {
 	uc.mutation.AddDeviceIDs(ids...)
 	return uc
 }
 
-// AddDevice adds the "device" edges to the Device entity.
-func (uc *UserCreate) AddDevice(d ...*Device) *UserCreate {
+// AddDevices adds the "devices" edges to the Device entity.
+func (uc *UserCreate) AddDevices(d ...*Device) *UserCreate {
 	ids := make([]int, len(d))
 	for i := range d {
 		ids[i] = d[i].ID
@@ -226,12 +226,12 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Nickname(); !ok {
 		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "nickname"`)}
 	}
-	if _, ok := uc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "type"`)}
+	if _, ok := uc.mutation.Kind(); !ok {
+		return &ValidationError{Name: "kind", err: errors.New(`ent: missing required field "kind"`)}
 	}
-	if v, ok := uc.mutation.GetType(); ok {
-		if err := user.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "type": %w`, err)}
+	if v, ok := uc.mutation.Kind(); ok {
+		if err := user.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`ent: validator failed for field "kind": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
@@ -294,13 +294,13 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.Weight = &value
 	}
-	if value, ok := uc.mutation.GetType(); ok {
+	if value, ok := uc.mutation.Kind(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
 			Value:  value,
-			Column: user.FieldType,
+			Column: user.FieldKind,
 		})
-		_node.Type = value
+		_node.Kind = value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -310,12 +310,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		})
 		_node.CreatedAt = value
 	}
-	if nodes := uc.mutation.DeviceIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.DevicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.DeviceTable,
-			Columns: []string{user.DeviceColumn},
+			Table:   user.DevicesTable,
+			Columns: []string{user.DevicesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

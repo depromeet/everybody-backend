@@ -93,10 +93,66 @@ func IDLTE(id int) predicate.NotificationConfig {
 	})
 }
 
-// Interval applies equality check predicate on the "interval" field. It's identical to IntervalEQ.
-func Interval(v int) predicate.NotificationConfig {
+// Monday applies equality check predicate on the "monday" field. It's identical to MondayEQ.
+func Monday(v bool) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldInterval), v))
+		s.Where(sql.EQ(s.C(FieldMonday), v))
+	})
+}
+
+// Tuesday applies equality check predicate on the "tuesday" field. It's identical to TuesdayEQ.
+func Tuesday(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTuesday), v))
+	})
+}
+
+// Wednesday applies equality check predicate on the "wednesday" field. It's identical to WednesdayEQ.
+func Wednesday(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWednesday), v))
+	})
+}
+
+// Thursday applies equality check predicate on the "thursday" field. It's identical to ThursdayEQ.
+func Thursday(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldThursday), v))
+	})
+}
+
+// Friday applies equality check predicate on the "friday" field. It's identical to FridayEQ.
+func Friday(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFriday), v))
+	})
+}
+
+// Saturday applies equality check predicate on the "saturday" field. It's identical to SaturdayEQ.
+func Saturday(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSaturday), v))
+	})
+}
+
+// Sunday applies equality check predicate on the "sunday" field. It's identical to SundayEQ.
+func Sunday(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSunday), v))
+	})
+}
+
+// PreferredTimeHour applies equality check predicate on the "preferred_time_hour" field. It's identical to PreferredTimeHourEQ.
+func PreferredTimeHour(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPreferredTimeHour), v))
+	})
+}
+
+// PreferredTimeMinute applies equality check predicate on the "preferred_time_minute" field. It's identical to PreferredTimeMinuteEQ.
+func PreferredTimeMinute(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPreferredTimeMinute), v))
 	})
 }
 
@@ -114,22 +170,120 @@ func IsActivated(v bool) predicate.NotificationConfig {
 	})
 }
 
-// IntervalEQ applies the EQ predicate on the "interval" field.
-func IntervalEQ(v int) predicate.NotificationConfig {
+// MondayEQ applies the EQ predicate on the "monday" field.
+func MondayEQ(v bool) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldInterval), v))
+		s.Where(sql.EQ(s.C(FieldMonday), v))
 	})
 }
 
-// IntervalNEQ applies the NEQ predicate on the "interval" field.
-func IntervalNEQ(v int) predicate.NotificationConfig {
+// MondayNEQ applies the NEQ predicate on the "monday" field.
+func MondayNEQ(v bool) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldInterval), v))
+		s.Where(sql.NEQ(s.C(FieldMonday), v))
 	})
 }
 
-// IntervalIn applies the In predicate on the "interval" field.
-func IntervalIn(vs ...int) predicate.NotificationConfig {
+// TuesdayEQ applies the EQ predicate on the "tuesday" field.
+func TuesdayEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTuesday), v))
+	})
+}
+
+// TuesdayNEQ applies the NEQ predicate on the "tuesday" field.
+func TuesdayNEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTuesday), v))
+	})
+}
+
+// WednesdayEQ applies the EQ predicate on the "wednesday" field.
+func WednesdayEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldWednesday), v))
+	})
+}
+
+// WednesdayNEQ applies the NEQ predicate on the "wednesday" field.
+func WednesdayNEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldWednesday), v))
+	})
+}
+
+// ThursdayEQ applies the EQ predicate on the "thursday" field.
+func ThursdayEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldThursday), v))
+	})
+}
+
+// ThursdayNEQ applies the NEQ predicate on the "thursday" field.
+func ThursdayNEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldThursday), v))
+	})
+}
+
+// FridayEQ applies the EQ predicate on the "friday" field.
+func FridayEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldFriday), v))
+	})
+}
+
+// FridayNEQ applies the NEQ predicate on the "friday" field.
+func FridayNEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldFriday), v))
+	})
+}
+
+// SaturdayEQ applies the EQ predicate on the "saturday" field.
+func SaturdayEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSaturday), v))
+	})
+}
+
+// SaturdayNEQ applies the NEQ predicate on the "saturday" field.
+func SaturdayNEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSaturday), v))
+	})
+}
+
+// SundayEQ applies the EQ predicate on the "sunday" field.
+func SundayEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldSunday), v))
+	})
+}
+
+// SundayNEQ applies the NEQ predicate on the "sunday" field.
+func SundayNEQ(v bool) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldSunday), v))
+	})
+}
+
+// PreferredTimeHourEQ applies the EQ predicate on the "preferred_time_hour" field.
+func PreferredTimeHourEQ(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPreferredTimeHour), v))
+	})
+}
+
+// PreferredTimeHourNEQ applies the NEQ predicate on the "preferred_time_hour" field.
+func PreferredTimeHourNEQ(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPreferredTimeHour), v))
+	})
+}
+
+// PreferredTimeHourIn applies the In predicate on the "preferred_time_hour" field.
+func PreferredTimeHourIn(vs ...int) predicate.NotificationConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -141,12 +295,12 @@ func IntervalIn(vs ...int) predicate.NotificationConfig {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldInterval), v...))
+		s.Where(sql.In(s.C(FieldPreferredTimeHour), v...))
 	})
 }
 
-// IntervalNotIn applies the NotIn predicate on the "interval" field.
-func IntervalNotIn(vs ...int) predicate.NotificationConfig {
+// PreferredTimeHourNotIn applies the NotIn predicate on the "preferred_time_hour" field.
+func PreferredTimeHourNotIn(vs ...int) predicate.NotificationConfig {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -158,49 +312,139 @@ func IntervalNotIn(vs ...int) predicate.NotificationConfig {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldInterval), v...))
+		s.Where(sql.NotIn(s.C(FieldPreferredTimeHour), v...))
 	})
 }
 
-// IntervalGT applies the GT predicate on the "interval" field.
-func IntervalGT(v int) predicate.NotificationConfig {
+// PreferredTimeHourGT applies the GT predicate on the "preferred_time_hour" field.
+func PreferredTimeHourGT(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldInterval), v))
+		s.Where(sql.GT(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
-// IntervalGTE applies the GTE predicate on the "interval" field.
-func IntervalGTE(v int) predicate.NotificationConfig {
+// PreferredTimeHourGTE applies the GTE predicate on the "preferred_time_hour" field.
+func PreferredTimeHourGTE(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldInterval), v))
+		s.Where(sql.GTE(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
-// IntervalLT applies the LT predicate on the "interval" field.
-func IntervalLT(v int) predicate.NotificationConfig {
+// PreferredTimeHourLT applies the LT predicate on the "preferred_time_hour" field.
+func PreferredTimeHourLT(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldInterval), v))
+		s.Where(sql.LT(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
-// IntervalLTE applies the LTE predicate on the "interval" field.
-func IntervalLTE(v int) predicate.NotificationConfig {
+// PreferredTimeHourLTE applies the LTE predicate on the "preferred_time_hour" field.
+func PreferredTimeHourLTE(v int) predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldInterval), v))
+		s.Where(sql.LTE(s.C(FieldPreferredTimeHour), v))
 	})
 }
 
-// IntervalIsNil applies the IsNil predicate on the "interval" field.
-func IntervalIsNil() predicate.NotificationConfig {
+// PreferredTimeHourIsNil applies the IsNil predicate on the "preferred_time_hour" field.
+func PreferredTimeHourIsNil() predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldInterval)))
+		s.Where(sql.IsNull(s.C(FieldPreferredTimeHour)))
 	})
 }
 
-// IntervalNotNil applies the NotNil predicate on the "interval" field.
-func IntervalNotNil() predicate.NotificationConfig {
+// PreferredTimeHourNotNil applies the NotNil predicate on the "preferred_time_hour" field.
+func PreferredTimeHourNotNil() predicate.NotificationConfig {
 	return predicate.NotificationConfig(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldInterval)))
+		s.Where(sql.NotNull(s.C(FieldPreferredTimeHour)))
+	})
+}
+
+// PreferredTimeMinuteEQ applies the EQ predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteEQ(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldPreferredTimeMinute), v))
+	})
+}
+
+// PreferredTimeMinuteNEQ applies the NEQ predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteNEQ(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldPreferredTimeMinute), v))
+	})
+}
+
+// PreferredTimeMinuteIn applies the In predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteIn(vs ...int) predicate.NotificationConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldPreferredTimeMinute), v...))
+	})
+}
+
+// PreferredTimeMinuteNotIn applies the NotIn predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteNotIn(vs ...int) predicate.NotificationConfig {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldPreferredTimeMinute), v...))
+	})
+}
+
+// PreferredTimeMinuteGT applies the GT predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteGT(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldPreferredTimeMinute), v))
+	})
+}
+
+// PreferredTimeMinuteGTE applies the GTE predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteGTE(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldPreferredTimeMinute), v))
+	})
+}
+
+// PreferredTimeMinuteLT applies the LT predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteLT(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldPreferredTimeMinute), v))
+	})
+}
+
+// PreferredTimeMinuteLTE applies the LTE predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteLTE(v int) predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldPreferredTimeMinute), v))
+	})
+}
+
+// PreferredTimeMinuteIsNil applies the IsNil predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteIsNil() predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldPreferredTimeMinute)))
+	})
+}
+
+// PreferredTimeMinuteNotNil applies the NotNil predicate on the "preferred_time_minute" field.
+func PreferredTimeMinuteNotNil() predicate.NotificationConfig {
+	return predicate.NotificationConfig(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldPreferredTimeMinute)))
 	})
 }
 

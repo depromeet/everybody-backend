@@ -11,6 +11,7 @@ type DeviceRepository interface {
 	CreateDevice(device *ent.Device) (*ent.Device, error)
 	FindById(id int) (*ent.Device, error)
 	FindByDeviceToken(deviceToken string) (*ent.Device, error)
+	Update(id int, device *ent.Device) error
 }
 
 func NewDeviceRepository(client *ent.Client) DeviceRepository {
@@ -38,23 +39,37 @@ func (repo *deviceRepository) CreateDevice(device *ent.Device) (*ent.Device, err
 }
 
 func (repo *deviceRepository) FindById(id int) (*ent.Device, error) {
-	u, err := repo.db.Device.Query().
+	d, err := repo.db.Device.Query().
 		Where(device.ID(id)).
+		WithUser().
 		Only(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return u, nil
+	return d, nil
 }
 
 func (repo *deviceRepository) FindByDeviceToken(deviceToken string) (*ent.Device, error) {
-	u, err := repo.db.Device.Query().
+	d, err := repo.db.Device.Query().
 		Where(device.DeviceToken(deviceToken)).
+		WithUser().
 		Only(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	return u, nil
+	return d, nil
+}
+
+func (repo *deviceRepository) Update(id int, device *ent.Device) error {
+	err := repo.db.Device.UpdateOneID(id).
+		SetUser(device.Edges.User).
+		SetPushToken(device.PushToken).
+		Exec(context.Background())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return nil
 }

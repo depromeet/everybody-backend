@@ -6,14 +6,15 @@ import (
 )
 
 type SignUpRequest struct {
-	Password             string `json:"password"`
-	Nickname             string `json:"nickname"`
-	NotificationInterval int    `json:"notification_interval"`
-	DeviceToken          string `json:"device_token"`
-	PushToken            string `json:"push_token"`
-	DeviceOS             string `json:"device_os"`
-	Type                 string `json:"type"`
-	SNSAccessToken       string `json:"sns_access_token"`
+	Password string `json:"password"`
+	Nickname string `json:"nickname"`
+	// 알림 설정할 때와 똑같은 body를 이용
+	NotificationConfig *ConfigureNotificationRequest `json:"notification_config"`
+	Device             *RegisterDeviceRequest        `json:"device"`
+	// 유저 타입이 무엇인지 (type은 예약어이므로 kind를 사용)
+	// e.g. SIMPLE, KAKAO, APPLE
+	Kind           string `json:"kind"`
+	SNSAccessToken string `json:"sns_access_token"`
 }
 
 type UpdateUserRequest struct {
@@ -35,7 +36,7 @@ func UserToDto(src *ent.User) *UserDto {
 		Nickname:  src.Nickname,
 		Height:    src.Height,
 		Weight:    src.Weight,
-		Kind:      src.Type.String(),
+		Kind:      src.Kind.String(),
 		CreatedAt: src.CreatedAt,
 	}
 }

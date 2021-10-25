@@ -25,7 +25,7 @@ type userRepository struct {
 func (repo *userRepository) Create(user *ent.User) (*ent.User, error) {
 	result, err := repo.db.User.Create().
 		SetNickname(user.Nickname).
-		SetType(user.Type).
+		SetKind(user.Kind).
 		Save(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)

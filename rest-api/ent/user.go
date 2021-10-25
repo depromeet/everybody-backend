@@ -22,8 +22,8 @@ type User struct {
 	Height *int `json:"height,omitempty"`
 	// Weight holds the value of the "weight" field.
 	Weight *int `json:"weight,omitempty"`
-	// Type holds the value of the "type" field.
-	Type user.Type `json:"type,omitempty"`
+	// Kind holds the value of the "kind" field.
+	Kind user.Kind `json:"kind,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -33,8 +33,8 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
-	// Device holds the value of the device edge.
-	Device []*Device `json:"device,omitempty"`
+	// Devices holds the value of the devices edge.
+	Devices []*Device `json:"devices,omitempty"`
 	// NotificationConfig holds the value of the notification_config edge.
 	NotificationConfig []*NotificationConfig `json:"notification_config,omitempty"`
 	// Album holds the value of the album edge.
@@ -46,13 +46,13 @@ type UserEdges struct {
 	loadedTypes [4]bool
 }
 
-// DeviceOrErr returns the Device value or an error if the edge
+// DevicesOrErr returns the Devices value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) DeviceOrErr() ([]*Device, error) {
+func (e UserEdges) DevicesOrErr() ([]*Device, error) {
 	if e.loadedTypes[0] {
-		return e.Device, nil
+		return e.Devices, nil
 	}
-	return nil, &NotLoadedError{edge: "device"}
+	return nil, &NotLoadedError{edge: "devices"}
 }
 
 // NotificationConfigOrErr returns the NotificationConfig value or an error if the edge
@@ -89,7 +89,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldID, user.FieldHeight, user.FieldWeight:
 			values[i] = new(sql.NullInt64)
-		case user.FieldNickname, user.FieldType:
+		case user.FieldNickname, user.FieldKind:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -134,11 +134,11 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				u.Weight = new(int)
 				*u.Weight = int(value.Int64)
 			}
-		case user.FieldType:
+		case user.FieldKind:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
+				return fmt.Errorf("unexpected type %T for field kind", values[i])
 			} else if value.Valid {
-				u.Type = user.Type(value.String)
+				u.Kind = user.Kind(value.String)
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -151,9 +151,9 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 	return nil
 }
 
-// QueryDevice queries the "device" edge of the User entity.
-func (u *User) QueryDevice() *DeviceQuery {
-	return (&UserClient{config: u.config}).QueryDevice(u)
+// QueryDevices queries the "devices" edge of the User entity.
+func (u *User) QueryDevices() *DeviceQuery {
+	return (&UserClient{config: u.config}).QueryDevices(u)
 }
 
 // QueryNotificationConfig queries the "notification_config" edge of the User entity.
@@ -204,8 +204,8 @@ func (u *User) String() string {
 		builder.WriteString(", weight=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
-	builder.WriteString(", type=")
-	builder.WriteString(fmt.Sprintf("%v", u.Type))
+	builder.WriteString(", kind=")
+	builder.WriteString(fmt.Sprintf("%v", u.Kind))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
