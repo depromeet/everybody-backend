@@ -58,6 +58,29 @@ func (_m *PictureServiceInterface) GetPicture(pictureID int) (*dto.PictureDto, e
 	return r0, r1
 }
 
+// GetPicturesForGeneratingVideo provides a mock function with given fields: albumID, bodyPart
+func (_m *PictureServiceInterface) GetPicturesForGeneratingVideo(albumID int, bodyPart string) (dto.PicturesDto, error) {
+	ret := _m.Called(albumID, bodyPart)
+
+	var r0 dto.PicturesDto
+	if rf, ok := ret.Get(0).(func(int, string) dto.PicturesDto); ok {
+		r0 = rf(albumID, bodyPart)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(dto.PicturesDto)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int, string) error); ok {
+		r1 = rf(albumID, bodyPart)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // SavePicture provides a mock function with given fields: userID, pictureReq
 func (_m *PictureServiceInterface) SavePicture(userID int, pictureReq *dto.PictureRequest) (*dto.PictureDto, error) {
 	ret := _m.Called(userID, pictureReq)

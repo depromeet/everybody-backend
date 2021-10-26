@@ -66,3 +66,17 @@ func TestPictureServiceGet(t *testing.T) {
 
 	// TODO: error test
 }
+
+func TestPictureServiceGetForGeneratingVideo(t *testing.T) {
+	t.Run("비디오 생성 위한 사진들 조회 성공", func(t *testing.T) {
+		pictureSvc := initializePictureTest(t)
+		var expectedPictures []*ent.Picture
+
+		pictureRepo.On("FindByAlbumIDAndBodyPart", mock.AnythingOfType("int"), mock.AnythingOfType("string")).Return(expectedPictures, nil)
+		picture, err := pictureSvc.GetPicturesForGeneratingVideo(1, "body")
+		assert.NoError(t, err)
+		assert.Equal(t, dto.PicturesToDto(expectedPictures), picture)
+	})
+
+	// TODO: error test
+}
