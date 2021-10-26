@@ -16,6 +16,7 @@ type PictureServiceInterface interface {
 	SavePicture(userID int, pictureReq *dto.PictureRequest) (*dto.PictureDto, error)
 	GetAllPictures(userID int) (dto.PicturesDto, error)
 	GetPicture(pictureID int) (*dto.PictureDto, error)
+	GetPicturesForGeneratingVideo(albumID int, bodyPart string) (dto.PicturesDto, error)
 }
 
 func NewPictureService(pictureRepo repository.PictureRepositoryInterface) PictureServiceInterface {
@@ -63,4 +64,23 @@ func (s *pictureService) GetPicture(pictureID int) (*dto.PictureDto, error) {
 
 	log.Info("하나의 사진 조회 완료")
 	return dto.PictureToDto(picture), nil
+}
+
+func (s *pictureService) GetPicturesForGeneratingVideo(albumID int, bodyPart string) (dto.PicturesDto, error) {
+	// bodyPart가 없다는 것은 앨범 전체의 사진 전부 영상으로 만들어 달라는 뜻
+	if bodyPart == "" {
+		pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
+		if err != nil {
+			return nil, err
+		}
+		return dto.PicturesToDto(pictures), nil
+	}
+
+	pictures, err := s.pictureRepo.FindByAlbumIDAndBodyPart(albumID, bodyPart)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	log.Info("영상 생성을 위한 사진 데이터들 조회 완료")
+	return dto.PicturesToDto(pictures), nil
 }

@@ -58,5 +58,7 @@ func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) 
 	group := app.Group("/pictures")
 	group.Post("", pictureHandler.SavePicture)
 	group.Get("", pictureHandler.GetAllPictures)
+	// /pictures/video?album_id={album_id}&body_part={body_part}
+	group.Get("/video", pictureHandler.GetPicturesForGeneratingVideo)
 	group.Get("/:picture_id", pictureHandler.GetPicture)
 }

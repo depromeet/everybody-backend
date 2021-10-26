@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"github.com/pkg/errors"
 	"strconv"
+
+	"github.com/pkg/errors"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/service"
@@ -72,4 +73,26 @@ func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(picture)
+}
+
+// GetPicturesForGeneratingVideo는 특정 앨범의 특정 신체 부위의 사진 조회(영상 만들때)
+func (h *PictureHandler) GetPicturesForGeneratingVideo(ctx *fiber.Ctx) error {
+	albumQuery := util.GetQueryParams(ctx, "album_id")
+	if albumQuery == "" {
+		return errors.New("album_id query param should be provided")
+	}
+
+	albumID, err := strconv.Atoi(albumQuery)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	bodyPartQuery := util.GetQueryParams(ctx, "body_part")
+
+	pictures, err := h.pictureService.GetPicturesForGeneratingVideo(albumID, bodyPartQuery)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return ctx.JSON(pictures)
 }
