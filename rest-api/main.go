@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
 	"github.com/depromeet/everybody-backend/rest-api/config"
 	_ "github.com/depromeet/everybody-backend/rest-api/config"
@@ -11,7 +13,6 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 var (
@@ -43,7 +44,8 @@ func main() {
 	log.SetReportCaller(true)
 
 	initialize()
-	if err := server.Listen(":8888"); err != nil {
+	// eb 배포 테스트 위해 잠시 5000번으로 변경
+	if err := server.Listen(":5000"); err != nil {
 		log.Error(err)
 	}
 }
