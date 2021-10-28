@@ -58,8 +58,8 @@ func (_m *PictureServiceInterface) GetPicture(pictureID int) (*dto.PictureDto, e
 	return r0, r1
 }
 
-// GetPicturesForGeneratingVideo provides a mock function with given fields: albumID, bodyPart
-func (_m *PictureServiceInterface) GetPicturesForGeneratingVideo(albumID int, bodyPart string) (dto.PicturesDto, error) {
+// GetPictures provides a mock function with given fields: albumID, bodyPart
+func (_m *PictureServiceInterface) GetPictures(albumID int, bodyPart string) (dto.PicturesDto, error) {
 	ret := _m.Called(albumID, bodyPart)
 
 	var r0 dto.PicturesDto

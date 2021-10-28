@@ -67,15 +67,22 @@ func TestPictureServiceGet(t *testing.T) {
 	// TODO: error test
 }
 
-func TestPictureServiceGetForGeneratingVideo(t *testing.T) {
-	t.Run("비디오 생성 위한 사진들 조회 성공", func(t *testing.T) {
-		pictureSvc := initializePictureTest(t)
-		var expectedPictures []*ent.Picture
+func TestPictureServiceGets(t *testing.T) {
+	pictureSvc := initializePictureTest(t)
+	var expectedPictures []*ent.Picture
 
+	t.Run("특정 앨범 및 신체 부위의 사진들 조회 성공", func(t *testing.T) {
 		pictureRepo.On("FindByAlbumIDAndBodyPart", mock.AnythingOfType("int"), mock.AnythingOfType("string")).Return(expectedPictures, nil)
-		picture, err := pictureSvc.GetPicturesForGeneratingVideo(1, "body")
+		pictures, err := pictureSvc.GetPictures(1, "body")
 		assert.NoError(t, err)
-		assert.Equal(t, dto.PicturesToDto(expectedPictures), picture)
+		assert.Equal(t, dto.PicturesToDto(expectedPictures), pictures)
+	})
+
+	t.Run("특정 앨범 사진들 조회 성공", func(t *testing.T) {
+		pictureRepo.On("GetAllByAlbumID", mock.AnythingOfType("int")).Return(expectedPictures, nil)
+		pictures, err := pictureSvc.GetPictures(1, "")
+		assert.NoError(t, err)
+		assert.Equal(t, dto.PicturesToDto(expectedPictures), pictures)
 	})
 
 	// TODO: error test
