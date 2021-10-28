@@ -9,8 +9,7 @@ import (
 )
 
 type videoService struct {
-	videoRepo   repository.VideoRepositoryInterface
-	pictureRepo repository.PictureRepositoryInterface
+	videoRepo repository.VideoRepositoryInterface
 }
 
 type VideoServiceInterface interface {
@@ -20,10 +19,9 @@ type VideoServiceInterface interface {
 	GetVideos(albumID int) (dto.VideosDto, error)
 }
 
-func NewVideoService(videoRepo repository.VideoRepositoryInterface, pictureRepo repository.PictureRepositoryInterface) VideoServiceInterface {
+func NewVideoService(videoRepo repository.VideoRepositoryInterface) VideoServiceInterface {
 	return &videoService{
-		videoRepo:   videoRepo,
-		pictureRepo: pictureRepo,
+		videoRepo: videoRepo,
 	}
 }
 

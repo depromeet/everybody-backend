@@ -68,7 +68,7 @@ func initialize() {
 	userService = service.NewUserService(userRepo, notificationService, deviceService)
 	albumService = service.NewAlbumService(albumRepo, pictureRepo)
 	pictureService = service.NewPictureService(pictureRepo)
-	videoService = service.NewVideoService(videoRepo, pictureRepo)
+	videoService = service.NewVideoService(videoRepo)
 
 	userHandler = handler.NewUserHandler(userService)
 	notificationHandler = handler.NewNotificationHandler(notificationService)
