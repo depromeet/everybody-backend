@@ -28,6 +28,8 @@ type AlbumDto struct {
 	Name      string      `json:"name"`
 	CreatedAt time.Time   `json:"created_at"`
 	Pictures  PicturesDto `json:"pictures"`
+
+	// Videos    VideosDto   `json:"videos"`
 }
 
 func AlbumsToDto(srcAlbums []*ent.Album) AlbumsDto {
@@ -49,5 +51,6 @@ func AlbumToDto(srcAlbum *ent.Album, srcPictures []*ent.Picture) *AlbumDto {
 		Name:      srcAlbum.Name,
 		CreatedAt: srcAlbum.CreatedAt,
 		Pictures:  picturesDto,
+		// Videos:
 	}
 }

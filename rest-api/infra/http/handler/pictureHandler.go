@@ -41,25 +41,10 @@ func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
 	return ctx.JSON(picture)
 }
 
-// GetAllPictures는 user가 가지고 있는 모든 사진 조회
-func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
-	userID, err := util.GetRequestUserID(ctx)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	pictures, err := h.pictureService.GetAllPictures(userID)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	return ctx.JSON(pictures)
-}
-
 func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
 	param := util.GetParams(ctx, "picture_id")
 	if param == "" {
-		return errors.New("params should be provided")
+		return errors.New("picture_id params should be provided")
 	}
 
 	pictureID, err := strconv.Atoi(param)
@@ -75,8 +60,23 @@ func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
 	return ctx.JSON(picture)
 }
 
-// GetPicturesForGeneratingVideo는 특정 앨범의 특정 신체 부위의 사진 조회(영상 만들때)
-func (h *PictureHandler) GetPicturesForGeneratingVideo(ctx *fiber.Ctx) error {
+// GetAllPictures는 user가 가지고 있는 모든 사진 조회
+func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	pictures, err := h.pictureService.GetAllPictures(userID)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return ctx.JSON(pictures)
+}
+
+// GetPictures는 특정 앨범의 특정 신체 부위의 사진 조회(영상 만들때도 필요)
+func (h *PictureHandler) GetPictures(ctx *fiber.Ctx) error {
 	albumQuery := util.GetQueryParams(ctx, "album_id")
 	if albumQuery == "" {
 		return errors.New("album_id query param should be provided")
@@ -89,7 +89,7 @@ func (h *PictureHandler) GetPicturesForGeneratingVideo(ctx *fiber.Ctx) error {
 
 	bodyPartQuery := util.GetQueryParams(ctx, "body_part")
 
-	pictures, err := h.pictureService.GetPicturesForGeneratingVideo(albumID, bodyPartQuery)
+	pictures, err := h.pictureService.GetPictures(albumID, bodyPartQuery)
 	if err != nil {
 		return errors.WithStack(err)
 	}
