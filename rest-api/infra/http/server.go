@@ -12,6 +12,7 @@ func NewServer(
 	notificationHandler *handler.NotificationHandler,
 	albumHandler *handler.AlbumHandler,
 	pictureHandler *handler.PictureHandler,
+	videoHandler *handler.VideoHandler,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: errorHandle,
@@ -27,6 +28,7 @@ func NewServer(
 	addNotificationHandlers(app, notificationHandler)
 	addAlbumHandlers(app, albumHandler)
 	addPictureHandlers(app, pictureHandler)
+	addVideoHandlers(app, videoHandler)
 
 	return app
 }
@@ -58,7 +60,17 @@ func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) 
 	group := app.Group("/pictures")
 	group.Post("", pictureHandler.SavePicture)
 	group.Get("", pictureHandler.GetAllPictures)
-	// /pictures/video?album_id={album_id}&body_part={body_part}
-	group.Get("/video", pictureHandler.GetPicturesForGeneratingVideo)
+	// /pictures/filter?album_id={album_id}&body_part={body_part}
+	group.Get("/filter", pictureHandler.GetPictures)
 	group.Get("/:picture_id", pictureHandler.GetPicture)
+}
+
+func addVideoHandlers(app *fiber.App, videoHandler *handler.VideoHandler) {
+	group := app.Group("/videos")
+	group.Post("", videoHandler.SaveVideo)
+	// /videos(유저의 전체 영상 조회)
+	group.Get("", videoHandler.GetAllVideos)
+	// /videos/fillter?album_id={album_id}
+	group.Get("/filter", videoHandler.GetVideos)
+	group.Get("/:video_id", videoHandler.GetVideo)
 }
