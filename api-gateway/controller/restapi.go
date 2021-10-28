@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
+	"github.com/depromeet/everybody-backend/api-gateway/util"
 	"github.com/labstack/echo"
 	log "github.com/sirupsen/logrus"
 )
@@ -48,12 +49,18 @@ func callRestApi(c echo.Context, method string) error {
 			return c.String(http.StatusUnauthorized, "Token not exist") // TODO: 에러 리턴 방식 수정 필요
 		}
 		req.Header.Del("Authorization")
-		// TODO: jwt 검증/해독/에러처리 + DB 연결해서 user_id 가져오기
-		userId := strconv.Itoa(123) // ### temp....
-		req.Header.Add("user", userId)
-		log.Info("Token Decoding Success -> user_id=", userId)
+
+		userId, err := util.VerifyAccessToken(token)
+		if err != nil {
+			return c.String(http.StatusForbidden, "Token invalid")
+		}
+
+		req.Header.Add("user", strconv.FormatUint(userId, 10)) // to decimal string
+
+	} else {
+		log.Warn("callRestApi without auth... userId=0")
+		req.Header.Add("user", "0") // 인증체크를 안하는 경우 userId를 0으로 넘김..
 	}
-	req.Header.Add("user", "2") // ### temp.... TODO: this line should be deleted
 
 	// 수신한 원본req의 destnation 조작
 	targetAddress := config.Config.TargetServer.RestApi.Address
@@ -61,7 +68,7 @@ func callRestApi(c echo.Context, method string) error {
 	newURL, err := url.Parse(targetAddress + targetPath)
 	if err != nil {
 		log.Error(err)
-		panic(err) // TODO: panic이 아니고 그냥 return 해서 요청 거절하면될듯??
+		return c.String(http.StatusInternalServerError, "url parse error")
 	}
 	req.URL = newURL
 	req.Method = method

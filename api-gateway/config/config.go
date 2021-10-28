@@ -46,9 +46,10 @@ var Config *config
 
 type config struct {
 	ApiGw struct {
-		Port            int    `yaml:"port"`
-		HealthCheckPath string `yaml:"healthCheckPath"`
-		AuthEnable      bool   `yaml:"authEnable"`
+		Port              int    `yaml:"port"`
+		HealthCheckPath   string `yaml:"healthCheckPath"`
+		AuthEnable        bool   `yaml:"authEnable"`
+		AccessTokenSecret string `yaml:"accessToeknSecret"`
 	} `yaml:"apiGw"`
 
 	DB struct {

@@ -13,6 +13,7 @@ import (
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
 	"github.com/depromeet/everybody-backend/api-gateway/model"
+	"github.com/depromeet/everybody-backend/api-gateway/util"
 )
 
 type AuthController struct {
@@ -33,14 +34,29 @@ func (AuthController) Login(c echo.Context) error {
 	json.Unmarshal([]byte(string(data)), &reqUa)
 
 	ua := model.GetUserAuth(reqUa.UserId)
-
-	if reqUa.Password != ua.Password {
-		log.Info("wrong...")
-		//return c.String(http.StatusBadRequest, "password unmatched...")
+	if ua.UserId < 1 {
+		log.Error("user not found... req=", reqUa)
+		return c.String(http.StatusBadRequest, "user not found...")
 	}
 
-	// TODO: JWT 발급로직 만들기...
-	return c.String(http.StatusOK, "ok... -> "+strconv.FormatUint(ua.UserId, 10)+" / "+ua.Password) // to decimal
+	// password 일치 여부 검사
+	if reqUa.Password != ua.Password {
+		log.Info("password unmatched... req=", reqUa)
+		return c.String(http.StatusBadRequest, "password unmatched...")
+	}
+
+	// JWT 발급
+	token, err := util.CreateAccessToken(ua.UserId)
+	if err != nil {
+		log.Error("token creation fail...")
+		return c.String(http.StatusInternalServerError, "token creation fail...")
+	}
+
+	res := map[string]interface{}{
+		"access_token": token,
+	}
+	log.Info("login ok... userId=", strconv.FormatUint(ua.UserId, 10)) // to decimal string
+	return c.JSON(http.StatusOK, res)
 }
 
 func (AuthController) SignUp(c echo.Context) error {
@@ -48,10 +64,12 @@ func (AuthController) SignUp(c echo.Context) error {
 	json_map := make(map[string]interface{})
 	err := json.NewDecoder(c.Request().Body).Decode(&json_map)
 	if err != nil {
+		log.Error("json parse error", err)
 		return c.String(http.StatusBadRequest, "json parse error")
 	}
 	password := json_map["password"]
 	if password == nil || reflect.TypeOf(password).Kind() != reflect.String || password == "" {
+		log.Error("password invalid")
 		return c.String(http.StatusBadRequest, "password invalid")
 	}
 
