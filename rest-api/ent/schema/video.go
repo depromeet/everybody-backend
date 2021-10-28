@@ -8,29 +8,31 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// Album holds the schema definition for the Album entity.
-type Album struct {
+// Video holds the schema definition for the Video entity.
+type Video struct {
 	ent.Schema
 }
 
-// Fields of the Album.
-func (Album) Fields() []ent.Field {
+// Fields of the Video.
+func (Video) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name"),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),
+		field.String("key"),
 	}
 }
 
-// Edges of the Album.
-func (Album) Edges() []ent.Edge {
+// Edges of the Video.
+func (Video) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
-			Ref("album").
+			Ref("video").
 			Required().
 			Unique(),
-		edge.To("picture", Picture.Type),
-		edge.To("video", Video.Type),
+		edge.From("album", Album.Type).
+			Ref("video").
+			Unique(),
 	}
+
 }

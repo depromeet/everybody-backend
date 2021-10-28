@@ -15,6 +15,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -142,6 +143,21 @@ func (uc *UserCreate) AddPicture(p ...*Picture) *UserCreate {
 		ids[i] = p[i].ID
 	}
 	return uc.AddPictureIDs(ids...)
+}
+
+// AddVideoIDs adds the "video" edge to the Video entity by IDs.
+func (uc *UserCreate) AddVideoIDs(ids ...int) *UserCreate {
+	uc.mutation.AddVideoIDs(ids...)
+	return uc
+}
+
+// AddVideo adds the "video" edges to the Video entity.
+func (uc *UserCreate) AddVideo(v ...*Video) *UserCreate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uc.AddVideoIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -378,6 +394,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: picture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.VideoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.VideoTable,
+			Columns: []string{user.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
 				},
 			},
 		}

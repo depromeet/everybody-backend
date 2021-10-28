@@ -41,9 +41,11 @@ type UserEdges struct {
 	Album []*Album `json:"album,omitempty"`
 	// Picture holds the value of the picture edge.
 	Picture []*Picture `json:"picture,omitempty"`
+	// Video holds the value of the video edge.
+	Video []*Video `json:"video,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 }
 
 // DevicesOrErr returns the Devices value or an error if the edge
@@ -80,6 +82,15 @@ func (e UserEdges) PictureOrErr() ([]*Picture, error) {
 		return e.Picture, nil
 	}
 	return nil, &NotLoadedError{edge: "picture"}
+}
+
+// VideoOrErr returns the Video value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) VideoOrErr() ([]*Video, error) {
+	if e.loadedTypes[4] {
+		return e.Video, nil
+	}
+	return nil, &NotLoadedError{edge: "video"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -169,6 +180,11 @@ func (u *User) QueryAlbum() *AlbumQuery {
 // QueryPicture queries the "picture" edge of the User entity.
 func (u *User) QueryPicture() *PictureQuery {
 	return (&UserClient{config: u.config}).QueryPicture(u)
+}
+
+// QueryVideo queries the "video" edge of the User entity.
+func (u *User) QueryVideo() *VideoQuery {
+	return (&UserClient{config: u.config}).QueryVideo(u)
 }
 
 // Update returns a builder for updating this User.

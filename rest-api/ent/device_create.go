@@ -50,14 +50,6 @@ func (dc *DeviceCreate) SetUserID(id int) *DeviceCreate {
 	return dc
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (dc *DeviceCreate) SetNillableUserID(id *int) *DeviceCreate {
-	if id != nil {
-		dc = dc.SetUserID(*id)
-	}
-	return dc
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (dc *DeviceCreate) SetUser(u *User) *DeviceCreate {
 	return dc.SetUserID(u.ID)
@@ -146,6 +138,9 @@ func (dc *DeviceCreate) check() error {
 		if err := device.DeviceOsValidator(v); err != nil {
 			return &ValidationError{Name: "device_os", err: fmt.Errorf(`ent: validator failed for field "device_os": %w`, err)}
 		}
+	}
+	if _, ok := dc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New("ent: missing required edge \"user\"")}
 	}
 	return nil
 }

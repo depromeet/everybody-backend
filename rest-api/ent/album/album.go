@@ -19,6 +19,8 @@ const (
 	EdgeUser = "user"
 	// EdgePicture holds the string denoting the picture edge name in mutations.
 	EdgePicture = "picture"
+	// EdgeVideo holds the string denoting the video edge name in mutations.
+	EdgeVideo = "video"
 	// Table holds the table name of the album in the database.
 	Table = "albums"
 	// UserTable is the table that holds the user relation/edge.
@@ -35,6 +37,13 @@ const (
 	PictureInverseTable = "pictures"
 	// PictureColumn is the table column denoting the picture relation/edge.
 	PictureColumn = "album_picture"
+	// VideoTable is the table that holds the video relation/edge.
+	VideoTable = "videos"
+	// VideoInverseTable is the table name for the Video entity.
+	// It exists in this package in order to avoid circular dependency with the "video" package.
+	VideoInverseTable = "videos"
+	// VideoColumn is the table column denoting the video relation/edge.
+	VideoColumn = "album_video"
 )
 
 // Columns holds all SQL columns for album fields.

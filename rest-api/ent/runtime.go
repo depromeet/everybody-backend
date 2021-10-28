@@ -10,6 +10,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/schema"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -68,4 +69,10 @@ func init() {
 	userDescCreatedAt := userFields[5].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	videoFields := schema.Video{}.Fields()
+	_ = videoFields
+	// videoDescCreatedAt is the schema descriptor for created_at field.
+	videoDescCreatedAt := videoFields[0].Descriptor()
+	// video.DefaultCreatedAt holds the default value on creation for the created_at field.
+	video.DefaultCreatedAt = videoDescCreatedAt.Default.(func() time.Time)
 }

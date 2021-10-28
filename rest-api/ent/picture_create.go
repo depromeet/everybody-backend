@@ -73,14 +73,6 @@ func (pc *PictureCreate) SetUserID(id int) *PictureCreate {
 	return pc
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (pc *PictureCreate) SetNillableUserID(id *int) *PictureCreate {
-	if id != nil {
-		pc = pc.SetUserID(*id)
-	}
-	return pc
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (pc *PictureCreate) SetUser(u *User) *PictureCreate {
 	return pc.SetUserID(u.ID)
@@ -173,6 +165,9 @@ func (pc *PictureCreate) check() error {
 	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
+	}
+	if _, ok := pc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New("ent: missing required edge \"user\"")}
 	}
 	return nil
 }

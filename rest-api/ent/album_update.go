@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // AlbumUpdate is the builder for updating Album entities.
@@ -55,14 +57,6 @@ func (au *AlbumUpdate) SetUserID(id int) *AlbumUpdate {
 	return au
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (au *AlbumUpdate) SetNillableUserID(id *int) *AlbumUpdate {
-	if id != nil {
-		au = au.SetUserID(*id)
-	}
-	return au
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (au *AlbumUpdate) SetUser(u *User) *AlbumUpdate {
 	return au.SetUserID(u.ID)
@@ -81,6 +75,21 @@ func (au *AlbumUpdate) AddPicture(p ...*Picture) *AlbumUpdate {
 		ids[i] = p[i].ID
 	}
 	return au.AddPictureIDs(ids...)
+}
+
+// AddVideoIDs adds the "video" edge to the Video entity by IDs.
+func (au *AlbumUpdate) AddVideoIDs(ids ...int) *AlbumUpdate {
+	au.mutation.AddVideoIDs(ids...)
+	return au
+}
+
+// AddVideo adds the "video" edges to the Video entity.
+func (au *AlbumUpdate) AddVideo(v ...*Video) *AlbumUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return au.AddVideoIDs(ids...)
 }
 
 // Mutation returns the AlbumMutation object of the builder.
@@ -115,6 +124,27 @@ func (au *AlbumUpdate) RemovePicture(p ...*Picture) *AlbumUpdate {
 	return au.RemovePictureIDs(ids...)
 }
 
+// ClearVideo clears all "video" edges to the Video entity.
+func (au *AlbumUpdate) ClearVideo() *AlbumUpdate {
+	au.mutation.ClearVideo()
+	return au
+}
+
+// RemoveVideoIDs removes the "video" edge to Video entities by IDs.
+func (au *AlbumUpdate) RemoveVideoIDs(ids ...int) *AlbumUpdate {
+	au.mutation.RemoveVideoIDs(ids...)
+	return au
+}
+
+// RemoveVideo removes "video" edges to Video entities.
+func (au *AlbumUpdate) RemoveVideo(v ...*Video) *AlbumUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return au.RemoveVideoIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (au *AlbumUpdate) Save(ctx context.Context) (int, error) {
 	var (
@@ -122,12 +152,18 @@ func (au *AlbumUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(au.hooks) == 0 {
+		if err = au.check(); err != nil {
+			return 0, err
+		}
 		affected, err = au.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*AlbumMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = au.check(); err != nil {
+				return 0, err
 			}
 			au.mutation = mutation
 			affected, err = au.sqlSave(ctx)
@@ -167,6 +203,14 @@ func (au *AlbumUpdate) ExecX(ctx context.Context) {
 	if err := au.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (au *AlbumUpdate) check() error {
+	if _, ok := au.mutation.UserID(); au.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
+	}
+	return nil
 }
 
 func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -290,6 +334,60 @@ func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if au.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.VideoTable,
+			Columns: []string{album.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.RemovedVideoIDs(); len(nodes) > 0 && !au.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.VideoTable,
+			Columns: []string{album.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.VideoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.VideoTable,
+			Columns: []string{album.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{album.Label}
@@ -335,14 +433,6 @@ func (auo *AlbumUpdateOne) SetUserID(id int) *AlbumUpdateOne {
 	return auo
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (auo *AlbumUpdateOne) SetNillableUserID(id *int) *AlbumUpdateOne {
-	if id != nil {
-		auo = auo.SetUserID(*id)
-	}
-	return auo
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (auo *AlbumUpdateOne) SetUser(u *User) *AlbumUpdateOne {
 	return auo.SetUserID(u.ID)
@@ -361,6 +451,21 @@ func (auo *AlbumUpdateOne) AddPicture(p ...*Picture) *AlbumUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return auo.AddPictureIDs(ids...)
+}
+
+// AddVideoIDs adds the "video" edge to the Video entity by IDs.
+func (auo *AlbumUpdateOne) AddVideoIDs(ids ...int) *AlbumUpdateOne {
+	auo.mutation.AddVideoIDs(ids...)
+	return auo
+}
+
+// AddVideo adds the "video" edges to the Video entity.
+func (auo *AlbumUpdateOne) AddVideo(v ...*Video) *AlbumUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return auo.AddVideoIDs(ids...)
 }
 
 // Mutation returns the AlbumMutation object of the builder.
@@ -395,6 +500,27 @@ func (auo *AlbumUpdateOne) RemovePicture(p ...*Picture) *AlbumUpdateOne {
 	return auo.RemovePictureIDs(ids...)
 }
 
+// ClearVideo clears all "video" edges to the Video entity.
+func (auo *AlbumUpdateOne) ClearVideo() *AlbumUpdateOne {
+	auo.mutation.ClearVideo()
+	return auo
+}
+
+// RemoveVideoIDs removes the "video" edge to Video entities by IDs.
+func (auo *AlbumUpdateOne) RemoveVideoIDs(ids ...int) *AlbumUpdateOne {
+	auo.mutation.RemoveVideoIDs(ids...)
+	return auo
+}
+
+// RemoveVideo removes "video" edges to Video entities.
+func (auo *AlbumUpdateOne) RemoveVideo(v ...*Video) *AlbumUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return auo.RemoveVideoIDs(ids...)
+}
+
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
 func (auo *AlbumUpdateOne) Select(field string, fields ...string) *AlbumUpdateOne {
@@ -409,12 +535,18 @@ func (auo *AlbumUpdateOne) Save(ctx context.Context) (*Album, error) {
 		node *Album
 	)
 	if len(auo.hooks) == 0 {
+		if err = auo.check(); err != nil {
+			return nil, err
+		}
 		node, err = auo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*AlbumMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = auo.check(); err != nil {
+				return nil, err
 			}
 			auo.mutation = mutation
 			node, err = auo.sqlSave(ctx)
@@ -454,6 +586,14 @@ func (auo *AlbumUpdateOne) ExecX(ctx context.Context) {
 	if err := auo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (auo *AlbumUpdateOne) check() error {
+	if _, ok := auo.mutation.UserID(); auo.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
+	}
+	return nil
 }
 
 func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error) {
@@ -586,6 +726,60 @@ func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: picture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.VideoTable,
+			Columns: []string{album.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.RemovedVideoIDs(); len(nodes) > 0 && !auo.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.VideoTable,
+			Columns: []string{album.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.VideoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   album.VideoTable,
+			Columns: []string{album.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
 				},
 			},
 		}

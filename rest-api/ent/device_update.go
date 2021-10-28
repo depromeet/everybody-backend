@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -48,14 +49,6 @@ func (du *DeviceUpdate) SetDeviceOs(do device.DeviceOs) *DeviceUpdate {
 // SetUserID sets the "user" edge to the User entity by ID.
 func (du *DeviceUpdate) SetUserID(id int) *DeviceUpdate {
 	du.mutation.SetUserID(id)
-	return du
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (du *DeviceUpdate) SetNillableUserID(id *int) *DeviceUpdate {
-	if id != nil {
-		du = du.SetUserID(*id)
-	}
 	return du
 }
 
@@ -141,6 +134,9 @@ func (du *DeviceUpdate) check() error {
 		if err := device.DeviceOsValidator(v); err != nil {
 			return &ValidationError{Name: "device_os", err: fmt.Errorf("ent: validator failed for field \"device_os\": %w", err)}
 		}
+	}
+	if _, ok := du.mutation.UserID(); du.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
 	}
 	return nil
 }
@@ -262,14 +258,6 @@ func (duo *DeviceUpdateOne) SetUserID(id int) *DeviceUpdateOne {
 	return duo
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (duo *DeviceUpdateOne) SetNillableUserID(id *int) *DeviceUpdateOne {
-	if id != nil {
-		duo = duo.SetUserID(*id)
-	}
-	return duo
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (duo *DeviceUpdateOne) SetUser(u *User) *DeviceUpdateOne {
 	return duo.SetUserID(u.ID)
@@ -359,6 +347,9 @@ func (duo *DeviceUpdateOne) check() error {
 		if err := device.DeviceOsValidator(v); err != nil {
 			return &ValidationError{Name: "device_os", err: fmt.Errorf("ent: validator failed for field \"device_os\": %w", err)}
 		}
+	}
+	if _, ok := duo.mutation.UserID(); duo.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
 	}
 	return nil
 }

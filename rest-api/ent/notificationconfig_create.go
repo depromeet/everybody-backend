@@ -187,14 +187,6 @@ func (ncc *NotificationConfigCreate) SetUserID(id int) *NotificationConfigCreate
 	return ncc
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ncc *NotificationConfigCreate) SetNillableUserID(id *int) *NotificationConfigCreate {
-	if id != nil {
-		ncc = ncc.SetUserID(*id)
-	}
-	return ncc
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (ncc *NotificationConfigCreate) SetUser(u *User) *NotificationConfigCreate {
 	return ncc.SetUserID(u.ID)
@@ -330,6 +322,9 @@ func (ncc *NotificationConfigCreate) check() error {
 	}
 	if _, ok := ncc.mutation.IsActivated(); !ok {
 		return &ValidationError{Name: "is_activated", err: errors.New(`ent: missing required field "is_activated"`)}
+	}
+	if _, ok := ncc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New("ent: missing required edge \"user\"")}
 	}
 	return nil
 }
