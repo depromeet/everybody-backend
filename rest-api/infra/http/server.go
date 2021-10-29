@@ -39,7 +39,7 @@ func addUserHandlers(app *fiber.App, userHandler *handler.UserHandler) {
 	group := app.Group("/users")
 	group.Post("", userHandler.SignUp)
 	group.Get("/me", userHandler.GetUser)
-	group.Patch("/me", userHandler.UpdateUser)
+	group.Put("/me", userHandler.UpdateUser)
 
 }
 

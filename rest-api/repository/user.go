@@ -50,12 +50,21 @@ func (repo *userRepository) FindById(id int) (*ent.User, error) {
 }
 
 func (repo *userRepository) Update(id int, user *ent.User) (*ent.User, error) {
-	result, err := repo.db.User.UpdateOneID(id).
+	update := repo.db.User.UpdateOneID(id).
 		SetNickname(user.Nickname).
-		SetMotto(user.Motto).
-		SetNillableHeight(user.Height).
-		SetNillableWeight(user.Weight).
-		Save(context.Background())
+		SetMotto(user.Motto)
+	if user.Height == nil {
+		update.ClearHeight()
+	} else {
+		update.SetHeight(*user.Height)
+	}
+	if user.Weight == nil {
+		update.ClearWeight()
+	} else {
+		update.SetWeight(*user.Weight)
+	}
+
+	result, err := update.Save(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
