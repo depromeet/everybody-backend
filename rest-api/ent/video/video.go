@@ -17,8 +17,6 @@ const (
 	FieldKey = "key"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
-	// EdgeAlbum holds the string denoting the album edge name in mutations.
-	EdgeAlbum = "album"
 	// Table holds the table name of the video in the database.
 	Table = "videos"
 	// UserTable is the table that holds the user relation/edge.
@@ -28,13 +26,6 @@ const (
 	UserInverseTable = "users"
 	// UserColumn is the table column denoting the user relation/edge.
 	UserColumn = "user_video"
-	// AlbumTable is the table that holds the album relation/edge.
-	AlbumTable = "videos"
-	// AlbumInverseTable is the table name for the Album entity.
-	// It exists in this package in order to avoid circular dependency with the "album" package.
-	AlbumInverseTable = "albums"
-	// AlbumColumn is the table column denoting the album relation/edge.
-	AlbumColumn = "album_video"
 )
 
 // Columns holds all SQL columns for video fields.
@@ -47,7 +38,6 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "videos"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"album_video",
 	"user_video",
 }
 

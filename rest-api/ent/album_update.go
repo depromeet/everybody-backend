@@ -15,7 +15,6 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
-	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // AlbumUpdate is the builder for updating Album entities.
@@ -77,21 +76,6 @@ func (au *AlbumUpdate) AddPicture(p ...*Picture) *AlbumUpdate {
 	return au.AddPictureIDs(ids...)
 }
 
-// AddVideoIDs adds the "video" edge to the Video entity by IDs.
-func (au *AlbumUpdate) AddVideoIDs(ids ...int) *AlbumUpdate {
-	au.mutation.AddVideoIDs(ids...)
-	return au
-}
-
-// AddVideo adds the "video" edges to the Video entity.
-func (au *AlbumUpdate) AddVideo(v ...*Video) *AlbumUpdate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return au.AddVideoIDs(ids...)
-}
-
 // Mutation returns the AlbumMutation object of the builder.
 func (au *AlbumUpdate) Mutation() *AlbumMutation {
 	return au.mutation
@@ -122,27 +106,6 @@ func (au *AlbumUpdate) RemovePicture(p ...*Picture) *AlbumUpdate {
 		ids[i] = p[i].ID
 	}
 	return au.RemovePictureIDs(ids...)
-}
-
-// ClearVideo clears all "video" edges to the Video entity.
-func (au *AlbumUpdate) ClearVideo() *AlbumUpdate {
-	au.mutation.ClearVideo()
-	return au
-}
-
-// RemoveVideoIDs removes the "video" edge to Video entities by IDs.
-func (au *AlbumUpdate) RemoveVideoIDs(ids ...int) *AlbumUpdate {
-	au.mutation.RemoveVideoIDs(ids...)
-	return au
-}
-
-// RemoveVideo removes "video" edges to Video entities.
-func (au *AlbumUpdate) RemoveVideo(v ...*Video) *AlbumUpdate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return au.RemoveVideoIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -334,60 +297,6 @@ func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if au.mutation.VideoCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   album.VideoTable,
-			Columns: []string{album.VideoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: video.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := au.mutation.RemovedVideoIDs(); len(nodes) > 0 && !au.mutation.VideoCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   album.VideoTable,
-			Columns: []string{album.VideoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: video.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := au.mutation.VideoIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   album.VideoTable,
-			Columns: []string{album.VideoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: video.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{album.Label}
@@ -453,21 +362,6 @@ func (auo *AlbumUpdateOne) AddPicture(p ...*Picture) *AlbumUpdateOne {
 	return auo.AddPictureIDs(ids...)
 }
 
-// AddVideoIDs adds the "video" edge to the Video entity by IDs.
-func (auo *AlbumUpdateOne) AddVideoIDs(ids ...int) *AlbumUpdateOne {
-	auo.mutation.AddVideoIDs(ids...)
-	return auo
-}
-
-// AddVideo adds the "video" edges to the Video entity.
-func (auo *AlbumUpdateOne) AddVideo(v ...*Video) *AlbumUpdateOne {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return auo.AddVideoIDs(ids...)
-}
-
 // Mutation returns the AlbumMutation object of the builder.
 func (auo *AlbumUpdateOne) Mutation() *AlbumMutation {
 	return auo.mutation
@@ -498,27 +392,6 @@ func (auo *AlbumUpdateOne) RemovePicture(p ...*Picture) *AlbumUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return auo.RemovePictureIDs(ids...)
-}
-
-// ClearVideo clears all "video" edges to the Video entity.
-func (auo *AlbumUpdateOne) ClearVideo() *AlbumUpdateOne {
-	auo.mutation.ClearVideo()
-	return auo
-}
-
-// RemoveVideoIDs removes the "video" edge to Video entities by IDs.
-func (auo *AlbumUpdateOne) RemoveVideoIDs(ids ...int) *AlbumUpdateOne {
-	auo.mutation.RemoveVideoIDs(ids...)
-	return auo
-}
-
-// RemoveVideo removes "video" edges to Video entities.
-func (auo *AlbumUpdateOne) RemoveVideo(v ...*Video) *AlbumUpdateOne {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return auo.RemoveVideoIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -726,60 +599,6 @@ func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: picture.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if auo.mutation.VideoCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   album.VideoTable,
-			Columns: []string{album.VideoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: video.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := auo.mutation.RemovedVideoIDs(); len(nodes) > 0 && !auo.mutation.VideoCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   album.VideoTable,
-			Columns: []string{album.VideoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: video.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := auo.mutation.VideoIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   album.VideoTable,
-			Columns: []string{album.VideoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: video.FieldID,
 				},
 			},
 		}

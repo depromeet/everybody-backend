@@ -72,22 +72,3 @@ func (h *VideoHandler) GetAllVideos(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(videos)
 }
-
-func (h *VideoHandler) GetVideos(ctx *fiber.Ctx) error {
-	queryParams := util.GetQueryParams(ctx, "album_id")
-	if queryParams == "" {
-		return errors.New("album_id query param should be provided")
-	}
-
-	albumID, err := strconv.Atoi(queryParams)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	videos, err := h.videoService.GetVideos(albumID)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	return ctx.JSON(videos)
-}

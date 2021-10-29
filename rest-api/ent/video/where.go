@@ -322,34 +322,6 @@ func HasUserWith(preds ...predicate.User) predicate.Video {
 	})
 }
 
-// HasAlbum applies the HasEdge predicate on the "album" edge.
-func HasAlbum() predicate.Video {
-	return predicate.Video(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(AlbumTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, AlbumTable, AlbumColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasAlbumWith applies the HasEdge predicate on the "album" edge with a given conditions (other predicates).
-func HasAlbumWith(preds ...predicate.Album) predicate.Video {
-	return predicate.Video(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.To(AlbumInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, AlbumTable, AlbumColumn),
-		)
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Video) predicate.Video {
 	return predicate.Video(func(s *sql.Selector) {

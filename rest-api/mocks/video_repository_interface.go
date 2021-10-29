@@ -35,29 +35,6 @@ func (_m *VideoRepositoryInterface) Get(videoID int) (*ent.Video, error) {
 	return r0, r1
 }
 
-// GetAllByAlbumID provides a mock function with given fields: albumID
-func (_m *VideoRepositoryInterface) GetAllByAlbumID(albumID int) ([]*ent.Video, error) {
-	ret := _m.Called(albumID)
-
-	var r0 []*ent.Video
-	if rf, ok := ret.Get(0).(func(int) []*ent.Video); ok {
-		r0 = rf(albumID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*ent.Video)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(albumID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // GetAllByUserID provides a mock function with given fields: userID
 func (_m *VideoRepositoryInterface) GetAllByUserID(userID int) ([]*ent.Video, error) {
 	ret := _m.Called(userID)

@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/ent/video"
@@ -27,9 +26,8 @@ type VideoQuery struct {
 	fields     []string
 	predicates []predicate.Video
 	// eager-loading edges.
-	withUser  *UserQuery
-	withAlbum *AlbumQuery
-	withFKs   bool
+	withUser *UserQuery
+	withFKs  bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -81,28 +79,6 @@ func (vq *VideoQuery) QueryUser() *UserQuery {
 			sqlgraph.From(video.Table, video.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, video.UserTable, video.UserColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryAlbum chains the current query on the "album" edge.
-func (vq *VideoQuery) QueryAlbum() *AlbumQuery {
-	query := &AlbumQuery{config: vq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := vq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := vq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(video.Table, video.FieldID, selector),
-			sqlgraph.To(album.Table, album.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, video.AlbumTable, video.AlbumColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(vq.driver.Dialect(), step)
 		return fromU, nil
@@ -292,7 +268,6 @@ func (vq *VideoQuery) Clone() *VideoQuery {
 		order:      append([]OrderFunc{}, vq.order...),
 		predicates: append([]predicate.Video{}, vq.predicates...),
 		withUser:   vq.withUser.Clone(),
-		withAlbum:  vq.withAlbum.Clone(),
 		// clone intermediate query.
 		sql:  vq.sql.Clone(),
 		path: vq.path,
@@ -307,17 +282,6 @@ func (vq *VideoQuery) WithUser(opts ...func(*UserQuery)) *VideoQuery {
 		opt(query)
 	}
 	vq.withUser = query
-	return vq
-}
-
-// WithAlbum tells the query-builder to eager-load the nodes that are connected to
-// the "album" edge. The optional arguments are used to configure the query builder of the edge.
-func (vq *VideoQuery) WithAlbum(opts ...func(*AlbumQuery)) *VideoQuery {
-	query := &AlbumQuery{config: vq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	vq.withAlbum = query
 	return vq
 }
 
@@ -387,12 +351,11 @@ func (vq *VideoQuery) sqlAll(ctx context.Context) ([]*Video, error) {
 		nodes       = []*Video{}
 		withFKs     = vq.withFKs
 		_spec       = vq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [1]bool{
 			vq.withUser != nil,
-			vq.withAlbum != nil,
 		}
 	)
-	if vq.withUser != nil || vq.withAlbum != nil {
+	if vq.withUser != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -443,35 +406,6 @@ func (vq *VideoQuery) sqlAll(ctx context.Context) ([]*Video, error) {
 			}
 			for i := range nodes {
 				nodes[i].Edges.User = n
-			}
-		}
-	}
-
-	if query := vq.withAlbum; query != nil {
-		ids := make([]int, 0, len(nodes))
-		nodeids := make(map[int][]*Video)
-		for i := range nodes {
-			if nodes[i].album_video == nil {
-				continue
-			}
-			fk := *nodes[i].album_video
-			if _, ok := nodeids[fk]; !ok {
-				ids = append(ids, fk)
-			}
-			nodeids[fk] = append(nodeids[fk], nodes[i])
-		}
-		query.Where(album.IDIn(ids...))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			nodes, ok := nodeids[n.ID]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "album_video" returned %v`, n.ID)
-			}
-			for i := range nodes {
-				nodes[i].Edges.Album = n
 			}
 		}
 	}

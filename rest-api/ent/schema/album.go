@@ -31,6 +31,5 @@ func (Album) Edges() []ent.Edge {
 			Required().
 			Unique(),
 		edge.To("picture", Picture.Type),
-		edge.To("video", Video.Type),
 	}
 }

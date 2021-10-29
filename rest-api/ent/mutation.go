@@ -50,9 +50,6 @@ type AlbumMutation struct {
 	picture        map[int]struct{}
 	removedpicture map[int]struct{}
 	clearedpicture bool
-	video          map[int]struct{}
-	removedvideo   map[int]struct{}
-	clearedvideo   bool
 	done           bool
 	oldValue       func(context.Context) (*Album, error)
 	predicates     []predicate.Album
@@ -302,60 +299,6 @@ func (m *AlbumMutation) ResetPicture() {
 	m.removedpicture = nil
 }
 
-// AddVideoIDs adds the "video" edge to the Video entity by ids.
-func (m *AlbumMutation) AddVideoIDs(ids ...int) {
-	if m.video == nil {
-		m.video = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.video[ids[i]] = struct{}{}
-	}
-}
-
-// ClearVideo clears the "video" edge to the Video entity.
-func (m *AlbumMutation) ClearVideo() {
-	m.clearedvideo = true
-}
-
-// VideoCleared reports if the "video" edge to the Video entity was cleared.
-func (m *AlbumMutation) VideoCleared() bool {
-	return m.clearedvideo
-}
-
-// RemoveVideoIDs removes the "video" edge to the Video entity by IDs.
-func (m *AlbumMutation) RemoveVideoIDs(ids ...int) {
-	if m.removedvideo == nil {
-		m.removedvideo = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.video, ids[i])
-		m.removedvideo[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedVideo returns the removed IDs of the "video" edge to the Video entity.
-func (m *AlbumMutation) RemovedVideoIDs() (ids []int) {
-	for id := range m.removedvideo {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// VideoIDs returns the "video" edge IDs in the mutation.
-func (m *AlbumMutation) VideoIDs() (ids []int) {
-	for id := range m.video {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetVideo resets all changes to the "video" edge.
-func (m *AlbumMutation) ResetVideo() {
-	m.video = nil
-	m.clearedvideo = false
-	m.removedvideo = nil
-}
-
 // Where appends a list predicates to the AlbumMutation builder.
 func (m *AlbumMutation) Where(ps ...predicate.Album) {
 	m.predicates = append(m.predicates, ps...)
@@ -491,15 +434,12 @@ func (m *AlbumMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AlbumMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 2)
 	if m.user != nil {
 		edges = append(edges, album.EdgeUser)
 	}
 	if m.picture != nil {
 		edges = append(edges, album.EdgePicture)
-	}
-	if m.video != nil {
-		edges = append(edges, album.EdgeVideo)
 	}
 	return edges
 }
@@ -518,24 +458,15 @@ func (m *AlbumMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case album.EdgeVideo:
-		ids := make([]ent.Value, 0, len(m.video))
-		for id := range m.video {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AlbumMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 2)
 	if m.removedpicture != nil {
 		edges = append(edges, album.EdgePicture)
-	}
-	if m.removedvideo != nil {
-		edges = append(edges, album.EdgeVideo)
 	}
 	return edges
 }
@@ -550,27 +481,18 @@ func (m *AlbumMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case album.EdgeVideo:
-		ids := make([]ent.Value, 0, len(m.removedvideo))
-		for id := range m.removedvideo {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AlbumMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 2)
 	if m.cleareduser {
 		edges = append(edges, album.EdgeUser)
 	}
 	if m.clearedpicture {
 		edges = append(edges, album.EdgePicture)
-	}
-	if m.clearedvideo {
-		edges = append(edges, album.EdgeVideo)
 	}
 	return edges
 }
@@ -583,8 +505,6 @@ func (m *AlbumMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case album.EdgePicture:
 		return m.clearedpicture
-	case album.EdgeVideo:
-		return m.clearedvideo
 	}
 	return false
 }
@@ -609,9 +529,6 @@ func (m *AlbumMutation) ResetEdge(name string) error {
 		return nil
 	case album.EdgePicture:
 		m.ResetPicture()
-		return nil
-	case album.EdgeVideo:
-		m.ResetVideo()
 		return nil
 	}
 	return fmt.Errorf("unknown Album edge %s", name)
@@ -3720,8 +3637,6 @@ type VideoMutation struct {
 	clearedFields map[string]struct{}
 	user          *int
 	cleareduser   bool
-	album         *int
-	clearedalbum  bool
 	done          bool
 	oldValue      func(context.Context) (*Video, error)
 	predicates    []predicate.Video
@@ -3917,45 +3832,6 @@ func (m *VideoMutation) ResetUser() {
 	m.cleareduser = false
 }
 
-// SetAlbumID sets the "album" edge to the Album entity by id.
-func (m *VideoMutation) SetAlbumID(id int) {
-	m.album = &id
-}
-
-// ClearAlbum clears the "album" edge to the Album entity.
-func (m *VideoMutation) ClearAlbum() {
-	m.clearedalbum = true
-}
-
-// AlbumCleared reports if the "album" edge to the Album entity was cleared.
-func (m *VideoMutation) AlbumCleared() bool {
-	return m.clearedalbum
-}
-
-// AlbumID returns the "album" edge ID in the mutation.
-func (m *VideoMutation) AlbumID() (id int, exists bool) {
-	if m.album != nil {
-		return *m.album, true
-	}
-	return
-}
-
-// AlbumIDs returns the "album" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// AlbumID instead. It exists only for internal usage by the builders.
-func (m *VideoMutation) AlbumIDs() (ids []int) {
-	if id := m.album; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetAlbum resets all changes to the "album" edge.
-func (m *VideoMutation) ResetAlbum() {
-	m.album = nil
-	m.clearedalbum = false
-}
-
 // Where appends a list predicates to the VideoMutation builder.
 func (m *VideoMutation) Where(ps ...predicate.Video) {
 	m.predicates = append(m.predicates, ps...)
@@ -4091,12 +3967,9 @@ func (m *VideoMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *VideoMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 1)
 	if m.user != nil {
 		edges = append(edges, video.EdgeUser)
-	}
-	if m.album != nil {
-		edges = append(edges, video.EdgeAlbum)
 	}
 	return edges
 }
@@ -4109,17 +3982,13 @@ func (m *VideoMutation) AddedIDs(name string) []ent.Value {
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
 		}
-	case video.EdgeAlbum:
-		if id := m.album; id != nil {
-			return []ent.Value{*id}
-		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *VideoMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -4133,12 +4002,9 @@ func (m *VideoMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *VideoMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 1)
 	if m.cleareduser {
 		edges = append(edges, video.EdgeUser)
-	}
-	if m.clearedalbum {
-		edges = append(edges, video.EdgeAlbum)
 	}
 	return edges
 }
@@ -4149,8 +4015,6 @@ func (m *VideoMutation) EdgeCleared(name string) bool {
 	switch name {
 	case video.EdgeUser:
 		return m.cleareduser
-	case video.EdgeAlbum:
-		return m.clearedalbum
 	}
 	return false
 }
@@ -4162,9 +4026,6 @@ func (m *VideoMutation) ClearEdge(name string) error {
 	case video.EdgeUser:
 		m.ClearUser()
 		return nil
-	case video.EdgeAlbum:
-		m.ClearAlbum()
-		return nil
 	}
 	return fmt.Errorf("unknown Video unique edge %s", name)
 }
@@ -4175,9 +4036,6 @@ func (m *VideoMutation) ResetEdge(name string) error {
 	switch name {
 	case video.EdgeUser:
 		m.ResetUser()
-		return nil
-	case video.EdgeAlbum:
-		m.ResetAlbum()
 		return nil
 	}
 	return fmt.Errorf("unknown Video edge %s", name)

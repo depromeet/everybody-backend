@@ -10,7 +10,6 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
@@ -51,25 +50,6 @@ func (vc *VideoCreate) SetUserID(id int) *VideoCreate {
 // SetUser sets the "user" edge to the User entity.
 func (vc *VideoCreate) SetUser(u *User) *VideoCreate {
 	return vc.SetUserID(u.ID)
-}
-
-// SetAlbumID sets the "album" edge to the Album entity by ID.
-func (vc *VideoCreate) SetAlbumID(id int) *VideoCreate {
-	vc.mutation.SetAlbumID(id)
-	return vc
-}
-
-// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
-func (vc *VideoCreate) SetNillableAlbumID(id *int) *VideoCreate {
-	if id != nil {
-		vc = vc.SetAlbumID(*id)
-	}
-	return vc
-}
-
-// SetAlbum sets the "album" edge to the Album entity.
-func (vc *VideoCreate) SetAlbum(a *Album) *VideoCreate {
-	return vc.SetAlbumID(a.ID)
 }
 
 // Mutation returns the VideoMutation object of the builder.
@@ -221,26 +201,6 @@ func (vc *VideoCreate) createSpec() (*Video, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.user_video = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := vc.mutation.AlbumIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   video.AlbumTable,
-			Columns: []string{video.AlbumColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: album.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.album_video = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

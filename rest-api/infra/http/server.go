@@ -68,9 +68,6 @@ func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) 
 func addVideoHandlers(app *fiber.App, videoHandler *handler.VideoHandler) {
 	group := app.Group("/videos")
 	group.Post("", videoHandler.SaveVideo)
-	// /videos(유저의 전체 영상 조회)
 	group.Get("", videoHandler.GetAllVideos)
-	// /videos/fillter?album_id={album_id}
-	group.Get("/filter", videoHandler.GetVideos)
 	group.Get("/:video_id", videoHandler.GetVideo)
 }

@@ -274,22 +274,6 @@ func (c *AlbumClient) QueryPicture(a *Album) *PictureQuery {
 	return query
 }
 
-// QueryVideo queries the video edge of a Album.
-func (c *AlbumClient) QueryVideo(a *Album) *VideoQuery {
-	query := &VideoQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := a.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(album.Table, album.FieldID, id),
-			sqlgraph.To(video.Table, video.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, album.VideoTable, album.VideoColumn),
-		)
-		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *AlbumClient) Hooks() []Hook {
 	return c.hooks.Album
@@ -893,22 +877,6 @@ func (c *VideoClient) QueryUser(v *Video) *UserQuery {
 			sqlgraph.From(video.Table, video.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, video.UserTable, video.UserColumn),
-		)
-		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryAlbum queries the album edge of a Video.
-func (c *VideoClient) QueryAlbum(v *Video) *AlbumQuery {
-	query := &AlbumQuery{config: c.config}
-	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
-		id := v.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(video.Table, video.FieldID, id),
-			sqlgraph.To(album.Table, album.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, video.AlbumTable, video.AlbumColumn),
 		)
 		fromV = sqlgraph.Neighbors(v.driver.Dialect(), step)
 		return fromV, nil

@@ -16,7 +16,6 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
-	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // AlbumQuery is the builder for querying Album entities.
@@ -31,7 +30,6 @@ type AlbumQuery struct {
 	// eager-loading edges.
 	withUser    *UserQuery
 	withPicture *PictureQuery
-	withVideo   *VideoQuery
 	withFKs     bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -106,28 +104,6 @@ func (aq *AlbumQuery) QueryPicture() *PictureQuery {
 			sqlgraph.From(album.Table, album.FieldID, selector),
 			sqlgraph.To(picture.Table, picture.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, album.PictureTable, album.PictureColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryVideo chains the current query on the "video" edge.
-func (aq *AlbumQuery) QueryVideo() *VideoQuery {
-	query := &VideoQuery{config: aq.config}
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := aq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := aq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(album.Table, album.FieldID, selector),
-			sqlgraph.To(video.Table, video.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, album.VideoTable, album.VideoColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -318,7 +294,6 @@ func (aq *AlbumQuery) Clone() *AlbumQuery {
 		predicates:  append([]predicate.Album{}, aq.predicates...),
 		withUser:    aq.withUser.Clone(),
 		withPicture: aq.withPicture.Clone(),
-		withVideo:   aq.withVideo.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
@@ -344,17 +319,6 @@ func (aq *AlbumQuery) WithPicture(opts ...func(*PictureQuery)) *AlbumQuery {
 		opt(query)
 	}
 	aq.withPicture = query
-	return aq
-}
-
-// WithVideo tells the query-builder to eager-load the nodes that are connected to
-// the "video" edge. The optional arguments are used to configure the query builder of the edge.
-func (aq *AlbumQuery) WithVideo(opts ...func(*VideoQuery)) *AlbumQuery {
-	query := &VideoQuery{config: aq.config}
-	for _, opt := range opts {
-		opt(query)
-	}
-	aq.withVideo = query
 	return aq
 }
 
@@ -424,10 +388,9 @@ func (aq *AlbumQuery) sqlAll(ctx context.Context) ([]*Album, error) {
 		nodes       = []*Album{}
 		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [2]bool{
 			aq.withUser != nil,
 			aq.withPicture != nil,
-			aq.withVideo != nil,
 		}
 	)
 	if aq.withUser != nil {
@@ -511,35 +474,6 @@ func (aq *AlbumQuery) sqlAll(ctx context.Context) ([]*Album, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "album_picture" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Picture = append(node.Edges.Picture, n)
-		}
-	}
-
-	if query := aq.withVideo; query != nil {
-		fks := make([]driver.Value, 0, len(nodes))
-		nodeids := make(map[int]*Album)
-		for i := range nodes {
-			fks = append(fks, nodes[i].ID)
-			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.Video = []*Video{}
-		}
-		query.withFKs = true
-		query.Where(predicate.Video(func(s *sql.Selector) {
-			s.Where(sql.InValues(album.VideoColumn, fks...))
-		}))
-		neighbors, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, n := range neighbors {
-			fk := n.album_video
-			if fk == nil {
-				return nil, fmt.Errorf(`foreign-key "album_video" is nil for node %v`, n.ID)
-			}
-			node, ok := nodeids[*fk]
-			if !ok {
-				return nil, fmt.Errorf(`unexpected foreign-key "album_video" returned %v for node %v`, *fk, n.ID)
-			}
-			node.Edges.Video = append(node.Edges.Video, n)
 		}
 	}
 

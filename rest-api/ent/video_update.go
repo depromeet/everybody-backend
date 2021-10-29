@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/ent/video"
@@ -61,25 +60,6 @@ func (vu *VideoUpdate) SetUser(u *User) *VideoUpdate {
 	return vu.SetUserID(u.ID)
 }
 
-// SetAlbumID sets the "album" edge to the Album entity by ID.
-func (vu *VideoUpdate) SetAlbumID(id int) *VideoUpdate {
-	vu.mutation.SetAlbumID(id)
-	return vu
-}
-
-// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
-func (vu *VideoUpdate) SetNillableAlbumID(id *int) *VideoUpdate {
-	if id != nil {
-		vu = vu.SetAlbumID(*id)
-	}
-	return vu
-}
-
-// SetAlbum sets the "album" edge to the Album entity.
-func (vu *VideoUpdate) SetAlbum(a *Album) *VideoUpdate {
-	return vu.SetAlbumID(a.ID)
-}
-
 // Mutation returns the VideoMutation object of the builder.
 func (vu *VideoUpdate) Mutation() *VideoMutation {
 	return vu.mutation
@@ -88,12 +68,6 @@ func (vu *VideoUpdate) Mutation() *VideoMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (vu *VideoUpdate) ClearUser() *VideoUpdate {
 	vu.mutation.ClearUser()
-	return vu
-}
-
-// ClearAlbum clears the "album" edge to the Album entity.
-func (vu *VideoUpdate) ClearAlbum() *VideoUpdate {
-	vu.mutation.ClearAlbum()
 	return vu
 }
 
@@ -232,41 +206,6 @@ func (vu *VideoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if vu.mutation.AlbumCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   video.AlbumTable,
-			Columns: []string{video.AlbumColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: album.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := vu.mutation.AlbumIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   video.AlbumTable,
-			Columns: []string{video.AlbumColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: album.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, vu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{video.Label}
@@ -317,25 +256,6 @@ func (vuo *VideoUpdateOne) SetUser(u *User) *VideoUpdateOne {
 	return vuo.SetUserID(u.ID)
 }
 
-// SetAlbumID sets the "album" edge to the Album entity by ID.
-func (vuo *VideoUpdateOne) SetAlbumID(id int) *VideoUpdateOne {
-	vuo.mutation.SetAlbumID(id)
-	return vuo
-}
-
-// SetNillableAlbumID sets the "album" edge to the Album entity by ID if the given value is not nil.
-func (vuo *VideoUpdateOne) SetNillableAlbumID(id *int) *VideoUpdateOne {
-	if id != nil {
-		vuo = vuo.SetAlbumID(*id)
-	}
-	return vuo
-}
-
-// SetAlbum sets the "album" edge to the Album entity.
-func (vuo *VideoUpdateOne) SetAlbum(a *Album) *VideoUpdateOne {
-	return vuo.SetAlbumID(a.ID)
-}
-
 // Mutation returns the VideoMutation object of the builder.
 func (vuo *VideoUpdateOne) Mutation() *VideoMutation {
 	return vuo.mutation
@@ -344,12 +264,6 @@ func (vuo *VideoUpdateOne) Mutation() *VideoMutation {
 // ClearUser clears the "user" edge to the User entity.
 func (vuo *VideoUpdateOne) ClearUser() *VideoUpdateOne {
 	vuo.mutation.ClearUser()
-	return vuo
-}
-
-// ClearAlbum clears the "album" edge to the Album entity.
-func (vuo *VideoUpdateOne) ClearAlbum() *VideoUpdateOne {
-	vuo.mutation.ClearAlbum()
 	return vuo
 }
 
@@ -504,41 +418,6 @@ func (vuo *VideoUpdateOne) sqlSave(ctx context.Context) (_node *Video, err error
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: user.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if vuo.mutation.AlbumCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   video.AlbumTable,
-			Columns: []string{video.AlbumColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: album.FieldID,
-				},
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := vuo.mutation.AlbumIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   video.AlbumTable,
-			Columns: []string{video.AlbumColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: album.FieldID,
 				},
 			},
 		}

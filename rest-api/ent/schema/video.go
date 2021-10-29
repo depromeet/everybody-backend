@@ -30,9 +30,5 @@ func (Video) Edges() []ent.Edge {
 			Ref("video").
 			Required().
 			Unique(),
-		edge.From("album", Album.Type).
-			Ref("video").
-			Unique(),
 	}
-
 }

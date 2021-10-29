@@ -13,7 +13,6 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
-	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // AlbumCreate is the builder for creating a Album entity.
@@ -67,21 +66,6 @@ func (ac *AlbumCreate) AddPicture(p ...*Picture) *AlbumCreate {
 		ids[i] = p[i].ID
 	}
 	return ac.AddPictureIDs(ids...)
-}
-
-// AddVideoIDs adds the "video" edge to the Video entity by IDs.
-func (ac *AlbumCreate) AddVideoIDs(ids ...int) *AlbumCreate {
-	ac.mutation.AddVideoIDs(ids...)
-	return ac
-}
-
-// AddVideo adds the "video" edges to the Video entity.
-func (ac *AlbumCreate) AddVideo(v ...*Video) *AlbumCreate {
-	ids := make([]int, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return ac.AddVideoIDs(ids...)
 }
 
 // Mutation returns the AlbumMutation object of the builder.
@@ -246,25 +230,6 @@ func (ac *AlbumCreate) createSpec() (*Album, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: picture.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := ac.mutation.VideoIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   album.VideoTable,
-			Columns: []string{album.VideoColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: video.FieldID,
 				},
 			},
 		}
