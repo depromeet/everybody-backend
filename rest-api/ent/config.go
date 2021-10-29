@@ -29,6 +29,7 @@ type hooks struct {
 	NotificationConfig []ent.Hook
 	Picture            []ent.Hook
 	User               []ent.Hook
+	Video              []ent.Hook
 }
 
 // Options applies the options on the config object.

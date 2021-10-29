@@ -48,14 +48,6 @@ func (ac *AlbumCreate) SetUserID(id int) *AlbumCreate {
 	return ac
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ac *AlbumCreate) SetNillableUserID(id *int) *AlbumCreate {
-	if id != nil {
-		ac = ac.SetUserID(*id)
-	}
-	return ac
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (ac *AlbumCreate) SetUser(u *User) *AlbumCreate {
 	return ac.SetUserID(u.ID)
@@ -160,6 +152,9 @@ func (ac *AlbumCreate) check() error {
 	}
 	if _, ok := ac.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
+	}
+	if _, ok := ac.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user", err: errors.New("ent: missing required edge \"user\"")}
 	}
 	return nil
 }

@@ -125,6 +125,27 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// VideosColumns holds the columns for the "videos" table.
+	VideosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "key", Type: field.TypeString},
+		{Name: "user_video", Type: field.TypeInt, Nullable: true},
+	}
+	// VideosTable holds the schema information for the "videos" table.
+	VideosTable = &schema.Table{
+		Name:       "videos",
+		Columns:    VideosColumns,
+		PrimaryKey: []*schema.Column{VideosColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "videos_users_video",
+				Columns:    []*schema.Column{VideosColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AlbumsTable,
@@ -132,6 +153,7 @@ var (
 		NotificationConfigsTable,
 		PicturesTable,
 		UsersTable,
+		VideosTable,
 	}
 )
 
@@ -141,4 +163,5 @@ func init() {
 	NotificationConfigsTable.ForeignKeys[0].RefTable = UsersTable
 	PicturesTable.ForeignKeys[0].RefTable = AlbumsTable
 	PicturesTable.ForeignKeys[1].RefTable = UsersTable
+	VideosTable.ForeignKeys[0].RefTable = UsersTable
 }

@@ -18,6 +18,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // UserQuery is the builder for querying User entities.
@@ -34,6 +35,7 @@ type UserQuery struct {
 	withNotificationConfig *NotificationConfigQuery
 	withAlbum              *AlbumQuery
 	withPicture            *PictureQuery
+	withVideo              *VideoQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -151,6 +153,28 @@ func (uq *UserQuery) QueryPicture() *PictureQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(picture.Table, picture.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.PictureTable, user.PictureColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryVideo chains the current query on the "video" edge.
+func (uq *UserQuery) QueryVideo() *VideoQuery {
+	query := &VideoQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(video.Table, video.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.VideoTable, user.VideoColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -343,6 +367,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withNotificationConfig: uq.withNotificationConfig.Clone(),
 		withAlbum:              uq.withAlbum.Clone(),
 		withPicture:            uq.withPicture.Clone(),
+		withVideo:              uq.withVideo.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -390,6 +415,17 @@ func (uq *UserQuery) WithPicture(opts ...func(*PictureQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withPicture = query
+	return uq
+}
+
+// WithVideo tells the query-builder to eager-load the nodes that are connected to
+// the "video" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithVideo(opts ...func(*VideoQuery)) *UserQuery {
+	query := &VideoQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withVideo = query
 	return uq
 }
 
@@ -458,11 +494,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			uq.withDevices != nil,
 			uq.withNotificationConfig != nil,
 			uq.withAlbum != nil,
 			uq.withPicture != nil,
+			uq.withVideo != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
@@ -598,6 +635,35 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_picture" returned %v for node %v`, *fk, n.ID)
 			}
 			node.Edges.Picture = append(node.Edges.Picture, n)
+		}
+	}
+
+	if query := uq.withVideo; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*User)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.Video = []*Video{}
+		}
+		query.withFKs = true
+		query.Where(predicate.Video(func(s *sql.Selector) {
+			s.Where(sql.InValues(user.VideoColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.user_video
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "user_video" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "user_video" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Video = append(node.Edges.Video, n)
 		}
 	}
 

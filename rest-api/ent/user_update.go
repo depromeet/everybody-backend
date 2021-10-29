@@ -16,6 +16,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/predicate"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -171,6 +172,21 @@ func (uu *UserUpdate) AddPicture(p ...*Picture) *UserUpdate {
 	return uu.AddPictureIDs(ids...)
 }
 
+// AddVideoIDs adds the "video" edge to the Video entity by IDs.
+func (uu *UserUpdate) AddVideoIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddVideoIDs(ids...)
+	return uu
+}
+
+// AddVideo adds the "video" edges to the Video entity.
+func (uu *UserUpdate) AddVideo(v ...*Video) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uu.AddVideoIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -258,6 +274,27 @@ func (uu *UserUpdate) RemovePicture(p ...*Picture) *UserUpdate {
 		ids[i] = p[i].ID
 	}
 	return uu.RemovePictureIDs(ids...)
+}
+
+// ClearVideo clears all "video" edges to the Video entity.
+func (uu *UserUpdate) ClearVideo() *UserUpdate {
+	uu.mutation.ClearVideo()
+	return uu
+}
+
+// RemoveVideoIDs removes the "video" edge to Video entities by IDs.
+func (uu *UserUpdate) RemoveVideoIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveVideoIDs(ids...)
+	return uu
+}
+
+// RemoveVideo removes "video" edges to Video entities.
+func (uu *UserUpdate) RemoveVideo(v ...*Video) *UserUpdate {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uu.RemoveVideoIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -625,6 +662,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.VideoTable,
+			Columns: []string{user.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedVideoIDs(); len(nodes) > 0 && !uu.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.VideoTable,
+			Columns: []string{user.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.VideoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.VideoTable,
+			Columns: []string{user.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -784,6 +875,21 @@ func (uuo *UserUpdateOne) AddPicture(p ...*Picture) *UserUpdateOne {
 	return uuo.AddPictureIDs(ids...)
 }
 
+// AddVideoIDs adds the "video" edge to the Video entity by IDs.
+func (uuo *UserUpdateOne) AddVideoIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddVideoIDs(ids...)
+	return uuo
+}
+
+// AddVideo adds the "video" edges to the Video entity.
+func (uuo *UserUpdateOne) AddVideo(v ...*Video) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uuo.AddVideoIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -871,6 +977,27 @@ func (uuo *UserUpdateOne) RemovePicture(p ...*Picture) *UserUpdateOne {
 		ids[i] = p[i].ID
 	}
 	return uuo.RemovePictureIDs(ids...)
+}
+
+// ClearVideo clears all "video" edges to the Video entity.
+func (uuo *UserUpdateOne) ClearVideo() *UserUpdateOne {
+	uuo.mutation.ClearVideo()
+	return uuo
+}
+
+// RemoveVideoIDs removes the "video" edge to Video entities by IDs.
+func (uuo *UserUpdateOne) RemoveVideoIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveVideoIDs(ids...)
+	return uuo
+}
+
+// RemoveVideo removes "video" edges to Video entities.
+func (uuo *UserUpdateOne) RemoveVideo(v ...*Video) *UserUpdateOne {
+	ids := make([]int, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return uuo.RemoveVideoIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -1254,6 +1381,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: picture.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.VideoTable,
+			Columns: []string{user.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedVideoIDs(); len(nodes) > 0 && !uuo.mutation.VideoCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.VideoTable,
+			Columns: []string{user.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.VideoIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.VideoTable,
+			Columns: []string{user.VideoColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: video.FieldID,
 				},
 			},
 		}

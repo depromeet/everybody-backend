@@ -13,6 +13,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/depromeet/everybody-backend/rest-api/ent/video"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -38,6 +39,7 @@ func columnChecker(table string) func(string) error {
 		notificationconfig.Table: notificationconfig.ValidColumn,
 		picture.Table:            picture.ValidColumn,
 		user.Table:               user.ValidColumn,
+		video.Table:              video.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {
