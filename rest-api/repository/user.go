@@ -10,6 +10,7 @@ import (
 type UserRepository interface {
 	Create(user *ent.User) (*ent.User, error)
 	FindById(id int) (*ent.User, error)
+	Update(id int, user *ent.User) (*ent.User, error)
 }
 
 func NewUserRepository(client *ent.Client) UserRepository {
@@ -25,7 +26,10 @@ type userRepository struct {
 func (repo *userRepository) Create(user *ent.User) (*ent.User, error) {
 	result, err := repo.db.User.Create().
 		SetNickname(user.Nickname).
+		SetMotto(user.Motto).
 		SetKind(user.Kind).
+		SetNillableHeight(user.Height).
+		SetNillableWeight(user.Weight).
 		Save(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -43,4 +47,18 @@ func (repo *userRepository) FindById(id int) (*ent.User, error) {
 	}
 
 	return u, nil
+}
+
+func (repo *userRepository) Update(id int, user *ent.User) (*ent.User, error) {
+	result, err := repo.db.User.UpdateOneID(id).
+		SetNickname(user.Nickname).
+		SetMotto(user.Motto).
+		SetNillableHeight(user.Height).
+		SetNillableWeight(user.Weight).
+		Save(context.Background())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return result, nil
 }

@@ -64,8 +64,12 @@ func init() {
 	picture.DefaultCreatedAt = pictureDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
+	// userDescMotto is the schema descriptor for motto field.
+	userDescMotto := userFields[2].Descriptor()
+	// user.DefaultMotto holds the default value on creation for the motto field.
+	user.DefaultMotto = userDescMotto.Default.(string)
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[5].Descriptor()
+	userDescCreatedAt := userFields[6].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 }

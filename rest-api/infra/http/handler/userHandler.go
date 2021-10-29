@@ -45,3 +45,24 @@ func (h *UserHandler) GetUser(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(user)
 }
+
+func (h *UserHandler) UpdateUser(ctx *fiber.Ctx) error {
+	id, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	body := new(dto.UpdateUserRequest)
+
+	if err = ctx.BodyParser(body); err != nil {
+		return errors.WithStack(err)
+	}
+
+	user, err := h.userService.UpdateUser(id, body)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return ctx.JSON(user)
+
+}

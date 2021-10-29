@@ -30,6 +30,20 @@ func (uc *UserCreate) SetNickname(s string) *UserCreate {
 	return uc
 }
 
+// SetMotto sets the "motto" field.
+func (uc *UserCreate) SetMotto(s string) *UserCreate {
+	uc.mutation.SetMotto(s)
+	return uc
+}
+
+// SetNillableMotto sets the "motto" field if the given value is not nil.
+func (uc *UserCreate) SetNillableMotto(s *string) *UserCreate {
+	if s != nil {
+		uc.SetMotto(*s)
+	}
+	return uc
+}
+
 // SetHeight sets the "height" field.
 func (uc *UserCreate) SetHeight(i int) *UserCreate {
 	uc.mutation.SetHeight(i)
@@ -215,6 +229,10 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (uc *UserCreate) defaults() {
+	if _, ok := uc.mutation.Motto(); !ok {
+		v := user.DefaultMotto
+		uc.mutation.SetMotto(v)
+	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
@@ -225,6 +243,9 @@ func (uc *UserCreate) defaults() {
 func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Nickname(); !ok {
 		return &ValidationError{Name: "nickname", err: errors.New(`ent: missing required field "nickname"`)}
+	}
+	if _, ok := uc.mutation.Motto(); !ok {
+		return &ValidationError{Name: "motto", err: errors.New(`ent: missing required field "motto"`)}
 	}
 	if _, ok := uc.mutation.Kind(); !ok {
 		return &ValidationError{Name: "kind", err: errors.New(`ent: missing required field "kind"`)}
@@ -277,6 +298,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldNickname,
 		})
 		_node.Nickname = value
+	}
+	if value, ok := uc.mutation.Motto(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldMotto,
+		})
+		_node.Motto = value
 	}
 	if value, ok := uc.mutation.Height(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

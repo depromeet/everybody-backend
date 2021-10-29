@@ -114,6 +114,7 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "nickname", Type: field.TypeString},
+		{Name: "motto", Type: field.TypeString, Default: "눈바디와 함께 꾸준히 운동할테야!"},
 		{Name: "height", Type: field.TypeInt, Nullable: true},
 		{Name: "weight", Type: field.TypeInt, Nullable: true},
 		{Name: "kind", Type: field.TypeEnum, Enums: []string{"SIMPLE", "KAKAO", "APPLE", "NAVER", "GOOGLE"}},
