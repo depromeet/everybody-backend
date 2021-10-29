@@ -3,6 +3,7 @@ package util
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -25,16 +26,23 @@ func CreateAccessToken(userId uint64) (string, error) {
 		log.Error(err)
 		return "", err
 	}
+	encToken = "Bearer " + encToken
 
 	log.Info("Token Decoding Success -> userId=", userId)
 	return encToken, nil
 }
 
 func VerifyAccessToken(t string) (uint64, error) {
+	tokenTypePrefix := "Bearer "
+	if !strings.HasPrefix(t, tokenTypePrefix) {
+		return 0, fmt.Errorf("token type invalid")
+	}
+	t = t[len(tokenTypePrefix):]
+
 	token, err := jwt.Parse(t, func(token *jwt.Token) (interface{}, error) {
 		// 파라미터로 받은 토큰이 HMAC 알고리즘이 맞는지 확인
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			return 0, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(config.Config.ApiGw.AccessTokenSecret), nil
 	})
