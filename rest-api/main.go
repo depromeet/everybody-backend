@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
 	"github.com/depromeet/everybody-backend/rest-api/config"
 	_ "github.com/depromeet/everybody-backend/rest-api/config"
@@ -43,7 +44,7 @@ func main() {
 	log.SetReportCaller(true)
 
 	initialize()
-	if err := server.Listen(":8888"); err != nil {
+	if err := server.Listen(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
 		log.Error(err)
 	}
 }

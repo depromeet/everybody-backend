@@ -50,7 +50,8 @@ func init() {
 var Config *config
 
 type config struct {
-	DB struct {
+	Port int `yaml:"port"`
+	DB   struct {
 		MySQL struct {
 			Host         string `yaml:"host"`
 			Port         int    `yaml:"port"`
