@@ -4,6 +4,8 @@ import (
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"os"
+	"strings"
 )
 
 var (
@@ -12,33 +14,35 @@ var (
 
 func init() {
 	Config = &config{}
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("config")
-	// TODO: test code에서는 상대경로를 자신으로 잡아서 최상위 코드가 아니면 ../config, ../../config 이런 식으로 설정해줘야하네...
-	// 안그러면 config를 못 찾음 ㅜㅜ
-	viper.AddConfigPath("../config")
-	viper.AddConfigPath("../../config")
-	viper.AddConfigPath("../../../config")
-	viper.AddConfigPath("../../../../config")
+	viper.AddConfigPath(os.Getenv("EVERYBODY_CONFIG_PATH"))
+	env := strings.ToLower(os.Getenv("EVERYBODY_ENVIRONMENT"))
+	if len(env) == 0 {
+		log.Fatal("어떤 환경을 이용해 서버를 띄울지 선택해주세요. e.g. EVERYBODY_ENVIRONMENT=local")
+	}
+
 	viper.SetEnvPrefix("EVERYBODY")
 	viper.AutomaticEnv()
 
 	found := false
 
 	for _, stage := range STAGES {
-		viper.SetConfigName(stage)
-		if err := viper.ReadInConfig(); err != nil {
-			if !errors.As(err, &viper.ConfigFileNotFoundError{}) {
-				log.Fatal(err)
-			}
-		} else {
-			found = true
-			log.Infof("%s stage에 대한 설정파일을 발견했습니다.", stage)
+		if env == stage {
+			viper.SetConfigName(stage)
+			if err := viper.ReadInConfig(); err != nil {
+				if !errors.As(err, &viper.ConfigFileNotFoundError{}) {
+					log.Fatal(err)
+				}
+			} else {
+				found = true
+				log.Infof("%s stage에 대한 설정파일을 발견했습니다.", stage)
 
-			if err := viper.Unmarshal(Config); err != nil {
-				log.Fatal(err)
+				if err := viper.Unmarshal(Config); err != nil {
+					log.Fatal(err)
+				}
 			}
+			break
 		}
+
 	}
 
 	if !found {
