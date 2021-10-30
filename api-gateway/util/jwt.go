@@ -12,6 +12,8 @@ import (
 	"github.com/depromeet/everybody-backend/api-gateway/config"
 )
 
+//TODO: jwt 인증 절차 전체를 미들웨어?로 빼는 방안 고려 필요
+
 func CreateAccessToken(userId uint64) (string, error) {
 	log.Info("request create access token for userId=", userId)
 

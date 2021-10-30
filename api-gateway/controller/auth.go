@@ -11,7 +11,6 @@ import (
 	"github.com/labstack/echo"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/depromeet/everybody-backend/api-gateway/config"
 	"github.com/depromeet/everybody-backend/api-gateway/model"
 	"github.com/depromeet/everybody-backend/api-gateway/util"
 )
@@ -19,17 +18,14 @@ import (
 type AuthController struct {
 }
 
-func (c AuthController) Init(g *echo.Group) {
-	g.POST("/login", c.Login)
-	g.POST("/signup", c.SignUp)
-}
-
-func (AuthController) Login(c echo.Context) error {
+func Login(c echo.Context) error {
 	data, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
 		log.Error(err)
 		panic(err)
 	}
+	log.Info("Login -> body=", string(data))
+
 	var reqUa model.UserAuth
 	json.Unmarshal([]byte(string(data)), &reqUa)
 
@@ -59,7 +55,7 @@ func (AuthController) Login(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-func (AuthController) SignUp(c echo.Context) error {
+func SignUp(c echo.Context) error {
 	// req body의 password 파싱 후 유효성 확인
 	json_map := make(map[string]interface{})
 	err := json.NewDecoder(c.Request().Body).Decode(&json_map)
@@ -73,41 +69,22 @@ func (AuthController) SignUp(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "password invalid")
 	}
 
+	log.Info("SignUp -> body=", json_map)
+
 	// rest-api 호출
-	url := config.Config.TargetServer.RestApi.Address + "/users"
 	jsonData, err := json.Marshal(json_map)
 	if err != nil {
 		log.Error(err)
 		panic(err)
 	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewReader(jsonData))
-	if err != nil {
-		log.Error(err)
-		panic(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	log.Info("callRestApi -> POST: ", url)
-
-	client := &http.Client{}
-	resp, err := client.Do(req) // TODO: util/httpclient로 대체 필요... 커넥션 풀 및 타임아웃 제어 필요..
-	if err != nil {
-		log.Error(err)
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	// rest-api 호출 결과 처리
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Error(err)
-		panic(err)
-	}
+	req, _ := http.NewRequest("", "", bytes.NewReader(jsonData)) // method and url will be set bottom
+	req.Header.Add("Content-Type", "application/json")
+	code, resBody := callRestApi(c, false, req, "/users", "POST")
 
 	// 성공인 경우, UserAuth 테이블에 user_id/password 로우 추가하고, 성공과 함께 user_id 리턴
-	if resp.StatusCode == http.StatusOK {
+	if code == http.StatusOK {
 		bodyMap := make(map[string]interface{})
-		d := json.NewDecoder(bytes.NewBuffer([]byte(string(data))))
+		d := json.NewDecoder(bytes.NewBuffer([]byte(string(resBody))))
 		d.UseNumber() // "id" 키를 기본 float64가 아닌 uint64로 받기 위해..
 		if err := d.Decode(&bodyMap); err != nil {
 			panic(err)
@@ -122,7 +99,7 @@ func (AuthController) SignUp(c echo.Context) error {
 		return c.JSON(http.StatusOK, ua)
 
 	} else { // restapi 서버에서 응답이 200이 아닌 경우, DB 접근 없이 실패 리턴
-		log.Info(strconv.Itoa(resp.StatusCode) + "//" + string(data))
+		log.Info(strconv.Itoa(code) + " - " + string(resBody))
 		return c.String(http.StatusInternalServerError, "rest-api Request fail...")
 	}
 }
