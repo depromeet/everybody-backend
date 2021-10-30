@@ -36,8 +36,8 @@ jobs:
 
     - name: prepare to deploy
       run: |
-        mkdir -p deploy
-        cp rest deploy/rest
+        mkdir -p deploy/config
+        cp -r rest deploy/rest
         cp -r Procfile deploy/Procfile
         cp -r .ebextensions deploy/.ebextensions
         cp -r config/dev.yml deploy/config/dev.yml
