@@ -1,6 +1,7 @@
 package main
 
 import (
+	"time"
 	"fmt"
 	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
 	"github.com/depromeet/everybody-backend/rest-api/config"
@@ -12,7 +13,6 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 var (
