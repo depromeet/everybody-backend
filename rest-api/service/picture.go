@@ -14,8 +14,9 @@ type pictureService struct {
 
 type PictureServiceInterface interface {
 	SavePicture(userID int, pictureReq *dto.PictureRequest) (*dto.PictureDto, error)
-	GetAllPictures(userID int) (dto.PicturesDto, error)
 	GetPicture(pictureID int) (*dto.PictureDto, error)
+	GetAllPictures(userID int) (dto.PicturesDto, error)
+	GetPictures(albumID int, bodyPart string) (dto.PicturesDto, error)
 }
 
 func NewPictureService(pictureRepo repository.PictureRepositoryInterface) PictureServiceInterface {
@@ -44,6 +45,16 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.PictureRequest)
 	return dto.PictureToDto(p), nil
 }
 
+func (s *pictureService) GetPicture(pictureID int) (*dto.PictureDto, error) {
+	picture, err := s.pictureRepo.Get(pictureID)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	log.Info("하나의 사진 조회 완료")
+	return dto.PictureToDto(picture), nil
+}
+
 // GetAllPictures는 user의 모든 사진들을 조회
 func (s *pictureService) GetAllPictures(userID int) (dto.PicturesDto, error) {
 	pictures, err := s.pictureRepo.GetAllByUserID(userID)
@@ -55,12 +66,24 @@ func (s *pictureService) GetAllPictures(userID int) (dto.PicturesDto, error) {
 	return dto.PicturesToDto(pictures), nil
 }
 
-func (s *pictureService) GetPicture(pictureID int) (*dto.PictureDto, error) {
-	picture, err := s.pictureRepo.Get(pictureID)
+func (s *pictureService) GetPictures(albumID int, bodyPart string) (dto.PicturesDto, error) {
+	// bodyPart가 없다는 것은 특정 앨범 내의 모든 사진들을 조회
+	if bodyPart == "" {
+		pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
+		if err != nil {
+			return nil, err
+		}
+
+		log.Info("특정 앨범 내의 모든 사진들 조회 완료")
+		return dto.PicturesToDto(pictures), nil
+	}
+
+	// albumID와 bodyPart에 맞는 사진들을 조회
+	pictures, err := s.pictureRepo.FindByAlbumIDAndBodyPart(albumID, bodyPart)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	log.Info("하나의 사진 조회 완료")
-	return dto.PictureToDto(picture), nil
+	log.Info("특정 앨범 및 신체 부위에 따른 사진들 조회 완료")
+	return dto.PicturesToDto(pictures), nil
 }

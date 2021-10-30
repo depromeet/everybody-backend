@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -52,14 +53,6 @@ func (au *AlbumUpdate) SetNillableCreatedAt(t *time.Time) *AlbumUpdate {
 // SetUserID sets the "user" edge to the User entity by ID.
 func (au *AlbumUpdate) SetUserID(id int) *AlbumUpdate {
 	au.mutation.SetUserID(id)
-	return au
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (au *AlbumUpdate) SetNillableUserID(id *int) *AlbumUpdate {
-	if id != nil {
-		au = au.SetUserID(*id)
-	}
 	return au
 }
 
@@ -122,12 +115,18 @@ func (au *AlbumUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(au.hooks) == 0 {
+		if err = au.check(); err != nil {
+			return 0, err
+		}
 		affected, err = au.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*AlbumMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = au.check(); err != nil {
+				return 0, err
 			}
 			au.mutation = mutation
 			affected, err = au.sqlSave(ctx)
@@ -167,6 +166,14 @@ func (au *AlbumUpdate) ExecX(ctx context.Context) {
 	if err := au.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (au *AlbumUpdate) check() error {
+	if _, ok := au.mutation.UserID(); au.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
+	}
+	return nil
 }
 
 func (au *AlbumUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -335,14 +342,6 @@ func (auo *AlbumUpdateOne) SetUserID(id int) *AlbumUpdateOne {
 	return auo
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (auo *AlbumUpdateOne) SetNillableUserID(id *int) *AlbumUpdateOne {
-	if id != nil {
-		auo = auo.SetUserID(*id)
-	}
-	return auo
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (auo *AlbumUpdateOne) SetUser(u *User) *AlbumUpdateOne {
 	return auo.SetUserID(u.ID)
@@ -409,12 +408,18 @@ func (auo *AlbumUpdateOne) Save(ctx context.Context) (*Album, error) {
 		node *Album
 	)
 	if len(auo.hooks) == 0 {
+		if err = auo.check(); err != nil {
+			return nil, err
+		}
 		node, err = auo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*AlbumMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = auo.check(); err != nil {
+				return nil, err
 			}
 			auo.mutation = mutation
 			node, err = auo.sqlSave(ctx)
@@ -454,6 +459,14 @@ func (auo *AlbumUpdateOne) ExecX(ctx context.Context) {
 	if err := auo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (auo *AlbumUpdateOne) check() error {
+	if _, ok := auo.mutation.UserID(); auo.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
+	}
+	return nil
 }
 
 func (auo *AlbumUpdateOne) sqlSave(ctx context.Context) (_node *Album, err error) {

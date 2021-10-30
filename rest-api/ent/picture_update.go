@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -80,14 +81,6 @@ func (pu *PictureUpdate) SetUserID(id int) *PictureUpdate {
 	return pu
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (pu *PictureUpdate) SetNillableUserID(id *int) *PictureUpdate {
-	if id != nil {
-		pu = pu.SetUserID(*id)
-	}
-	return pu
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (pu *PictureUpdate) SetUser(u *User) *PictureUpdate {
 	return pu.SetUserID(u.ID)
@@ -117,12 +110,18 @@ func (pu *PictureUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(pu.hooks) == 0 {
+		if err = pu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = pu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PictureMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = pu.check(); err != nil {
+				return 0, err
 			}
 			pu.mutation = mutation
 			affected, err = pu.sqlSave(ctx)
@@ -162,6 +161,14 @@ func (pu *PictureUpdate) ExecX(ctx context.Context) {
 	if err := pu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (pu *PictureUpdate) check() error {
+	if _, ok := pu.mutation.UserID(); pu.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
+	}
+	return nil
 }
 
 func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -343,14 +350,6 @@ func (puo *PictureUpdateOne) SetUserID(id int) *PictureUpdateOne {
 	return puo
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (puo *PictureUpdateOne) SetNillableUserID(id *int) *PictureUpdateOne {
-	if id != nil {
-		puo = puo.SetUserID(*id)
-	}
-	return puo
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (puo *PictureUpdateOne) SetUser(u *User) *PictureUpdateOne {
 	return puo.SetUserID(u.ID)
@@ -387,12 +386,18 @@ func (puo *PictureUpdateOne) Save(ctx context.Context) (*Picture, error) {
 		node *Picture
 	)
 	if len(puo.hooks) == 0 {
+		if err = puo.check(); err != nil {
+			return nil, err
+		}
 		node, err = puo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*PictureMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = puo.check(); err != nil {
+				return nil, err
 			}
 			puo.mutation = mutation
 			node, err = puo.sqlSave(ctx)
@@ -432,6 +437,14 @@ func (puo *PictureUpdateOne) ExecX(ctx context.Context) {
 	if err := puo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (puo *PictureUpdateOne) check() error {
+	if _, ok := puo.mutation.UserID(); puo.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
+	}
+	return nil
 }
 
 func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err error) {
