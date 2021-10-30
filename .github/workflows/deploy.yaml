@@ -1,10 +1,11 @@
-name: deploy rest-api
+name: deploy
 on:
+  workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, cicd]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-18.04
     steps:
     - name: checkout
@@ -19,30 +20,34 @@ jobs:
       uses: 1466587594/get-current-time@v2
       id: current-time
       with:
-        format: YYYYMMDD-HH
-        utcOffset: "+09:00"
+        format: YYYYMMDD-HH-mm-ss
 
-    - name: copy config file
+    - name: Create directories
+      run: |
+        mkdir -p rest-api/deploy
+        mkdir -p api-gateway/deploy
+
+    - name: Copy config file
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
-        aws s3 cp s3://${{ secrets.SECRET_BUCKET }}/dev.yml rest-api/config/
+        aws s3 cp s3://${{ secrets.SECRET_BUCKET }}/config/rest/dev.yml rest-api/config/
+        aws s3 cp s3://${{ secrets.SECRET_BUCKET }}/config/apigw/dev.yml api-gateway/config/
 
-    - name: build rest-api
+    - name: Build rest-api
+      working-directory: rest-api
       run: |
         GOOS=linux GOARCH=amd64 go build -o rest main.go
-      working-directory: rest-api
+
+    - name: Build api-gateway
+      working-directory: api-gateway
+      run: |
+        GOOS=linux GOARCH=amd64 go build -o gw main.go
 
     - name: prepare to deploy
       run: |
-        mkdir -p deploy/config
-        cp -r rest deploy/rest
-        cp -r Procfile deploy/Procfile
-        cp -r .ebextensions deploy/.ebextensions
-        cp -r config/dev.yml deploy/config/dev.yml
-        cd deploy && zip -r deploy.zip .
-      working-directory: rest-api
+        zip -r deploy.zip .
 
       # ref) https://github.com/marketplace/actions/beanstalk-deploy
     - name: deploy to eb
@@ -53,7 +58,7 @@ jobs:
         # secrets.APPLICATION_NAME,ENVIRONMENT_NAME 이렇게 하자...
         application_name: everybody
         environment_name: Everybody-dev
-        version_label: ${{ github.run_id }}
+        version_label: ${{ steps.current-time.outputs.formattedTime }}-${{ github.run_id }}
         region: ap-northeast-2
-        deployment_package: rest-api/deploy/deploy.zip
+        deployment_package: deploy.zip
         # wait_for_environment_recovery: 200
