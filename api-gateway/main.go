@@ -23,18 +23,28 @@ func main() {
 
 	e := echo.New()
 
-	// register API GATEWAY's api...
-	controller.RestApiController{}.Init(e.Group("/restapi"))
-	controller.AuthController{}.Init(e.Group("/auth"))
-
-	// register server health check api
-	e.GET(config.Config.ApiGw.HealthCheckPath, func(c echo.Context) error { // TODO: 연동테스트 완료되면 * 제거
+	// server health check api
+	e.GET(config.Config.ApiGw.HealthCheckPath, func(c echo.Context) error {
 		c.Response().Header().Set("Health-Checked-Time", time.Now().Format(time.RFC3339))
+		log.Info("health check OK...")
 		return c.String(http.StatusOK, "OK")
 	})
 
-	// register app version check api
-	// TODO: TBD
+	// auth apis
+	e.POST("/auth/login", func(c echo.Context) error {
+		return controller.Login(c)
+	})
+	e.POST("/auth/signup", func(c echo.Context) error {
+		return controller.SignUp(c)
+	})
+
+	// picures apis
+	e.POST("/pictures", func(c echo.Context) error {
+		return controller.UploadPicture(c)
+	})
+
+	// fowarding to rest-api server apis
+	controller.RestApiController{}.Init(e.Group("/*"))
 
 	// run server...
 	if err := e.Start(":" + strconv.Itoa(config.Config.ApiGw.Port)); err != nil {
