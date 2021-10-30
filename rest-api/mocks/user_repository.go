@@ -57,3 +57,26 @@ func (_m *UserRepository) FindById(id int) (*ent.User, error) {
 
 	return r0, r1
 }
+
+// Update provides a mock function with given fields: id, user
+func (_m *UserRepository) Update(id int, user *ent.User) (*ent.User, error) {
+	ret := _m.Called(id, user)
+
+	var r0 *ent.User
+	if rf, ok := ret.Get(0).(func(int, *ent.User) *ent.User); ok {
+		r0 = rf(id, user)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ent.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int, *ent.User) error); ok {
+		r1 = rf(id, user)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

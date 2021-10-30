@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -220,14 +221,6 @@ func (ncu *NotificationConfigUpdate) SetUserID(id int) *NotificationConfigUpdate
 	return ncu
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ncu *NotificationConfigUpdate) SetNillableUserID(id *int) *NotificationConfigUpdate {
-	if id != nil {
-		ncu = ncu.SetUserID(*id)
-	}
-	return ncu
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (ncu *NotificationConfigUpdate) SetUser(u *User) *NotificationConfigUpdate {
 	return ncu.SetUserID(u.ID)
@@ -251,12 +244,18 @@ func (ncu *NotificationConfigUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(ncu.hooks) == 0 {
+		if err = ncu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = ncu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*NotificationConfigMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ncu.check(); err != nil {
+				return 0, err
 			}
 			ncu.mutation = mutation
 			affected, err = ncu.sqlSave(ctx)
@@ -296,6 +295,14 @@ func (ncu *NotificationConfigUpdate) ExecX(ctx context.Context) {
 	if err := ncu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ncu *NotificationConfigUpdate) check() error {
+	if _, ok := ncu.mutation.UserID(); ncu.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
+	}
+	return nil
 }
 
 func (ncu *NotificationConfigUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -671,14 +678,6 @@ func (ncuo *NotificationConfigUpdateOne) SetUserID(id int) *NotificationConfigUp
 	return ncuo
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (ncuo *NotificationConfigUpdateOne) SetNillableUserID(id *int) *NotificationConfigUpdateOne {
-	if id != nil {
-		ncuo = ncuo.SetUserID(*id)
-	}
-	return ncuo
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (ncuo *NotificationConfigUpdateOne) SetUser(u *User) *NotificationConfigUpdateOne {
 	return ncuo.SetUserID(u.ID)
@@ -709,12 +708,18 @@ func (ncuo *NotificationConfigUpdateOne) Save(ctx context.Context) (*Notificatio
 		node *NotificationConfig
 	)
 	if len(ncuo.hooks) == 0 {
+		if err = ncuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = ncuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*NotificationConfigMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = ncuo.check(); err != nil {
+				return nil, err
 			}
 			ncuo.mutation = mutation
 			node, err = ncuo.sqlSave(ctx)
@@ -754,6 +759,14 @@ func (ncuo *NotificationConfigUpdateOne) ExecX(ctx context.Context) {
 	if err := ncuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (ncuo *NotificationConfigUpdateOne) check() error {
+	if _, ok := ncuo.mutation.UserID(); ncuo.mutation.UserCleared() && !ok {
+		return errors.New("ent: clearing a required unique edge \"user\"")
+	}
+	return nil
 }
 
 func (ncuo *NotificationConfigUpdateOne) sqlSave(ctx context.Context) (_node *NotificationConfig, err error) {

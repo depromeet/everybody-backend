@@ -33,6 +33,7 @@ func (Picture) Edges() []ent.Edge {
 			Unique(),
 		edge.From("user", User.Type).
 			Ref("picture").
+			Required().
 			Unique(),
 	}
 }

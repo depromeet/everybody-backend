@@ -3,8 +3,9 @@
 package service
 
 import (
-	"github.com/depromeet/everybody-backend/rest-api/mocks"
 	"testing"
+
+	"github.com/depromeet/everybody-backend/rest-api/mocks"
 )
 
 var (
@@ -13,6 +14,7 @@ var (
 	userRepo         *mocks.UserRepository
 	albumRepo        *mocks.AlbumRepositoryInterface
 	pictureRepo      *mocks.PictureRepositoryInterface
+	videoRepo        *mocks.VideoRepositoryInterface
 	pushAdapter      *mocks.PushAdapter
 )
 
@@ -24,5 +26,6 @@ func initialize(t *testing.T) {
 	userRepo = new(mocks.UserRepository)
 	albumRepo = new(mocks.AlbumRepositoryInterface)
 	pictureRepo = new(mocks.PictureRepositoryInterface)
+	videoRepo = new(mocks.VideoRepositoryInterface)
 	pushAdapter = new(mocks.PushAdapter)
 }

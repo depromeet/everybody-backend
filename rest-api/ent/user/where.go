@@ -100,6 +100,13 @@ func Nickname(v string) predicate.User {
 	})
 }
 
+// Motto applies equality check predicate on the "motto" field. It's identical to MottoEQ.
+func Motto(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMotto), v))
+	})
+}
+
 // Height applies equality check predicate on the "height" field. It's identical to HeightEQ.
 func Height(v int) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -229,6 +236,117 @@ func NicknameEqualFold(v string) predicate.User {
 func NicknameContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldNickname), v))
+	})
+}
+
+// MottoEQ applies the EQ predicate on the "motto" field.
+func MottoEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldMotto), v))
+	})
+}
+
+// MottoNEQ applies the NEQ predicate on the "motto" field.
+func MottoNEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldMotto), v))
+	})
+}
+
+// MottoIn applies the In predicate on the "motto" field.
+func MottoIn(vs ...string) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldMotto), v...))
+	})
+}
+
+// MottoNotIn applies the NotIn predicate on the "motto" field.
+func MottoNotIn(vs ...string) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldMotto), v...))
+	})
+}
+
+// MottoGT applies the GT predicate on the "motto" field.
+func MottoGT(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldMotto), v))
+	})
+}
+
+// MottoGTE applies the GTE predicate on the "motto" field.
+func MottoGTE(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldMotto), v))
+	})
+}
+
+// MottoLT applies the LT predicate on the "motto" field.
+func MottoLT(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldMotto), v))
+	})
+}
+
+// MottoLTE applies the LTE predicate on the "motto" field.
+func MottoLTE(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldMotto), v))
+	})
+}
+
+// MottoContains applies the Contains predicate on the "motto" field.
+func MottoContains(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldMotto), v))
+	})
+}
+
+// MottoHasPrefix applies the HasPrefix predicate on the "motto" field.
+func MottoHasPrefix(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldMotto), v))
+	})
+}
+
+// MottoHasSuffix applies the HasSuffix predicate on the "motto" field.
+func MottoHasSuffix(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldMotto), v))
+	})
+}
+
+// MottoEqualFold applies the EqualFold predicate on the "motto" field.
+func MottoEqualFold(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldMotto), v))
+	})
+}
+
+// MottoContainsFold applies the ContainsFold predicate on the "motto" field.
+func MottoContainsFold(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldMotto), v))
 	})
 }
 
@@ -639,6 +757,34 @@ func HasPictureWith(preds ...predicate.Picture) predicate.User {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(PictureInverseTable, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, PictureTable, PictureColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasVideo applies the HasEdge predicate on the "video" edge.
+func HasVideo() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VideoTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, VideoTable, VideoColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasVideoWith applies the HasEdge predicate on the "video" edge with a given conditions (other predicates).
+func HasVideoWith(preds ...predicate.Video) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(VideoInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, VideoTable, VideoColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

@@ -14,6 +14,8 @@ const (
 	FieldID = "id"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
+	// FieldMotto holds the string denoting the motto field in the database.
+	FieldMotto = "motto"
 	// FieldHeight holds the string denoting the height field in the database.
 	FieldHeight = "height"
 	// FieldWeight holds the string denoting the weight field in the database.
@@ -30,6 +32,8 @@ const (
 	EdgeAlbum = "album"
 	// EdgePicture holds the string denoting the picture edge name in mutations.
 	EdgePicture = "picture"
+	// EdgeVideo holds the string denoting the video edge name in mutations.
+	EdgeVideo = "video"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// DevicesTable is the table that holds the devices relation/edge.
@@ -60,12 +64,20 @@ const (
 	PictureInverseTable = "pictures"
 	// PictureColumn is the table column denoting the picture relation/edge.
 	PictureColumn = "user_picture"
+	// VideoTable is the table that holds the video relation/edge.
+	VideoTable = "videos"
+	// VideoInverseTable is the table name for the Video entity.
+	// It exists in this package in order to avoid circular dependency with the "video" package.
+	VideoInverseTable = "videos"
+	// VideoColumn is the table column denoting the video relation/edge.
+	VideoColumn = "user_video"
 )
 
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
 	FieldNickname,
+	FieldMotto,
 	FieldHeight,
 	FieldWeight,
 	FieldKind,
@@ -83,6 +95,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultMotto holds the default value on creation for the "motto" field.
+	DefaultMotto string
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 )
