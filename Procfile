@@ -1,2 +1,2 @@
 rest: ./rest-api/rest
-gw: ./api-gateway/gw
+web: ./api-gateway/gw
