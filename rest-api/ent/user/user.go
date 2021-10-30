@@ -14,6 +14,8 @@ const (
 	FieldID = "id"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
+	// FieldMotto holds the string denoting the motto field in the database.
+	FieldMotto = "motto"
 	// FieldHeight holds the string denoting the height field in the database.
 	FieldHeight = "height"
 	// FieldWeight holds the string denoting the weight field in the database.
@@ -75,6 +77,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldNickname,
+	FieldMotto,
 	FieldHeight,
 	FieldWeight,
 	FieldKind,
@@ -92,6 +95,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultMotto holds the default value on creation for the "motto" field.
+	DefaultMotto string
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 )

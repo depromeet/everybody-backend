@@ -3,7 +3,7 @@ package service
 import (
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
-	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	entUser "github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -19,6 +19,7 @@ var (
 type UserService interface {
 	SignUp(body *dto.SignUpRequest) (*dto.UserDto, error)
 	GetUser(id int) (*dto.UserDto, error)
+	UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.UserDto, error)
 }
 
 func NewUserService(
@@ -50,7 +51,10 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 
 	user, err := s.userRepo.Create(&ent.User{
 		Nickname: body.Nickname,
-		Kind:     user.Kind(body.Kind),
+		Motto:    body.Motto,
+		Height:   body.Height,
+		Weight:   body.Weight,
+		Kind:     entUser.Kind(body.Kind),
 	})
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -82,6 +86,21 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 // GetUser 는 유저 정보를 조회합니다.
 func (s *userService) GetUser(id int) (*dto.UserDto, error) {
 	user, err := s.userRepo.FindById(id)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return dto.UserToDto(user), err
+}
+
+// GetUser 는 유저가 수정할 수 있는 유저 정보의 필드들을 수정합니다.
+func (s *userService) UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.UserDto, error) {
+	user, err := s.userRepo.Update(id, &ent.User{
+		Nickname: body.Nickname,
+		Motto:    body.Motto,
+		Height:   body.Height,
+		Weight:   body.Weight,
+	})
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

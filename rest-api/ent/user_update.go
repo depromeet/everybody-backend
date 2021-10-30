@@ -38,6 +38,20 @@ func (uu *UserUpdate) SetNickname(s string) *UserUpdate {
 	return uu
 }
 
+// SetMotto sets the "motto" field.
+func (uu *UserUpdate) SetMotto(s string) *UserUpdate {
+	uu.mutation.SetMotto(s)
+	return uu
+}
+
+// SetNillableMotto sets the "motto" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableMotto(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetMotto(*s)
+	}
+	return uu
+}
+
 // SetHeight sets the "height" field.
 func (uu *UserUpdate) SetHeight(i int) *UserUpdate {
 	uu.mutation.ResetHeight()
@@ -392,6 +406,13 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldNickname,
 		})
 	}
+	if value, ok := uu.mutation.Motto(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldMotto,
+		})
+	}
 	if value, ok := uu.mutation.Height(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeInt,
@@ -738,6 +759,20 @@ type UserUpdateOne struct {
 // SetNickname sets the "nickname" field.
 func (uuo *UserUpdateOne) SetNickname(s string) *UserUpdateOne {
 	uuo.mutation.SetNickname(s)
+	return uuo
+}
+
+// SetMotto sets the "motto" field.
+func (uuo *UserUpdateOne) SetMotto(s string) *UserUpdateOne {
+	uuo.mutation.SetMotto(s)
+	return uuo
+}
+
+// SetNillableMotto sets the "motto" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableMotto(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetMotto(*s)
+	}
 	return uuo
 }
 
@@ -1117,6 +1152,13 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: user.FieldNickname,
+		})
+	}
+	if value, ok := uuo.mutation.Motto(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldMotto,
 		})
 	}
 	if value, ok := uuo.mutation.Height(); ok {

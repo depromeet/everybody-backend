@@ -2582,6 +2582,7 @@ type UserMutation struct {
 	typ                        string
 	id                         *int
 	nickname                   *string
+	motto                      *string
 	height                     *int
 	addheight                  *int
 	weight                     *int
@@ -2728,6 +2729,42 @@ func (m *UserMutation) OldNickname(ctx context.Context) (v string, err error) {
 // ResetNickname resets all changes to the "nickname" field.
 func (m *UserMutation) ResetNickname() {
 	m.nickname = nil
+}
+
+// SetMotto sets the "motto" field.
+func (m *UserMutation) SetMotto(s string) {
+	m.motto = &s
+}
+
+// Motto returns the value of the "motto" field in the mutation.
+func (m *UserMutation) Motto() (r string, exists bool) {
+	v := m.motto
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMotto returns the old "motto" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldMotto(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldMotto is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldMotto requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMotto: %w", err)
+	}
+	return oldValue.Motto, nil
+}
+
+// ResetMotto resets all changes to the "motto" field.
+func (m *UserMutation) ResetMotto() {
+	m.motto = nil
 }
 
 // SetHeight sets the "height" field.
@@ -3231,9 +3268,12 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.nickname != nil {
 		fields = append(fields, user.FieldNickname)
+	}
+	if m.motto != nil {
+		fields = append(fields, user.FieldMotto)
 	}
 	if m.height != nil {
 		fields = append(fields, user.FieldHeight)
@@ -3257,6 +3297,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case user.FieldNickname:
 		return m.Nickname()
+	case user.FieldMotto:
+		return m.Motto()
 	case user.FieldHeight:
 		return m.Height()
 	case user.FieldWeight:
@@ -3276,6 +3318,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case user.FieldNickname:
 		return m.OldNickname(ctx)
+	case user.FieldMotto:
+		return m.OldMotto(ctx)
 	case user.FieldHeight:
 		return m.OldHeight(ctx)
 	case user.FieldWeight:
@@ -3299,6 +3343,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetNickname(v)
+		return nil
+	case user.FieldMotto:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMotto(v)
 		return nil
 	case user.FieldHeight:
 		v, ok := value.(int)
@@ -3421,6 +3472,9 @@ func (m *UserMutation) ResetField(name string) error {
 	switch name {
 	case user.FieldNickname:
 		m.ResetNickname()
+		return nil
+	case user.FieldMotto:
+		m.ResetMotto()
 		return nil
 	case user.FieldHeight:
 		m.ResetHeight()
