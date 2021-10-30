@@ -53,7 +53,7 @@ jobs:
         # secrets.APPLICATION_NAME,ENVIRONMENT_NAME 이렇게 하자...
         application_name: everybody
         environment_name: Everybody-dev
-        version_label: app-${{ steps.current-time.outputs.formattedTime }}
+        version_label: ${{ github.run_id }}
         region: ap-northeast-2
         deployment_package: rest-api/deploy/deploy.zip
         # wait_for_environment_recovery: 200
