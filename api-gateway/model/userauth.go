@@ -7,16 +7,16 @@ import (
 )
 
 type UserAuth struct {
-	UserId   uint64 `json:"user_id"`
+	UserId   int    `json:"user_id"`
 	Password string `json:"password"`
 }
 
-func GetUserAuth(u uint64) UserAuth {
+func GetUserAuth(u int) UserAuth {
 	sqlStatement := "SELECT user_id, password FROM UserAuth WHERE user_id = ?"
 	conn := util.CreateDBConn()
 	defer conn.Close()
 
-	var userId uint64
+	var userId int
 	var password string
 	err := conn.QueryRow(sqlStatement, u).Scan(&userId, &password)
 	if err != nil {
@@ -33,12 +33,11 @@ func SetUserAuth(ua UserAuth) error {
 
 	result, err := conn.Exec(sqlStatement, ua.UserId, ua.Password)
 	if err != nil {
-		log.Fatal(err)
-		return err
+		log.Fatal("SetUserAuth -> ", err)
 	}
 	n, err := result.RowsAffected()
-	if n != 1 {
-		return err
+	if n != int64(1) || err != nil {
+		log.Fatal("SetUserAuth -> ", err)
 	}
 
 	return nil

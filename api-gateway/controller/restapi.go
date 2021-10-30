@@ -42,24 +42,25 @@ func forwardWithAuthProc(c echo.Context, path string, method string) error {
 	}
 
 	// 인증절차 수행
-	userId := uint64(0)
+	userId := 0
 	if config.Config.ApiGw.AuthEnable {
 		if token == "" {
-			log.Error("Token not exist")
-			return c.String(http.StatusUnauthorized, "Token not exist") // TODO: 에러 리턴 방식 수정 필요
+			log.Error("Token not exist...")
+			return c.String(http.StatusUnauthorized, "Token not exist...")
 		}
 		id, err := util.VerifyAccessToken(token)
 		if err != nil {
-			return c.String(http.StatusForbidden, "Token invalid")
+			log.Error("Token invalid... err=", err)
+			return c.String(http.StatusForbidden, "Token invalid...")
 		}
 		userId = id
-		req.Header.Add("user", strconv.FormatUint(userId, 10)) // to decimal string
+
 	} else {
 		log.Warn("Auth DISABLED... func 'forwardToRestApi' processing with userId=0")
-		req.Header.Add("user", "0") // 인증체크를 안하는 경우 userId를 0으로 넘김..
 	}
+	req.Header.Set("user", strconv.Itoa(userId))
 
-	log.Info("forwardWithAuthProc -> userId=" + strconv.FormatUint(userId, 10) + " path=" + path)
+	log.Info("forwardWithAuthProc -> userId=" + strconv.Itoa(userId) + " path=" + path)
 
 	return c.String(callRestApi(c, false, c.Request(), path, method)) // TODO: true로 바꾸고 싶은데.. 바꾸면 헤더에 접근해버리고, 그러면 바디를 못넣어주는듯?
 }
@@ -74,14 +75,15 @@ func callRestApi(c echo.Context, copyHeader bool, req *http.Request, path string
 	req.URL = newURL
 	req.Method = method
 	req.RequestURI = "" // need reset.. ref: https://stackoverflow.com/questions/19595860/http-request-requesturi-field-when-making-request-in-go
+
 	log.Info("callRestApi -> HTTP "+method+": ", newURL.String())
 
 	// HttpClient 로 실제 앱서버 호출
 	client := &http.Client{}
 	resp, err := client.Do(req) // TODO: util/httpclient로 대체 필요... 커넥션 풀 및 타임아웃 제어 필요..
 	if err != nil {
-		log.Error(err)
-		panic(err)
+		log.Error("callRestApi fail... err=", err)
+		return http.StatusInternalServerError, "callRestApi fail..."
 	}
 	defer resp.Body.Close()
 
@@ -95,11 +97,8 @@ func callRestApi(c echo.Context, copyHeader bool, req *http.Request, path string
 	// 응답 받은 결과 복사 - Body
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Error(err)
+		log.Error("resp.Body read error... err=", err)
 		panic(err)
 	}
-	str := string(data)
-
-	log.Debug(str)
-	return resp.StatusCode, str
+	return resp.StatusCode, string(data)
 }
