@@ -12,6 +12,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 var (
