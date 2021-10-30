@@ -13,7 +13,7 @@ func init() {
 	viper.AddConfigPath(os.Getenv("EVERYBODY_CONFIG_PATH"))
 	env := strings.ToLower(os.Getenv("EVERYBODY_ENVIRONMENT"))
 	if len(env) == 0 {
-		log.Fatal("어떤 환경을 이용해 서버를 띄울지 선택해주세요. e.g. EVERYBODY_ENVIRONMENT=local")
+		log.Warningf("어떤 환경을 이용해 서버를 띄울지 선택해주세요. e.g. EVERYBODY_ENVIRONMENT=local")
 	}
 
 	viper.SetEnvPrefix("EVERYBODY")
