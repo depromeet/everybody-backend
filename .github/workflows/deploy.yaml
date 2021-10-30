@@ -32,8 +32,8 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
-        aws s3 cp s3://${{ secrets.SECRET_BUCKET }}/config/rest/dev.yml rest-api/config/
-        aws s3 cp s3://${{ secrets.SECRET_BUCKET }}/config/apigw/dev.yml api-gateway/config/
+        echo ${{ secrets.REST_CONFIG_DEV }} | base64 --decode > rest-api/config/dev.yml
+        echo ${{ secrets.GATEWAY_CONFIG_DEV }} | base64 --decode > api-gateway/config/dev.yml
 
     - name: Build rest-api
       working-directory: rest-api
