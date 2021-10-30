@@ -1,6 +1,6 @@
 name: deploy rest-api
 on:
-  pull_request:
+  push:
     branches: [main]
 
 jobs:
@@ -27,20 +27,20 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
-        aws s3 cp s3://${{ secrets.BUCKET }}/rest-api/local.yml rest-api/config/
+        aws s3 cp s3://${{ secrets.SECRET_BUCKET }}/dev.yml rest-api/config/
 
     - name: build rest-api
       run: |
-        GOOS=linux GOARCH=amd64 go build -o application main.go
+        GOOS=linux GOARCH=amd64 go build -o rest main.go
       working-directory: rest-api
 
     - name: prepare to deploy
       run: |
         mkdir -p deploy
-        cp application deploy/application
+        cp rest deploy/rest
         cp -r Procfile deploy/Procfile
         cp -r .ebextensions deploy/.ebextensions
-        cp -r config/local.yml deploy/local.yml
+        cp -r config/dev.yml deploy/config/dev.yml
         cd deploy && zip -r deploy.zip .
       working-directory: rest-api
 
@@ -51,8 +51,8 @@ jobs:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         # secrets.APPLICATION_NAME,ENVIRONMENT_NAME 이렇게 하자...
-        application_name: rest-api
-        environment_name: rest
+        application_name: everybody
+        environment_name: Everybody-dev
         version_label: app-${{ steps.current-time.outputs.formattedTime }}
         region: ap-northeast-2
         deployment_package: rest-api/deploy/deploy.zip
