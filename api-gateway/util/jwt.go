@@ -21,7 +21,7 @@ func CreateAccessToken(userId int) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 
-	claims["exp"] = time.Now().Add(time.Minute * 10).Unix() // access 토큰의 유효시간은 발급 순간부터 10분
+	claims["exp"] = time.Now().Add(time.Duration(config.Config.ApiGw.AccessTokenExpireTimeMin * 60000000000)).Unix() // 60000000000ns = 1min = time.Minute
 	claims["user_id"] = strconv.Itoa(userId)
 
 	encToken, err := token.SignedString([]byte(config.Config.ApiGw.AccessTokenSecret))

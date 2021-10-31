@@ -3,6 +3,7 @@ apiGw:
   healthCheckPath: /health
   authEnable: true
   accessTokenSecret: 123123
+  accessTokenExpireTimeMin: 1
 
 db:
   mySql:
