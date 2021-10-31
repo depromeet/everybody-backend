@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -88,9 +89,9 @@ func SignUp(c echo.Context) error {
 	log.Info("SignUp -> body=", reqMap)
 
 	// check password validation
-	password := reqMap["password"].(string)
-	if password == "" {
-		log.Error("password invalid...")
+	password := reqMap["password"]
+	if password == nil || reflect.TypeOf(password) != reflect.TypeOf("") || password == "" {
+		log.Error("password invalid... password=", password)
 		return c.String(http.StatusBadRequest, "password invalid")
 	}
 
@@ -122,7 +123,7 @@ func SignUp(c echo.Context) error {
 			return c.String(http.StatusBadRequest, "resBody parse error...")
 		}
 		ua.UserId = userId
-		ua.Password = password
+		ua.Password = password.(string)
 		model.SetUserAuth(ua)
 		return c.JSON(http.StatusOK, ua) // 성공 시 user_id와 password만 리턴
 
