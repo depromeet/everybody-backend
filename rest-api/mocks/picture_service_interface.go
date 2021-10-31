@@ -12,13 +12,13 @@ type PictureServiceInterface struct {
 	mock.Mock
 }
 
-// GetAllPictures provides a mock function with given fields: userID
-func (_m *PictureServiceInterface) GetAllPictures(userID int) (dto.PicturesDto, error) {
-	ret := _m.Called(userID)
+// GetAllPictures provides a mock function with given fields: userID, pictureReq
+func (_m *PictureServiceInterface) GetAllPictures(userID int, pictureReq *dto.GetPictureRequest) (dto.PicturesDto, error) {
+	ret := _m.Called(userID, pictureReq)
 
 	var r0 dto.PicturesDto
-	if rf, ok := ret.Get(0).(func(int) dto.PicturesDto); ok {
-		r0 = rf(userID)
+	if rf, ok := ret.Get(0).(func(int, *dto.GetPictureRequest) dto.PicturesDto); ok {
+		r0 = rf(userID, pictureReq)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(dto.PicturesDto)
@@ -26,8 +26,8 @@ func (_m *PictureServiceInterface) GetAllPictures(userID int) (dto.PicturesDto, 
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(userID)
+	if rf, ok := ret.Get(1).(func(int, *dto.GetPictureRequest) error); ok {
+		r1 = rf(userID, pictureReq)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -58,35 +58,12 @@ func (_m *PictureServiceInterface) GetPicture(pictureID int) (*dto.PictureDto, e
 	return r0, r1
 }
 
-// GetPictures provides a mock function with given fields: albumID, bodyPart
-func (_m *PictureServiceInterface) GetPictures(albumID int, bodyPart string) (dto.PicturesDto, error) {
-	ret := _m.Called(albumID, bodyPart)
-
-	var r0 dto.PicturesDto
-	if rf, ok := ret.Get(0).(func(int, string) dto.PicturesDto); ok {
-		r0 = rf(albumID, bodyPart)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(dto.PicturesDto)
-		}
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(int, string) error); ok {
-		r1 = rf(albumID, bodyPart)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // SavePicture provides a mock function with given fields: userID, pictureReq
-func (_m *PictureServiceInterface) SavePicture(userID int, pictureReq *dto.PictureRequest) (*dto.PictureDto, error) {
+func (_m *PictureServiceInterface) SavePicture(userID int, pictureReq *dto.CreatePictureRequest) (*dto.PictureDto, error) {
 	ret := _m.Called(userID, pictureReq)
 
 	var r0 *dto.PictureDto
-	if rf, ok := ret.Get(0).(func(int, *dto.PictureRequest) *dto.PictureDto); ok {
+	if rf, ok := ret.Get(0).(func(int, *dto.CreatePictureRequest) *dto.PictureDto); ok {
 		r0 = rf(userID, pictureReq)
 	} else {
 		if ret.Get(0) != nil {
@@ -95,7 +72,7 @@ func (_m *PictureServiceInterface) SavePicture(userID int, pictureReq *dto.Pictu
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int, *dto.PictureRequest) error); ok {
+	if rf, ok := ret.Get(1).(func(int, *dto.CreatePictureRequest) error); ok {
 		r1 = rf(userID, pictureReq)
 	} else {
 		r1 = ret.Error(1)

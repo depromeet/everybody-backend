@@ -26,7 +26,7 @@ func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
 		return errors.WithStack(err)
 	}
 
-	pictureReq := new(dto.PictureRequest)
+	pictureReq := new(dto.CreatePictureRequest)
 	err = ctx.BodyParser(pictureReq)
 	if err != nil {
 		return errors.WithStack(err)
@@ -66,18 +66,18 @@ func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
 		return errors.WithStack(err)
 	}
 
-	pictureQueryString := new(dto.PictureQueryString)
-	err = ctx.QueryParser(pictureQueryString)
+	pictureReq := new(dto.GetPictureRequest)
+	err = ctx.QueryParser(pictureReq)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	// query string으로 uploader가 없다면 잘못된 요청
-	if len(pictureQueryString.Uploader) == 0 {
+	// query string으로 uploader, album이 둘 다 없다면 잘못된 요청
+	if len(pictureReq.Uploader) == 0 && len(pictureReq.Album) == 0 {
 		return errors.WithStack(errors.New("적절한 query string으로 요청해주세요"))
 	}
 
-	pictures, err := h.pictureService.GetAllPictures(userID, pictureQueryString)
+	pictures, err := h.pictureService.GetAllPictures(userID, pictureReq)
 	if err != nil {
 		return errors.WithStack(err)
 	}

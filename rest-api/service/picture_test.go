@@ -26,7 +26,7 @@ func TestPictureServiceSave(t *testing.T) {
 		}
 
 		pictureRepo.On("Save", mock.AnythingOfType("*ent.Picture")).Return(expectedPicture, nil)
-		picture, err := pictureSvc.SavePicture(1, &dto.PictureRequest{})
+		picture, err := pictureSvc.SavePicture(1, &dto.CreatePictureRequest{})
 		assert.NoError(t, err)
 		assert.Equal(t, dto.PictureToDto(expectedPicture), picture)
 	})
@@ -39,28 +39,28 @@ func TestPictureServiceGetAll(t *testing.T) {
 
 	t.Run("유저 전체 사진 조회 성공", func(t *testing.T) {
 		pictureRepo.On("GetAllByUserID", mock.AnythingOfType("int")).Return(expectedPictures, nil)
-		pictureQueryString := new(dto.PictureQueryString)
-		pictureQueryString.Uploader = "1"
-		pictures, err := pictureSvc.GetAllPictures(1, pictureQueryString)
+		pictureReq := new(dto.GetPictureRequest)
+		pictureReq.Uploader = "1"
+		pictures, err := pictureSvc.GetAllPictures(1, pictureReq)
 		assert.NoError(t, err)
 		assert.Equal(t, dto.PicturesToDto(expectedPictures), pictures)
 	})
 
 	t.Run("특정 앨범 내의 사진들 조회 성공", func(t *testing.T) {
 		pictureRepo.On("GetAllByAlbumID", mock.AnythingOfType("int"), mock.AnythingOfType("string")).Return(expectedPictures, nil)
-		pictureQueryString := new(dto.PictureQueryString)
-		pictureQueryString.Album = "1"
-		pictures, err := pictureSvc.GetAllPictures(1, pictureQueryString)
+		pictureReq := new(dto.GetPictureRequest)
+		pictureReq.Album = "1"
+		pictures, err := pictureSvc.GetAllPictures(1, pictureReq)
 		assert.NoError(t, err)
 		assert.Equal(t, dto.PicturesToDto(expectedPictures), pictures)
 	})
 
 	t.Run("특정 앨범 및 신체 부위의 사진들 조회 성공", func(t *testing.T) {
 		pictureRepo.On("FindByAlbumIDAndBodyPart", mock.AnythingOfType("int"), mock.AnythingOfType("string")).Return(expectedPictures, nil)
-		pictureQueryString := new(dto.PictureQueryString)
-		pictureQueryString.Album = "1"
-		pictureQueryString.BodyPart = "body"
-		pictures, err := pictureSvc.GetAllPictures(1, pictureQueryString)
+		pictureReq := new(dto.GetPictureRequest)
+		pictureReq.Album = "1"
+		pictureReq.BodyPart = "body"
+		pictures, err := pictureSvc.GetAllPictures(1, pictureReq)
 		assert.NoError(t, err)
 		assert.Equal(t, dto.PicturesToDto(expectedPictures), pictures)
 	})
