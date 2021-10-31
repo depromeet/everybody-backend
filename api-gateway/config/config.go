@@ -62,5 +62,9 @@ type config struct {
 			Address string `yaml:"address"`
 			Prefix  string `yaml:"prefix"`
 		} `yaml:"restApi"`
+		LambdaImageUpload struct {
+			Address string `yaml:"address"`
+			Method  string `yaml:"method"`
+		} `yaml:"lambdaImageUpload"`
 	} `yaml:"targetServer"`
 }

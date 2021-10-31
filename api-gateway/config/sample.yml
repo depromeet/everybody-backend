@@ -16,3 +16,6 @@ targetServer:
   restApi: 
     address: http://localhost:8080/health
     prefix: restapi
+  lambdaImageUpload:
+    address: http://localhost:8080/health
+    method: POST

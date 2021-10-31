@@ -94,7 +94,7 @@ func SignUp(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "password invalid")
 	}
 
-	// rest-api 호출
+	// rest-api 호출 - 사용자에게 받은 body를 그대로 넘김
 	reqMapByte, err := json.Marshal(reqMap)
 	if err != nil {
 		log.Error(err)
@@ -102,9 +102,9 @@ func SignUp(c echo.Context) error {
 	}
 	req, _ := http.NewRequest("", "", bytes.NewReader(reqMapByte)) // method and url will be set bottom
 	req.Header.Set("Content-Type", "application/json")
-	code, resBody := callRestApi(c, false, req, "/users", "POST")
+	code, _, resBody := callRestApi(c, req, "/users", "POST")
 
-	// 성공인 경우, UserAuth 테이블에 user_id/password 로우 추가하고, 성공과 함께 user_id 리턴
+	// 성공인 경우, UserAuth 테이블에 삽입하고, user_id/password만 리턴해줌
 	if code == http.StatusOK {
 		d := json.NewDecoder(strings.NewReader(resBody))
 		d.UseNumber()
@@ -124,10 +124,10 @@ func SignUp(c echo.Context) error {
 		ua.UserId = userId
 		ua.Password = password
 		model.SetUserAuth(ua)
-		return c.JSON(http.StatusOK, ua)
+		return c.JSON(http.StatusOK, ua) // 성공 시 user_id와 password만 리턴
 
-	} else { // restapi 서버에서 응답이 200이 아닌 경우, DB 접근 없이 실패 리턴
+	} else { // restapi 서버에서 응답이 200이 아닌 경우, DB 접근x
 		log.Error("rest-api Request fail... code=" + strconv.Itoa(code) + " resBody=" + resBody)
-		return c.String(http.StatusInternalServerError, "rest-api Request fail...")
+		return c.String(code, resBody) // 실패 시 rest-api로부터 받은 실패코드와 메세지를 그대로 리턴해줌
 	}
 }
