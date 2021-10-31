@@ -3,12 +3,11 @@ package handler
 import (
 	"strconv"
 
-	"github.com/pkg/errors"
-
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pkg/errors"
 )
 
 type PictureHandler struct {
@@ -43,8 +42,8 @@ func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
 
 func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
 	param := util.GetParams(ctx, "picture_id")
-	if param == "" {
-		return errors.New("picture_id params should be provided")
+	if len(param) == 0 {
+		return errors.WithStack(errors.New("picture_id params를 입력해주세요"))
 	}
 
 	pictureID, err := strconv.Atoi(param)
@@ -60,36 +59,25 @@ func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
 	return ctx.JSON(picture)
 }
 
-// GetAllPictures는 user가 가지고 있는 모든 사진 조회
+// GetAllPictures는 query string에 따른 사진들 조회(uploader=? / album=?&body_part=?))
 func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	pictures, err := h.pictureService.GetAllPictures(userID)
+	pictureQueryString := new(dto.PictureQueryString)
+	err = ctx.QueryParser(pictureQueryString)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	return ctx.JSON(pictures)
-}
-
-// GetPictures는 특정 앨범의 특정 신체 부위의 사진 조회(영상 만들때도 필요)
-func (h *PictureHandler) GetPictures(ctx *fiber.Ctx) error {
-	albumQuery := util.GetQueryParams(ctx, "album_id")
-	if albumQuery == "" {
-		return errors.New("album_id query param should be provided")
+	// query string으로 uploader가 없다면 잘못된 요청
+	if len(pictureQueryString.Uploader) == 0 {
+		return errors.WithStack(errors.New("적절한 query string으로 요청해주세요"))
 	}
 
-	albumID, err := strconv.Atoi(albumQuery)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	bodyPartQuery := util.GetQueryParams(ctx, "body_part")
-
-	pictures, err := h.pictureService.GetPictures(albumID, bodyPartQuery)
+	pictures, err := h.pictureService.GetAllPictures(userID, pictureQueryString)
 	if err != nil {
 		return errors.WithStack(err)
 	}

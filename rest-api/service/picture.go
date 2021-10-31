@@ -1,6 +1,8 @@
 package service
 
 import (
+	"strconv"
+
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
@@ -15,8 +17,7 @@ type pictureService struct {
 type PictureServiceInterface interface {
 	SavePicture(userID int, pictureReq *dto.PictureRequest) (*dto.PictureDto, error)
 	GetPicture(pictureID int) (*dto.PictureDto, error)
-	GetAllPictures(userID int) (dto.PicturesDto, error)
-	GetPictures(albumID int, bodyPart string) (dto.PicturesDto, error)
+	GetAllPictures(userID int, pictureQueryString *dto.PictureQueryString) (dto.PicturesDto, error)
 }
 
 func NewPictureService(pictureRepo repository.PictureRepositoryInterface) PictureServiceInterface {
@@ -55,35 +56,45 @@ func (s *pictureService) GetPicture(pictureID int) (*dto.PictureDto, error) {
 	return dto.PictureToDto(picture), nil
 }
 
-// GetAllPictures는 user의 모든 사진들을 조회
-func (s *pictureService) GetAllPictures(userID int) (dto.PicturesDto, error) {
-	pictures, err := s.pictureRepo.GetAllByUserID(userID)
+// GetAllPictures는 query string으로 오는 uploader, albumID, bodyPart에 맞는 모든 사진들을 조회
+func (s *pictureService) GetAllPictures(userID int, pictureQueryString *dto.PictureQueryString) (dto.PicturesDto, error) {
+	// albumID로 사진 조회
+	if len(pictureQueryString.Album) > 0 {
+		albumID, err := strconv.Atoi(pictureQueryString.Album)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		// albumID와 bodyPart로 사진 조회
+		if len(pictureQueryString.BodyPart) > 0 {
+			pictures, err := s.pictureRepo.FindByAlbumIDAndBodyPart(albumID, pictureQueryString.BodyPart)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
+
+			log.Info("특정 앨범과 신체 부위에 맞는 사진들 조회")
+			return dto.PicturesToDto(pictures), nil
+		}
+		pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		log.Info("특정 앨범의 사진들 조회")
+		return dto.PicturesToDto(pictures), nil
+	}
+
+	uploaderID, err := strconv.Atoi(pictureQueryString.Uploader)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	pictures, err := s.pictureRepo.GetAllByUserID(uploaderID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
 	log.Info("사용자의 모든 사진들을 조회 완료")
-	return dto.PicturesToDto(pictures), nil
-}
 
-func (s *pictureService) GetPictures(albumID int, bodyPart string) (dto.PicturesDto, error) {
-	// bodyPart가 없다는 것은 특정 앨범 내의 모든 사진들을 조회
-	if bodyPart == "" {
-		pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
-		if err != nil {
-			return nil, err
-		}
-
-		log.Info("특정 앨범 내의 모든 사진들 조회 완료")
-		return dto.PicturesToDto(pictures), nil
-	}
-
-	// albumID와 bodyPart에 맞는 사진들을 조회
-	pictures, err := s.pictureRepo.FindByAlbumIDAndBodyPart(albumID, bodyPart)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	log.Info("특정 앨범 및 신체 부위에 따른 사진들 조회 완료")
 	return dto.PicturesToDto(pictures), nil
 }

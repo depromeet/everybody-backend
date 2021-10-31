@@ -61,9 +61,8 @@ func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {
 func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) {
 	group := app.Group("/pictures")
 	group.Post("", pictureHandler.SavePicture)
+	// query string으로 구분(uploader=?&album=?&body_part=?)
 	group.Get("", pictureHandler.GetAllPictures)
-	// /pictures/filter?album_id={album_id}&body_part={body_part}
-	group.Get("/filter", pictureHandler.GetPictures)
 	group.Get("/:picture_id", pictureHandler.GetPicture)
 }
 
