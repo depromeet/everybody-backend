@@ -7,17 +7,23 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/cloudfront/sign"
 	"github.com/depromeet/everybody-backend/rest-api/config"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/depromeet/everybody-backend/rest-api/ent"
+	log "github.com/sirupsen/logrus"
 )
 
-type PictureRequest struct {
+type CreatePictureRequest struct {
 	ID       int    `json:"id"`
 	AlbumID  int    `json:"album_id"`
 	BodyPart string `json:"body_part"`
 	// Gateway에서 image key 값도 같이 받음
 	Key string `json:"key"`
+}
+
+// 사진 조회할 때 query string으로 오는 것 처리
+type GetPictureRequest struct {
+	Uploader string `query:"uploader"`
+	Album    string `query:"album"`
+	BodyPart string `query:"body_part"`
 }
 
 // type PictureMultiPart struct {
