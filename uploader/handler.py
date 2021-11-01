@@ -1,6 +1,7 @@
 import base64
 import io
 import json
+import time
 import traceback
 import uuid
 import boto3
@@ -26,10 +27,13 @@ class Multipart:
 # https://devlog-wjdrbs96.tistory.com/331
 def handle(event, context):
     try:
-        print(event)
+        # print(event)
+        start_handle_time = time.time()
         user = event['headers']['user']
         body = base64.b64decode(event['body'])
-        print('body', body)
+        finish_base64_decode_time = time.time()
+        print(f'Elapsed(base64 디코딩 완료): {finish_base64_decode_time - start_handle_time}')
+        # print('body', body)
         boundary = event['headers']['content-type']
         print('boundary', boundary)
         multipart_body = decoder.MultipartDecoder(body, boundary)
@@ -37,7 +41,7 @@ def handle(event, context):
         keys = []
 
         for item in multipart_body.parts:
-            print('item', item)
+            # print('item', item)
             print('item.headers', item.headers)
 
             disposition = item.headers[b'Content-Disposition']
@@ -53,6 +57,9 @@ def handle(event, context):
                 key = str(uuid.uuid4())
                 print(f'{part.filename}을 업로드합니다.')
                 resized_result = generate_thumbnail(part.content)
+                finish_resize_time = time.time()
+                print(f'Elapsed(리사이징 완료): {finish_resize_time - start_handle_time}')
+                
                 for w, img in resized_result.items():
                     tmp_file = io.BytesIO()
                     img.save(tmp_file, 'png', optimize=True)
@@ -62,10 +69,15 @@ def handle(event, context):
                         Key=f'{user}/{OUTPUT_OBJECT_PREFIX}{w}/{key}',
                         Body=tmp_file.getvalue(),
                     )
+                    finish_upload_time = time.time()
+                    print(f'Elapsed({w} 크기의 사진 업로드 완료): {finish_upload_time - start_handle_time}')
                 keys.append(key)
 
             else:
                 print(f'필드명이 image가 아님: {part.name}')
+
+        finish_request_time = time.time()
+        print(f'Elapsed(요청 처리 완료): {finish_request_time - start_handle_time}')
 
         return {
             'statusCode': 200,
