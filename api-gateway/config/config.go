@@ -41,10 +41,11 @@ var Config *config
 
 type config struct {
 	ApiGw struct {
-		Port              int    `yaml:"port"`
-		HealthCheckPath   string `yaml:"healthCheckPath"`
-		AuthEnable        bool   `yaml:"authEnable"`
-		AccessTokenSecret string `yaml:"accessToeknSecret"`
+		Port                     int    `yaml:"port"`
+		HealthCheckPath          string `yaml:"healthCheckPath"`
+		AuthEnable               bool   `yaml:"authEnable"`
+		AccessTokenSecret        string `yaml:"accessToeknSecret"`
+		AccessTokenExpireTimeMin int64  `yaml:"accessTokenExpireTimeMin"`
 	} `yaml:"apiGw"`
 
 	DB struct {
@@ -62,5 +63,9 @@ type config struct {
 			Address string `yaml:"address"`
 			Prefix  string `yaml:"prefix"`
 		} `yaml:"restApi"`
+		LambdaImageUpload struct {
+			Address string `yaml:"address"`
+			Method  string `yaml:"method"`
+		} `yaml:"lambdaImageUpload"`
 	} `yaml:"targetServer"`
 }

@@ -3,6 +3,7 @@ package util
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,14 +15,14 @@ import (
 
 //TODO: jwt 인증 절차 전체를 미들웨어?로 빼는 방안 고려 필요
 
-func CreateAccessToken(userId uint64) (string, error) {
+func CreateAccessToken(userId int) (string, error) {
 	log.Info("request create access token for userId=", userId)
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 
-	claims["exp"] = time.Now().Add(time.Minute * 10).Unix() // access 토큰의 유효시간은 발급 순간부터 10분
-	claims["user_id"] = userId
+	claims["exp"] = time.Now().Add(time.Duration(config.Config.ApiGw.AccessTokenExpireTimeMin * 60000000000)).Unix() // 60000000000ns = 1min = time.Minute
+	claims["user_id"] = strconv.Itoa(userId)
 
 	encToken, err := token.SignedString([]byte(config.Config.ApiGw.AccessTokenSecret))
 	if err != nil {
@@ -30,11 +31,11 @@ func CreateAccessToken(userId uint64) (string, error) {
 	}
 	encToken = "Bearer " + encToken
 
-	log.Info("Token Decoding Success -> userId=", userId)
+	log.Info("Token create Success -> userId=", userId)
 	return encToken, nil
 }
 
-func VerifyAccessToken(t string) (uint64, error) {
+func VerifyAccessToken(t string) (int, error) {
 	tokenTypePrefix := "Bearer "
 	if !strings.HasPrefix(t, tokenTypePrefix) {
 		return 0, fmt.Errorf("token type invalid")
@@ -56,10 +57,14 @@ func VerifyAccessToken(t string) (uint64, error) {
 	// 토큰 유효성 확인
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return 0, fmt.Errorf("token not invalid")
+		return 0, fmt.Errorf("token not valid")
 	}
 
-	userId := uint64(claims["user_id"].(float64)) // TODO: 이렇게 타입변환해도 괜찮나? 숫자가 커졌을 때도 문제없는지 확인필요..
-	log.Info("token verifed userId=", userId)
+	userId, err := strconv.Atoi(claims["user_id"].(string))
+	if err != nil {
+		return 0, fmt.Errorf("token not valid")
+	}
+
+	log.Info("token verified userId=", userId)
 	return userId, nil
 }

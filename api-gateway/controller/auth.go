@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo"
 	log "github.com/sirupsen/logrus"
@@ -19,16 +20,32 @@ type AuthController struct {
 }
 
 func Login(c echo.Context) error {
+	// read json body
 	data, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
 		log.Error(err)
 		panic(err)
 	}
-	log.Info("Login -> body=", string(data))
+	d := json.NewDecoder(strings.NewReader(string(data)))
+	d.UseNumber()
+	var reqMap map[string]interface{}
+	if err := d.Decode(&reqMap); err != nil {
+		log.Error("json body parse error... bodyStr=", string(data), "\nerr=", err)
+		return c.String(http.StatusBadRequest, "json body parse error...")
+	}
+	log.Info("Login -> body=", reqMap)
 
+	// make UserAuth Obj
 	var reqUa model.UserAuth
-	json.Unmarshal([]byte(string(data)), &reqUa)
+	userId, err := strconv.Atoi(reqMap["user_id"].(json.Number).String())
+	if err != nil {
+		log.Error("json body parse error... bodyStr=", string(data), "\nerr=", err)
+		return c.String(http.StatusBadRequest, "json body parse error...")
+	}
+	reqUa.UserId = userId
+	reqUa.Password = reqMap["password"].(string)
 
+	// access to DB
 	ua := model.GetUserAuth(reqUa.UserId)
 	if ua.UserId < 1 {
 		log.Error("user not found... req=", reqUa)
@@ -51,55 +68,67 @@ func Login(c echo.Context) error {
 	res := map[string]interface{}{
 		"access_token": token,
 	}
-	log.Info("login ok... userId=", strconv.FormatUint(ua.UserId, 10)) // to decimal string
+	log.Info("Login ok... userId=", ua.UserId)
 	return c.JSON(http.StatusOK, res)
 }
 
 func SignUp(c echo.Context) error {
-	// req body의 password 파싱 후 유효성 확인
-	json_map := make(map[string]interface{})
-	err := json.NewDecoder(c.Request().Body).Decode(&json_map)
-	if err != nil {
-		log.Error("json parse error", err)
-		return c.String(http.StatusBadRequest, "json parse error")
-	}
-	password := json_map["password"]
-	if password == nil || reflect.TypeOf(password).Kind() != reflect.String || password == "" {
-		log.Error("password invalid")
-		return c.String(http.StatusBadRequest, "password invalid")
-	}
-
-	log.Info("SignUp -> body=", json_map)
-
-	// rest-api 호출
-	jsonData, err := json.Marshal(json_map)
+	// read json body
+	data, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
 		log.Error(err)
 		panic(err)
 	}
-	req, _ := http.NewRequest("", "", bytes.NewReader(jsonData)) // method and url will be set bottom
-	req.Header.Add("Content-Type", "application/json")
-	code, resBody := callRestApi(c, false, req, "/users", "POST")
+	d := json.NewDecoder(strings.NewReader(string(data)))
+	d.UseNumber()
+	var reqMap map[string]interface{}
+	if err := d.Decode(&reqMap); err != nil {
+		log.Error("json body parse error... bodyStr=", string(data), "\nerr=", err)
+		return c.String(http.StatusBadRequest, "json body parse error...")
+	}
+	log.Info("SignUp -> body=", reqMap)
 
-	// 성공인 경우, UserAuth 테이블에 user_id/password 로우 추가하고, 성공과 함께 user_id 리턴
+	// check password validation
+	password := reqMap["password"]
+	if password == nil || reflect.TypeOf(password) != reflect.TypeOf("") || password == "" {
+		log.Error("password invalid... password=", password)
+		return c.String(http.StatusBadRequest, "password invalid")
+	}
+
+	// rest-api 호출 - 사용자에게 받은 body를 그대로 넘김
+	reqMapByte, err := json.Marshal(reqMap)
+	if err != nil {
+		log.Error(err)
+		panic(err)
+	}
+	req, _ := http.NewRequest("", "", bytes.NewReader(reqMapByte)) // method and url will be set bottom
+	req.Header.Set("Content-Type", "application/json")
+	code, _, resBody := callRestApi(c, req, "/users", "POST")
+
+	// 성공인 경우, UserAuth 테이블에 삽입하고, user_id/password만 리턴해줌
 	if code == http.StatusOK {
-		bodyMap := make(map[string]interface{})
-		d := json.NewDecoder(bytes.NewBuffer([]byte(string(resBody))))
-		d.UseNumber() // "id" 키를 기본 float64가 아닌 uint64로 받기 위해..
-		if err := d.Decode(&bodyMap); err != nil {
-			panic(err)
+		d := json.NewDecoder(strings.NewReader(resBody))
+		d.UseNumber()
+		resMap := make(map[string]interface{})
+		if err := d.Decode(&resMap); err != nil {
+			log.Error("resBody parse error... resBody=", resBody, "\nerr=", err)
+			return c.String(http.StatusBadRequest, "resBody parse error...")
 		}
 
 		// UserAuth 테이블에 삽입
 		var ua model.UserAuth
-		userId, _ := strconv.ParseUint(string(bodyMap["id"].(json.Number)), 10, 64)
+		userId, err := strconv.Atoi(resMap["id"].(json.Number).String())
+		if err != nil {
+			log.Error("resBody parse error... resBody=", resBody, "\nerr=", err)
+			return c.String(http.StatusBadRequest, "resBody parse error...")
+		}
 		ua.UserId = userId
 		ua.Password = password.(string)
 		model.SetUserAuth(ua)
-		return c.JSON(http.StatusOK, ua)
+		return c.JSON(http.StatusOK, ua) // 성공 시 user_id와 password만 리턴
 
-	} else { // restapi 서버에서 응답이 200이 아닌 경우, DB 접근 없이 실패 리턴
-		log.Info(strconv.Itoa(code) + " - " + string(resBody))
-		return c.String(http.StatusInternalServerError, "rest-api Request fail...")
+	} else { // restapi 서버에서 응답이 200이 아닌 경우, DB 접근x
+		log.Error("rest-api Request fail... code=" + strconv.Itoa(code) + " resBody=" + resBody)
+		return c.String(code, resBody) // 실패 시 rest-api로부터 받은 실패코드와 메세지를 그대로 리턴해줌
 	}
 }
