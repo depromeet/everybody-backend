@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
 	"github.com/depromeet/everybody-backend/rest-api/config"
 	_ "github.com/depromeet/everybody-backend/rest-api/config"
@@ -12,7 +14,6 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
-	"time"
 )
 
 var (
@@ -67,7 +68,7 @@ func initialize() {
 	deviceService = service.NewDeviceService(deviceRepo)
 	userService = service.NewUserService(userRepo, notificationService, deviceService)
 	albumService = service.NewAlbumService(albumRepo, pictureRepo)
-	pictureService = service.NewPictureService(pictureRepo)
+	pictureService = service.NewPictureService(pictureRepo, albumRepo)
 	videoService = service.NewVideoService(videoRepo)
 
 	userHandler = handler.NewUserHandler(userService)

@@ -12,22 +12,35 @@ import (
 
 type pictureService struct {
 	pictureRepo repository.PictureRepositoryInterface
+	albumRepo   repository.AlbumRepositoryInterface
 }
 
 type PictureServiceInterface interface {
 	SavePicture(userID int, pictureReq *dto.CreatePictureRequest) (*dto.PictureDto, error)
-	GetPicture(pictureID int) (*dto.PictureDto, error)
+	GetPicture(userID, pictureID int) (*dto.PictureDto, error)
 	GetAllPictures(userID int, pictureReq *dto.GetPictureRequest) (dto.PicturesDto, error)
 }
 
-func NewPictureService(pictureRepo repository.PictureRepositoryInterface) PictureServiceInterface {
+func NewPictureService(pictureRepo repository.PictureRepositoryInterface, albumRepo repository.AlbumRepositoryInterface) PictureServiceInterface {
 	return &pictureService{
 		pictureRepo: pictureRepo,
+		albumRepo:   albumRepo,
 	}
 }
 
 // SavePicture는 API Gateway에서 보낸 picture 정보를(key값 포함) 저장하는 역할
 func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRequest) (*dto.PictureDto, error) {
+	album, err := s.albumRepo.Get(pictureReq.AlbumID)
+	if err != nil {
+		// 사진 저장할 앨범 id가 존재하지 않는 등의 에러
+		return nil, errors.WithStack(err)
+	}
+
+	// 요청한 유저와 앨범의 소유주와 다르다면 그 앨범에 사진이 저장이 되면 안됨
+	if userID != album.Edges.User.ID {
+		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+	}
+
 	picture := &ent.Picture{
 		BodyPart: pictureReq.BodyPart,
 		Edges: ent.PictureEdges{
@@ -46,10 +59,15 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRe
 	return dto.PictureToDto(p), nil
 }
 
-func (s *pictureService) GetPicture(pictureID int) (*dto.PictureDto, error) {
+func (s *pictureService) GetPicture(userID, pictureID int) (*dto.PictureDto, error) {
 	picture, err := s.pictureRepo.Get(pictureID)
 	if err != nil {
 		return nil, errors.WithStack(err)
+	}
+
+	// TODO: forbidden error로 wrapping?
+	if userID != picture.Edges.User.ID {
+		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
 	}
 
 	log.Info("하나의 사진 조회 완료")
@@ -65,9 +83,19 @@ func (s *pictureService) GetAllPictures(userID int, pictureReq *dto.GetPictureRe
 			return nil, errors.WithStack(err)
 		}
 
+		// forbiddenerr로 wrapping?
+		if userID != uploaderID {
+			return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+		}
+
 		pictures, err := s.pictureRepo.GetAllByUserID(uploaderID)
 		if err != nil {
 			return nil, errors.WithStack(err)
+		}
+
+		// Notfounderr로 wrapping?
+		if len(pictures) == 0 {
+			return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
 		}
 
 		log.Info("사용자의 모든 사진들을 조회 완료")
@@ -87,6 +115,16 @@ func (s *pictureService) GetAllPictures(userID int, pictureReq *dto.GetPictureRe
 			return nil, errors.WithStack(err)
 		}
 
+		// Notfounderr로 wrapping?
+		if len(pictures) == 0 {
+			return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
+		}
+
+		// forbiddenerr로 wrapping?
+		if userID != pictures[0].Edges.User.ID {
+			return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+		}
+
 		log.Info("특정 앨범과 신체 부위에 맞는 사진들 조회")
 		return dto.PicturesToDto(pictures), nil
 	}
@@ -94,6 +132,16 @@ func (s *pictureService) GetAllPictures(userID int, pictureReq *dto.GetPictureRe
 	pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
 	if err != nil {
 		return nil, errors.WithStack(err)
+	}
+
+	// Notfounderr로 wrapping?
+	if len(pictures) == 0 {
+		return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
+	}
+
+	// forbiddenerr로 wrapping?
+	if userID != pictures[0].Edges.User.ID {
+		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
 	}
 
 	log.Info("특정 앨범의 사진들 조회")
