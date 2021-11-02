@@ -27,9 +27,24 @@ class Multipart:
 # https://devlog-wjdrbs96.tistory.com/331
 def handle(event, context):
     try:
-        # print(event)
+        # debug 할 때에만 event 출력
+        if event.get("queryStringParameters", {"debug": 'false'}) == 'true':
+            print(event)
+        # 기본적으로 random_key_enabled는 True
+        random_key_enabled = event.get("queryStringParameters", {"random_key_enabled": 'true'}).get("random_key_enabled") == 'true'
         start_handle_time = time.time()
-        user = event['headers']['user']
+        user = event['headers'].get('user', '')
+        if user == '' or not str(user).isdigit():
+            return {
+            'statusCode': 401,
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            'body': {
+                'keys': None,
+                'error': '유저 인증 정보가 존재하지 않습니다.'
+            }
+        }
         body = base64.b64decode(event['body'])
         finish_base64_decode_time = time.time()
         print(f'Elapsed(base64 디코딩 완료): {finish_base64_decode_time - start_handle_time}')
@@ -54,7 +69,7 @@ def handle(event, context):
 
             part = Multipart(item.content, content_type, params.get('name'), params.get('filename'))
             if part.name == 'image':
-                key = str(uuid.uuid4())
+                key = str(uuid.uuid4()) if random_key_enabled else part.filename
                 print(f'{part.filename}을 업로드합니다.')
                 resized_result = generate_thumbnail(part.content)
                 finish_resize_time = time.time()
