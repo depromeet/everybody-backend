@@ -34,6 +34,10 @@ func TestAlbumServiceGetAllByUserID(t *testing.T) {
 		albumSvc := initializeAlbumService(t)
 		var expectedAlbums []*ent.Album
 		var expectedPictures []*ent.Picture
+		expectedAlbums = append(expectedAlbums, &ent.Album{
+			ID:   0,
+			Name: "0th",
+		})
 
 		albumRepo.On("GetAllByUserID", mock.AnythingOfType("int")).Return(expectedAlbums, nil)
 		pictureRepo.On("GetAllByUserID", mock.AnythingOfType("int")).Return(expectedPictures, nil)
@@ -49,7 +53,7 @@ func TestAlbumServiceGetAllByUserID(t *testing.T) {
 			expectedAlbumsWithPictures = append(expectedAlbumsWithPictures, album)
 		}
 
-		albums, err := albumSvc.GetAllAlbums(1)
+		albums, err := albumSvc.GetAllAlbums(0)
 		assert.NoError(t, err)
 		assert.Equal(t, dto.AlbumsToDto(expectedAlbumsWithPictures), albums)
 	})
@@ -60,12 +64,16 @@ func TestAlbumServiceGetAllByUserID(t *testing.T) {
 func TestAlbumServiceGet(t *testing.T) {
 	t.Run("각 앨범 조회 성공", func(t *testing.T) {
 		albumSvc := initializeAlbumService(t)
-		expectedAlbum := new(ent.Album)
+		expectedAlbum := &ent.Album{
+			Edges: ent.AlbumEdges{
+				User: &ent.User{ID: 0},
+			},
+		}
 		var expectedPictures []*ent.Picture
 
 		albumRepo.On("Get", mock.AnythingOfType("int")).Return(expectedAlbum, nil)
 		pictureRepo.On("GetAllByAlbumID", mock.AnythingOfType("int")).Return(expectedPictures, nil)
-		album, err := albumSvc.GetAlbum(1)
+		album, err := albumSvc.GetAlbum(0, 1)
 		assert.NoError(t, err)
 		assert.Equal(t, dto.AlbumToDto(expectedAlbum, expectedPictures), album)
 	})

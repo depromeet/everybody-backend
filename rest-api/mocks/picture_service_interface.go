@@ -35,13 +35,13 @@ func (_m *PictureServiceInterface) GetAllPictures(userID int, pictureReq *dto.Ge
 	return r0, r1
 }
 
-// GetPicture provides a mock function with given fields: pictureID
-func (_m *PictureServiceInterface) GetPicture(pictureID int) (*dto.PictureDto, error) {
-	ret := _m.Called(pictureID)
+// GetPicture provides a mock function with given fields: userID, pictureID
+func (_m *PictureServiceInterface) GetPicture(userID int, pictureID int) (*dto.PictureDto, error) {
+	ret := _m.Called(userID, pictureID)
 
 	var r0 *dto.PictureDto
-	if rf, ok := ret.Get(0).(func(int) *dto.PictureDto); ok {
-		r0 = rf(pictureID)
+	if rf, ok := ret.Get(0).(func(int, int) *dto.PictureDto); ok {
+		r0 = rf(userID, pictureID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*dto.PictureDto)
@@ -49,8 +49,8 @@ func (_m *PictureServiceInterface) GetPicture(pictureID int) (*dto.PictureDto, e
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(pictureID)
+	if rf, ok := ret.Get(1).(func(int, int) error); ok {
+		r1 = rf(userID, pictureID)
 	} else {
 		r1 = ret.Error(1)
 	}

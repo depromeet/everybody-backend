@@ -35,13 +35,13 @@ func (_m *AlbumServiceInterface) CreateAlbum(userID int, albumReq *dto.AlbumRequ
 	return r0, r1
 }
 
-// GetAlbum provides a mock function with given fields: albumID
-func (_m *AlbumServiceInterface) GetAlbum(albumID int) (*dto.AlbumDto, error) {
-	ret := _m.Called(albumID)
+// GetAlbum provides a mock function with given fields: userID, albumID
+func (_m *AlbumServiceInterface) GetAlbum(userID int, albumID int) (*dto.AlbumDto, error) {
+	ret := _m.Called(userID, albumID)
 
 	var r0 *dto.AlbumDto
-	if rf, ok := ret.Get(0).(func(int) *dto.AlbumDto); ok {
-		r0 = rf(albumID)
+	if rf, ok := ret.Get(0).(func(int, int) *dto.AlbumDto); ok {
+		r0 = rf(userID, albumID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*dto.AlbumDto)
@@ -49,8 +49,8 @@ func (_m *AlbumServiceInterface) GetAlbum(albumID int) (*dto.AlbumDto, error) {
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(int) error); ok {
-		r1 = rf(albumID)
+	if rf, ok := ret.Get(1).(func(int, int) error); ok {
+		r1 = rf(userID, albumID)
 	} else {
 		r1 = ret.Error(1)
 	}
