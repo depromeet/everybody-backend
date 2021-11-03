@@ -16,7 +16,7 @@ type albumService struct {
 type AlbumServiceInterface interface {
 	CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto.AlbumDto, error)
 	GetAllAlbums(userID int) (dto.AlbumsDto, error)
-	GetAlbum(albumID int) (*dto.AlbumDto, error)
+	GetAlbum(userID, albumID int) (*dto.AlbumDto, error)
 }
 
 func NewAlbumService(albumRepo repository.AlbumRepositoryInterface, pictureRepo repository.PictureRepositoryInterface) AlbumServiceInterface {
@@ -43,14 +43,18 @@ func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto
 	return dto.AlbumToDto(newAlbum, nil), nil
 }
 
-// GetAllAlbums는 album의 전체 리스트를 조회(사진 정보는 조회X)
+// GetAllAlbums는 album의 전체 리스트를 조회
 func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 	albums, err := s.albumRepo.GetAllByUserID(userID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	// album들의 각각의 사진들도 조회
+	if len(albums) == 0 {
+		return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
+	}
+
+	// album들의 각각의 사진들도 조회(사진이 없을 수도 있음)
 	allPictures, err := s.pictureRepo.GetAllByUserID(userID)
 	if err != nil {
 		return nil, err
@@ -75,13 +79,17 @@ func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 }
 
 // GetAlbum은 alubm 정보와 album의 사진 정보들도 조회
-func (s *albumService) GetAlbum(albumID int) (*dto.AlbumDto, error) {
+func (s *albumService) GetAlbum(userID, albumID int) (*dto.AlbumDto, error) {
 	album, err := s.albumRepo.Get(albumID)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	// albumID에 해당하는 pictrues 목록 조회 기능 필요
+	if userID != album.Edges.User.ID {
+		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+	}
+
+	// albumID에 해당하는 사진 목록도 조회(사진이 없을 수도 있음)
 	pictures, err := s.pictureRepo.GetAllByAlbumID(albumID)
 	if err != nil {
 		return nil, errors.WithStack(err)

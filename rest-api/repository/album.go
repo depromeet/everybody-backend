@@ -2,11 +2,11 @@ package repository
 
 import (
 	"context"
-	"github.com/pkg/errors"
 
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/pkg/errors"
 )
 
 type albumRepository struct {
@@ -41,6 +41,7 @@ func (r *albumRepository) Create(album *ent.Album) (*ent.Album, error) {
 func (r *albumRepository) GetAllByUserID(userID int) ([]*ent.Album, error) {
 	albums, err := r.db.Album.Query().
 		Where(album.HasUserWith(user.ID(userID))).
+		WithUser().
 		All(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -52,6 +53,7 @@ func (r *albumRepository) GetAllByUserID(userID int) ([]*ent.Album, error) {
 func (r *albumRepository) Get(albumID int) (*ent.Album, error) {
 	albumData, err := r.db.Album.Query().
 		Where(album.ID(albumID)).
+		WithUser().
 		Only(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)

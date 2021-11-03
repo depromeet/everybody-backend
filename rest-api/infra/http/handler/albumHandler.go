@@ -1,13 +1,13 @@
 package handler
 
 import (
-	"github.com/pkg/errors"
 	"strconv"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pkg/errors"
 )
 
 type AlbumHandler struct {
@@ -57,6 +57,11 @@ func (h *AlbumHandler) GetAllAlbums(ctx *fiber.Ctx) error {
 
 // GetAlbum은 각 album의 정보와 사진들을 조회
 func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
 	param := util.GetParams(ctx, "album_id")
 	if param == "" {
 		return errors.New("params should be provided")
@@ -68,7 +73,7 @@ func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
 	}
 
 	// GetAlbum 에서 각 앨범에 해당하는 pictures도 조회해야 함
-	albumData, err := h.albumService.GetAlbum(albumID)
+	albumData, err := h.albumService.GetAlbum(userID, albumID)
 	if err != nil {
 		return errors.WithStack(err)
 	}

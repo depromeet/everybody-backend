@@ -12,6 +12,7 @@ import (
 
 type PictureHandler struct {
 	pictureService service.PictureServiceInterface
+	albumService   service.AlbumServiceInterface
 }
 
 func NewPictureHandler(pictureService service.PictureServiceInterface) *PictureHandler {
@@ -41,6 +42,10 @@ func (h *PictureHandler) SavePicture(ctx *fiber.Ctx) error {
 }
 
 func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
 	param := util.GetParams(ctx, "picture_id")
 	if len(param) == 0 {
 		return errors.WithStack(errors.New("picture_id params를 입력해주세요"))
@@ -51,7 +56,7 @@ func (h *PictureHandler) GetPicture(ctx *fiber.Ctx) error {
 		return errors.WithStack(err)
 	}
 
-	picture, err := h.pictureService.GetPicture(pictureID)
+	picture, err := h.pictureService.GetPicture(userID, pictureID)
 	if err != nil {
 		return errors.WithStack(err)
 	}

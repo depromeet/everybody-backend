@@ -2,12 +2,12 @@ package repository
 
 import (
 	"context"
-	"github.com/pkg/errors"
 
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/album"
 	"github.com/depromeet/everybody-backend/rest-api/ent/picture"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
+	"github.com/pkg/errors"
 )
 
 type pictureRepository struct {
