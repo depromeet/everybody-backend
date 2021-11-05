@@ -7,8 +7,6 @@ import (
 
 type SignUpRequest struct {
 	Password string `json:"password"`
-	Nickname string `json:"nickname"`
-	Motto    string `json:"motto"`
 	// 알림 설정할 때와 똑같은 body를 이용
 	NotificationConfig *ConfigureNotificationRequest `json:"notification_config"`
 	Device             *RegisterDeviceRequest        `json:"device"`

@@ -57,7 +57,7 @@ func (s *deviceService) Register(requestUser int, body *dto.RegisterDeviceReques
 	log.Warningf("이미 같은 디바이스를 이용하는 정보가 존재합니다. Device(id=%d)의 유저를 새 유저로 변경하겠습니다.", d.ID)
 	update := d
 	update.PushToken = body.PushToken
-	update.Edges.User.ID = requestUser
+	update.Edges.User = &ent.User{ID: requestUser}
 	err = s.deviceRepo.Update(d.ID, update)
 	if err != nil {
 		return nil, errors.WithStack(err)

@@ -32,6 +32,9 @@ $ make mock
 
 ```shell
 $ go clean -testcache && go test ./...
-// or just
+#  or just
 $ make test
+
+# 다음과 같은 환경변수가 필요할 수 있습니다.
+$ EVERYBODY_ENVIRONMENT=local EVERYBODY_REST_CONFIG_PATH=$(pwd)/config make test
 ```
