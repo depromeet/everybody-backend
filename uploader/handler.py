@@ -8,7 +8,12 @@ import boto3
 from PIL import Image
 from requests_toolbelt.multipart import decoder
 
-RESIZE_SIZES = ((48, 64), (192, 256), (768, 1024))
+RESIZE_SIZES = (
+    (48, 64),
+    (192, 256),
+    (768, 1024)
+)
+
 OUTPUT_BUCKET_NAME = 'everybody-upload-output-dev-1'
 OUTPUT_OBJECT_PREFIX = 'image/'
 
@@ -77,13 +82,16 @@ def handle(event, context):
                 
                 for w, img in resized_result.items():
                     tmp_file = io.BytesIO()
-                    img.save(tmp_file, 'png', optimize=True)
+                    img.save(tmp_file, 'png', optimize=False) # optimize를 True로 만들면 Lambda에서는 엄청나게 오랜 시간이 소요되어버림. 왜지?
+                    finish_tmp_save = time.time()
+                    print(f'Elapsed({w} 크기의 사진 임시 저장 완료): {finish_tmp_save - start_handle_time}')
                     bucket.put_object(
                         # ACL='public-read', # public 권한 필요
                         ContentType='image/png',
                         Key=f'{user}/{OUTPUT_OBJECT_PREFIX}{w}/{key}',
                         Body=tmp_file.getvalue(),
                     )
+                    tmp_file.close()
                     finish_upload_time = time.time()
                     print(f'Elapsed({w} 크기의 사진 업로드 완료): {finish_upload_time - start_handle_time}')
                 keys.append(key)
