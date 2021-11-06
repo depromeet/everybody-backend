@@ -17,8 +17,8 @@ const (
 	FieldKey = "key"
 	// FieldTakenAt holds the string denoting the taken_at field in the database.
 	FieldTakenAt = "taken_at"
-	// FieldUploadedAt holds the string denoting the uploaded_at field in the database.
-	FieldUploadedAt = "uploaded_at"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
 	// EdgeAlbum holds the string denoting the album edge name in mutations.
 	EdgeAlbum = "album"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -47,7 +47,7 @@ var Columns = []string{
 	FieldBodyPart,
 	FieldKey,
 	FieldTakenAt,
-	FieldUploadedAt,
+	FieldCreatedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "pictures"

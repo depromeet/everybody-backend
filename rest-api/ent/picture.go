@@ -24,8 +24,8 @@ type Picture struct {
 	Key string `json:"key,omitempty"`
 	// TakenAt holds the value of the "taken_at" field.
 	TakenAt time.Time `json:"taken_at,omitempty"`
-	// UploadedAt holds the value of the "uploaded_at" field.
-	UploadedAt time.Time `json:"uploaded_at,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PictureQuery when eager-loading is set.
 	Edges         PictureEdges `json:"edges"`
@@ -81,7 +81,7 @@ func (*Picture) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case picture.FieldBodyPart, picture.FieldKey:
 			values[i] = new(sql.NullString)
-		case picture.FieldTakenAt, picture.FieldUploadedAt:
+		case picture.FieldTakenAt, picture.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		case picture.ForeignKeys[0]: // album_picture
 			values[i] = new(sql.NullInt64)
@@ -121,6 +121,12 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 				pi.Key = value.String
 			}
 		case picture.FieldTakenAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field taken_at", values[i])
+			} else if value.Valid {
+				pi.TakenAt = value.Time
+			}
+		case picture.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field taken_at", values[i])
 			} else if value.Valid {
@@ -190,8 +196,8 @@ func (pi *Picture) String() string {
 	builder.WriteString(pi.Key)
 	builder.WriteString(", taken_at=")
 	builder.WriteString(pi.TakenAt.Format(time.ANSIC))
-	builder.WriteString(", uploaded_at=")
-	builder.WriteString(pi.UploadedAt.Format(time.ANSIC))
+	builder.WriteString(", created_at=")
+	builder.WriteString(pi.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -2,6 +2,7 @@ package dto
 
 import (
 	"fmt"
+	"github.com/depromeet/everybody-backend/rest-api/util"
 	"strings"
 	"time"
 
@@ -16,9 +17,10 @@ type CreatePictureRequest struct {
 	AlbumID  int    `json:"album_id"`
 	BodyPart string `json:"body_part"`
 	// Gateway에서 image key 값도 같이 받음
-	Key string `json:"key"`
-	// TakenAt은 사진을 찍은 날짜(업로드 날짜와 다름)
-	TakenAt time.Time `json:"taken_at"`
+	Key          string `json:"key"`
+	TakenAtYear  int    `json:"taken_at_year"`
+	TakenAtMonth int    `json:"taken_at_month"`
+	TakenAtDay   int    `json:"taken_at_day"`
 }
 
 // 사진 조회할 때 query string으로 오는 것 처리
@@ -37,20 +39,23 @@ type GetPictureRequest struct {
 type PicturesDto []*PictureDto
 
 type PictureDto struct {
-	ID           int       `json:"id"`
-	AlbumID      int       `json:"album_id"`
-	BodyPart     string    `json:"body_part"`
-	TakenAt      time.Time `json:"taken_at"`
-	Uploaded_at  time.Time `json:"uploaded_at"`
-	ThumbnailURL string    `json:"thumbnail_url"`
-	PreviewURL   string    `json:"preview_url"`
-	ImageURL     string    `json:"image_url"`
+	ID           int    `json:"id"`
+	AlbumID      int    `json:"album_id"`
+	BodyPart     string `json:"body_part"`
+	ThumbnailURL string `json:"thumbnail_url"`
+	PreviewURL   string `json:"preview_url"`
+	ImageURL     string `json:"image_url"`
 	// image의 object key
-	Key string `json:"key"`
+	Key          string    `json:"key"`
+	TakenAtYear  int       `json:"taken_at_year"`
+	TakenAtMonth int       `json:"taken_at_month"`
+	TakenAtDay   int       `json:"taken_at_day"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 func PictureToDto(src *ent.Picture) *PictureDto {
 	thumbnailURL, err := createImageURL(fmt.Sprintf("%d/image/%d/%s", src.Edges.User.ID, 48, src.Key))
+	// TODO(umi0410)
 	// 일단 이 부분까지 하나 하나 에러처리하긴 번거로울 듯?
 	if err != nil {
 		log.Error(err)
@@ -65,16 +70,19 @@ func PictureToDto(src *ent.Picture) *PictureDto {
 	if err != nil {
 		log.Error(err)
 	}
+	year, month, day := util.ConvertTimeToStr(src.TakenAt)
 	return &PictureDto{
 		ID:           src.ID,
 		AlbumID:      src.Edges.Album.ID,
 		BodyPart:     src.BodyPart,
-		TakenAt:      src.TakenAt,
-		Uploaded_at:  src.UploadedAt,
 		ThumbnailURL: thumbnailURL,
 		PreviewURL:   previewURL,
 		ImageURL:     imageURL,
 		Key:          src.Key,
+		TakenAtYear:  year,
+		TakenAtMonth: month,
+		TakenAtDay:   day,
+		CreatedAt:    src.CreatedAt,
 	}
 }
 

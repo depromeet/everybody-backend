@@ -2056,7 +2056,7 @@ type PictureMutation struct {
 	body_part     *string
 	key           *string
 	taken_at      *time.Time
-	uploaded_at   *time.Time
+	created_at    *time.Time
 	clearedFields map[string]struct{}
 	album         *int
 	clearedalbum  bool
@@ -2254,6 +2254,42 @@ func (m *PictureMutation) ResetTakenAt() {
 	m.taken_at = nil
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (m *PictureMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// TakenAt returns the value of the "taken_at" field in the mutation.
+func (m *PictureMutation) TakenAt() (r time.Time, exists bool) {
+	v := m.taken_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTakenAt returns the old "taken_at" field's value of the Picture entity.
+// If the Picture object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PictureMutation) OldTakenAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldTakenAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldTakenAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTakenAt: %w", err)
+	}
+	return oldValue.TakenAt, nil
+}
+
+// ResetTakenAt resets all changes to the "taken_at" field.
+func (m *PictureMutation) ResetTakenAt() {
+	m.taken_at = nil
+}
+
 // SetUploadedAt sets the "uploaded_at" field.
 func (m *PictureMutation) SetUploadedAt(t time.Time) {
 	m.uploaded_at = &t
@@ -2397,6 +2433,9 @@ func (m *PictureMutation) Fields() []string {
 	if m.taken_at != nil {
 		fields = append(fields, picture.FieldTakenAt)
 	}
+	if m.created_at != nil {
+		fields = append(fields, picture.FieldCreatedAt)
+	}
 	if m.uploaded_at != nil {
 		fields = append(fields, picture.FieldUploadedAt)
 	}
@@ -2414,8 +2453,8 @@ func (m *PictureMutation) Field(name string) (ent.Value, bool) {
 		return m.Key()
 	case picture.FieldTakenAt:
 		return m.TakenAt()
-	case picture.FieldUploadedAt:
-		return m.UploadedAt()
+	case picture.FieldCreatedAt:
+		return m.CreatedAt()
 	}
 	return nil, false
 }
@@ -2431,8 +2470,8 @@ func (m *PictureMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldKey(ctx)
 	case picture.FieldTakenAt:
 		return m.OldTakenAt(ctx)
-	case picture.FieldUploadedAt:
-		return m.OldUploadedAt(ctx)
+	case picture.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Picture field %s", name)
 }
@@ -2457,6 +2496,13 @@ func (m *PictureMutation) SetField(name string, value ent.Value) error {
 		m.SetKey(v)
 		return nil
 	case picture.FieldTakenAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTakenAt(v)
+		return nil
+	case picture.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -2527,6 +2573,9 @@ func (m *PictureMutation) ResetField(name string) error {
 		return nil
 	case picture.FieldTakenAt:
 		m.ResetTakenAt()
+		return nil
+	case picture.FieldCreatedAt:
+		m.ResetCreatedAt()
 		return nil
 	case picture.FieldUploadedAt:
 		m.ResetUploadedAt()

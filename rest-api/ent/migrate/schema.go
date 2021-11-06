@@ -87,7 +87,7 @@ var (
 		{Name: "body_part", Type: field.TypeString},
 		{Name: "key", Type: field.TypeString},
 		{Name: "taken_at", Type: field.TypeTime},
-		{Name: "uploaded_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
 		{Name: "album_picture", Type: field.TypeInt, Nullable: true},
 		{Name: "user_picture", Type: field.TypeInt, Nullable: true},
 	}

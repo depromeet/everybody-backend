@@ -59,10 +59,10 @@ func init() {
 	notificationconfig.DefaultIsActivated = notificationconfigDescIsActivated.Default.(bool)
 	pictureFields := schema.Picture{}.Fields()
 	_ = pictureFields
-	// pictureDescUploadedAt is the schema descriptor for uploaded_at field.
-	pictureDescUploadedAt := pictureFields[3].Descriptor()
-	// picture.DefaultUploadedAt holds the default value on creation for the uploaded_at field.
-	picture.DefaultUploadedAt = pictureDescUploadedAt.Default.(func() time.Time)
+	// pictureDescCreatedAt is the schema descriptor for created_at field.
+	pictureDescCreatedAt := pictureFields[3].Descriptor()
+	// picture.DefaultCreatedAt holds the default value on creation for the created_at field.
+	picture.DefaultCreatedAt = pictureDescCreatedAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescMotto is the schema descriptor for motto field.
