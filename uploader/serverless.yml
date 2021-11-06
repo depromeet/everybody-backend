@@ -23,6 +23,7 @@ functions:
     layers:
       - { Ref: PythonRequirementsLambdaLayer }
     description: 전달 받은 이미지를 리사이즈 후 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
+    timeout: 20 # optional, in seconds, default is 6. 이미지 변환 도중 timeout 날 수도 있음.
     events:
       - httpApi:
           path: /upload
@@ -34,13 +35,10 @@ plugins:
 
 package:
   patterns:
-#    # numpy나 open cv때문에 직접 빌드해야한다.
     - '!venv/**'
 
 custom:
   pythonRequirements:
     # layer에 불필요한 애들이 다 포함되어버리는 것 같은데 venv나 node_modules 같은 거...
+    # requirements.txt를 바탕으로한 layer를 이용할 수 있다.
     layer: true
-    # zip 안해도 되나...
-#    zip: true
-

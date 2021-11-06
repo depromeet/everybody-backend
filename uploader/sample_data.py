@@ -5,7 +5,8 @@ sample_data = {
     'version': '2.0',
     'routeKey': 'POST /upload',
     'rawPath': '/upload',
-    'rawQueryString': '',
+    'rawQueryString': 'random_key_enabled=false',
+    'queryStringParameters': {'random_key_enabled': 'true'},
     'headers': {
         'user': 10,
         'accept': '*/*',
