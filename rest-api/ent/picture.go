@@ -128,15 +128,9 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 			}
 		case picture.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field taken_at", values[i])
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				pi.TakenAt = value.Time
-			}
-		case picture.FieldUploadedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field uploaded_at", values[i])
-			} else if value.Valid {
-				pi.UploadedAt = value.Time
+				pi.CreatedAt = value.Time
 			}
 		case picture.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

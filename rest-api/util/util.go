@@ -19,7 +19,7 @@ func GetQueryParams(ctx *fiber.Ctx, params string) string {
 	return ctx.Query(params, "")
 }
 
-func ConvertStrToTime(year, month, day int) (time.Time, error) {
+func ConvertIntToTime(year, month, day int) (time.Time, error) {
 	return time.Parse(time.RFC3339, fmt.Sprintf("%04d-%02d-%02dT12:00:00+09:00", year, month, day))
 }
 

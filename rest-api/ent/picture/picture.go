@@ -73,6 +73,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultUploadedAt holds the default value on creation for the "uploaded_at" field.
-	DefaultUploadedAt func() time.Time
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
 )

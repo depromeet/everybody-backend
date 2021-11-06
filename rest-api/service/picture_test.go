@@ -2,6 +2,7 @@ package service
 
 import (
 	"testing"
+	"time"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
@@ -32,7 +33,15 @@ func TestPictureServiceSave(t *testing.T) {
 
 		albumRepo.On("Get", mock.AnythingOfType("int")).Return(expectedAlbum, nil)
 		pictureRepo.On("Save", mock.AnythingOfType("*ent.Picture")).Return(expectedPicture, nil)
-		picture, err := pictureSvc.SavePicture(0, &dto.CreatePictureRequest{AlbumID: 0})
+		picture, err := pictureSvc.SavePicture(0, &dto.CreatePictureRequest{
+			ID:           0,
+			AlbumID:      0,
+			BodyPart:     "",
+			Key:          "",
+			TakenAtYear:  2021,
+			TakenAtMonth: 11,
+			TakenAtDay:   5,
+		})
 		assert.NoError(t, err)
 		assert.Equal(t, dto.PictureToDto(expectedPicture), picture)
 	})
@@ -44,6 +53,8 @@ func TestPictureServiceGetAll(t *testing.T) {
 	var expectedPictures []*ent.Picture
 	expectedPictures = append(expectedPictures, &ent.Picture{
 		BodyPart: "upper",
+		TakenAt:  time.Now(),
+
 		Edges: ent.PictureEdges{
 			User:  &ent.User{ID: 0},
 			Album: &ent.Album{ID: 0},

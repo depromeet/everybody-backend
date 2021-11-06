@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/depromeet/everybody-backend/rest-api/util"
 	"strconv"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
@@ -41,6 +42,11 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRe
 		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
 	}
 
+	takenAt, err := util.ConvertIntToTime(pictureReq.TakenAtYear, pictureReq.TakenAtMonth, pictureReq.TakenAtMonth)
+	if err != nil {
+		return nil, errors.Wrapf(err, "잘못된 날짜 형식입니다. (%4d, %2d, %2d", pictureReq.TakenAtYear, pictureReq.TakenAtMonth, pictureReq.TakenAtMonth)
+	}
+
 	picture := &ent.Picture{
 		BodyPart: pictureReq.BodyPart,
 		Edges: ent.PictureEdges{
@@ -48,7 +54,7 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRe
 			Album: &ent.Album{ID: pictureReq.AlbumID},
 		},
 		Key:     pictureReq.Key,
-		TakenAt: pictureReq.TakenAt,
+		TakenAt: takenAt,
 	}
 
 	p, err := s.pictureRepo.Save(picture)

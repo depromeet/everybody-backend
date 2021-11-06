@@ -6,14 +6,14 @@ import (
 	"time"
 )
 
-func Test_ConvertStrToTime(t *testing.T) {
+func Test_ConvertIntToTime(t *testing.T) {
 	// RFC3339 포맷 이용
 	expected, err := time.Parse(time.RFC3339, "2021-08-17T12:00:00+09:00")
 	assert.NoError(t, err)
-	converted, err := ConvertStrToTime(2021, 8, 17)
+	converted, err := ConvertIntToTime(2021, 8, 17)
 	assert.Equal(t, expected, converted)
 
-	_, err = ConvertStrToTime(0, 0, 0)
+	_, err = ConvertIntToTime(0, 0, 0)
 	assert.Error(t, err)
 }
 

@@ -117,14 +117,7 @@ func TakenAt(v time.Time) predicate.Picture {
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTakenAt), v))
-	})
-}
-
-// UploadedAt applies equality check predicate on the "uploaded_at" field. It's identical to UploadedAtEQ.
-func UploadedAt(v time.Time) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUploadedAt), v))
+		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
 	})
 }
 
@@ -429,19 +422,19 @@ func TakenAtLTE(v time.Time) predicate.Picture {
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldTakenAt), v))
+		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
 	})
 }
 
-// TakenAtNEQ applies the NEQ predicate on the "taken_at" field.
-func TakenAtNEQ(v time.Time) predicate.Picture {
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldTakenAt), v))
+		s.Where(sql.NEQ(s.C(FieldCreatedAt), v))
 	})
 }
 
-// TakenAtIn applies the In predicate on the "taken_at" field.
-func TakenAtIn(vs ...time.Time) predicate.Picture {
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Picture {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -453,12 +446,12 @@ func TakenAtIn(vs ...time.Time) predicate.Picture {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.In(s.C(FieldTakenAt), v...))
+		s.Where(sql.In(s.C(FieldCreatedAt), v...))
 	})
 }
 
-// TakenAtNotIn applies the NotIn predicate on the "taken_at" field.
-func TakenAtNotIn(vs ...time.Time) predicate.Picture {
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Picture {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -470,111 +463,35 @@ func TakenAtNotIn(vs ...time.Time) predicate.Picture {
 			s.Where(sql.False())
 			return
 		}
-		s.Where(sql.NotIn(s.C(FieldTakenAt), v...))
+		s.Where(sql.NotIn(s.C(FieldCreatedAt), v...))
 	})
 }
 
-// TakenAtGT applies the GT predicate on the "taken_at" field.
-func TakenAtGT(v time.Time) predicate.Picture {
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldTakenAt), v))
+		s.Where(sql.GT(s.C(FieldCreatedAt), v))
 	})
 }
 
-// TakenAtGTE applies the GTE predicate on the "taken_at" field.
-func TakenAtGTE(v time.Time) predicate.Picture {
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldTakenAt), v))
+		s.Where(sql.GTE(s.C(FieldCreatedAt), v))
 	})
 }
 
-// TakenAtLT applies the LT predicate on the "taken_at" field.
-func TakenAtLT(v time.Time) predicate.Picture {
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldTakenAt), v))
+		s.Where(sql.LT(s.C(FieldCreatedAt), v))
 	})
 }
 
-// TakenAtLTE applies the LTE predicate on the "taken_at" field.
-func TakenAtLTE(v time.Time) predicate.Picture {
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldTakenAt), v))
-	})
-}
-
-// UploadedAtEQ applies the EQ predicate on the "uploaded_at" field.
-func UploadedAtEQ(v time.Time) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldUploadedAt), v))
-	})
-}
-
-// UploadedAtNEQ applies the NEQ predicate on the "uploaded_at" field.
-func UploadedAtNEQ(v time.Time) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldUploadedAt), v))
-	})
-}
-
-// UploadedAtIn applies the In predicate on the "uploaded_at" field.
-func UploadedAtIn(vs ...time.Time) predicate.Picture {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Picture(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.In(s.C(FieldUploadedAt), v...))
-	})
-}
-
-// UploadedAtNotIn applies the NotIn predicate on the "uploaded_at" field.
-func UploadedAtNotIn(vs ...time.Time) predicate.Picture {
-	v := make([]interface{}, len(vs))
-	for i := range v {
-		v[i] = vs[i]
-	}
-	return predicate.Picture(func(s *sql.Selector) {
-		// if not arguments were provided, append the FALSE constants,
-		// since we can't apply "IN ()". This will make this predicate falsy.
-		if len(v) == 0 {
-			s.Where(sql.False())
-			return
-		}
-		s.Where(sql.NotIn(s.C(FieldUploadedAt), v...))
-	})
-}
-
-// UploadedAtGT applies the GT predicate on the "uploaded_at" field.
-func UploadedAtGT(v time.Time) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldUploadedAt), v))
-	})
-}
-
-// UploadedAtGTE applies the GTE predicate on the "uploaded_at" field.
-func UploadedAtGTE(v time.Time) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldUploadedAt), v))
-	})
-}
-
-// UploadedAtLT applies the LT predicate on the "uploaded_at" field.
-func UploadedAtLT(v time.Time) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldUploadedAt), v))
-	})
-}
-
-// UploadedAtLTE applies the LTE predicate on the "uploaded_at" field.
-func UploadedAtLTE(v time.Time) predicate.Picture {
-	return predicate.Picture(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldUploadedAt), v))
+		s.Where(sql.LTE(s.C(FieldCreatedAt), v))
 	})
 }
 

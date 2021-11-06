@@ -54,16 +54,10 @@ func (pu *PictureUpdate) SetCreatedAt(t time.Time) *PictureUpdate {
 	return pu
 }
 
-// SetUploadedAt sets the "uploaded_at" field.
-func (pu *PictureUpdate) SetUploadedAt(t time.Time) *PictureUpdate {
-	pu.mutation.SetUploadedAt(t)
-	return pu
-}
-
-// SetNillableUploadedAt sets the "uploaded_at" field if the given value is not nil.
-func (pu *PictureUpdate) SetNillableUploadedAt(t *time.Time) *PictureUpdate {
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pu *PictureUpdate) SetNillableCreatedAt(t *time.Time) *PictureUpdate {
 	if t != nil {
-		pu.SetUploadedAt(*t)
+		pu.SetCreatedAt(*t)
 	}
 	return pu
 }
@@ -226,14 +220,7 @@ func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: picture.FieldTakenAt,
-		})
-	}
-	if value, ok := pu.mutation.UploadedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: picture.FieldUploadedAt,
+			Column: picture.FieldCreatedAt,
 		})
 	}
 	if pu.mutation.AlbumCleared() {
@@ -349,16 +336,10 @@ func (puo *PictureUpdateOne) SetCreatedAt(t time.Time) *PictureUpdateOne {
 	return puo
 }
 
-// SetUploadedAt sets the "uploaded_at" field.
-func (puo *PictureUpdateOne) SetUploadedAt(t time.Time) *PictureUpdateOne {
-	puo.mutation.SetUploadedAt(t)
-	return puo
-}
-
-// SetNillableUploadedAt sets the "uploaded_at" field if the given value is not nil.
-func (puo *PictureUpdateOne) SetNillableUploadedAt(t *time.Time) *PictureUpdateOne {
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (puo *PictureUpdateOne) SetNillableCreatedAt(t *time.Time) *PictureUpdateOne {
 	if t != nil {
-		puo.SetUploadedAt(*t)
+		puo.SetCreatedAt(*t)
 	}
 	return puo
 }
@@ -545,14 +526,7 @@ func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err e
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: picture.FieldTakenAt,
-		})
-	}
-	if value, ok := puo.mutation.UploadedAt(); ok {
-		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: picture.FieldUploadedAt,
+			Column: picture.FieldCreatedAt,
 		})
 	}
 	if puo.mutation.AlbumCleared() {

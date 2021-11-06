@@ -46,16 +46,10 @@ func (pc *PictureCreate) SetCreatedAt(t time.Time) *PictureCreate {
 	return pc
 }
 
-// SetUploadedAt sets the "uploaded_at" field.
-func (pc *PictureCreate) SetUploadedAt(t time.Time) *PictureCreate {
-	pc.mutation.SetUploadedAt(t)
-	return pc
-}
-
-// SetNillableUploadedAt sets the "uploaded_at" field if the given value is not nil.
-func (pc *PictureCreate) SetNillableUploadedAt(t *time.Time) *PictureCreate {
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pc *PictureCreate) SetNillableCreatedAt(t *time.Time) *PictureCreate {
 	if t != nil {
-		pc.SetUploadedAt(*t)
+		pc.SetCreatedAt(*t)
 	}
 	return pc
 }
@@ -161,9 +155,9 @@ func (pc *PictureCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pc *PictureCreate) defaults() {
-	if _, ok := pc.mutation.UploadedAt(); !ok {
-		v := picture.DefaultUploadedAt()
-		pc.mutation.SetUploadedAt(v)
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		v := picture.DefaultCreatedAt()
+		pc.mutation.SetCreatedAt(v)
 	}
 }
 
@@ -180,9 +174,6 @@ func (pc *PictureCreate) check() error {
 	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
-	}
-	if _, ok := pc.mutation.UploadedAt(); !ok {
-		return &ValidationError{Name: "uploaded_at", err: errors.New(`ent: missing required field "uploaded_at"`)}
 	}
 	if _, ok := pc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New("ent: missing required edge \"user\"")}
@@ -242,17 +233,9 @@ func (pc *PictureCreate) createSpec() (*Picture, *sqlgraph.CreateSpec) {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: picture.FieldTakenAt,
+			Column: picture.FieldCreatedAt,
 		})
-		_node.TakenAt = value
-	}
-	if value, ok := pc.mutation.UploadedAt(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: picture.FieldUploadedAt,
-		})
-		_node.UploadedAt = value
+		_node.CreatedAt = value
 	}
 	if nodes := pc.mutation.AlbumIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
