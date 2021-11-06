@@ -50,10 +50,6 @@ func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	if len(albums) == 0 {
-		return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
-	}
-
 	// album들의 각각의 사진들도 조회(사진이 없을 수도 있음)
 	allPictures, err := s.pictureRepo.GetAllByUserID(userID)
 	if err != nil {
