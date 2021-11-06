@@ -1,26 +1,21 @@
 package service
 
 import (
+	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func Test_NotFoundError(t *testing.T) {
-	err := err3()
-	//notFoundErr := NotFoundError(err)
-	//t.Logf("%+v", notFoundErr)
-	t.Logf("%+v", err)
-
-}
-
-func err1() error {
-	return errors.New("err1")
-}
-
-func err2() error {
-	return errors.WithStack(err1(), "err2")
-}
-
-func err3() error {
-	return errors.WithStack(err2(), "err3")
+	var entErr *ent.NotFoundError
+	notFoundErrorPtr := new(NotFoundError)
+	notFoundError := NotFoundError(entErr)
+	assert.ErrorAs(t, &ent.NotFoundError{}, notFoundErrorPtr)
+	assert.ErrorAs(t, &ent.NotFoundError{}, &notFoundError)
+	assert.Panics(t, func() {
+		// panic: errors: *target must be interface or implement error
+		// 타겟은 포인터형이어야한다.
+		errors.As(&ent.NotFoundError{}, notFoundError)
+	})
 }
