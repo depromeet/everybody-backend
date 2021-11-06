@@ -86,7 +86,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "body_part", Type: field.TypeString},
 		{Name: "key", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime},
+		{Name: "taken_at", Type: field.TypeTime},
+		{Name: "uploaded_at", Type: field.TypeTime},
 		{Name: "album_picture", Type: field.TypeInt, Nullable: true},
 		{Name: "user_picture", Type: field.TypeInt, Nullable: true},
 	}
@@ -98,13 +99,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pictures_albums_picture",
-				Columns:    []*schema.Column{PicturesColumns[4]},
+				Columns:    []*schema.Column{PicturesColumns[5]},
 				RefColumns: []*schema.Column{AlbumsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "pictures_users_picture",
-				Columns:    []*schema.Column{PicturesColumns[5]},
+				Columns:    []*schema.Column{PicturesColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

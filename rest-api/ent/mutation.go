@@ -2055,7 +2055,8 @@ type PictureMutation struct {
 	id            *int
 	body_part     *string
 	key           *string
-	created_at    *time.Time
+	taken_at      *time.Time
+	uploaded_at   *time.Time
 	clearedFields map[string]struct{}
 	album         *int
 	clearedalbum  bool
@@ -2217,40 +2218,76 @@ func (m *PictureMutation) ResetKey() {
 	m.key = nil
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (m *PictureMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
+// SetTakenAt sets the "taken_at" field.
+func (m *PictureMutation) SetTakenAt(t time.Time) {
+	m.taken_at = &t
 }
 
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *PictureMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
+// TakenAt returns the value of the "taken_at" field in the mutation.
+func (m *PictureMutation) TakenAt() (r time.Time, exists bool) {
+	v := m.taken_at
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the Picture entity.
+// OldTakenAt returns the old "taken_at" field's value of the Picture entity.
 // If the Picture object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PictureMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *PictureMutation) OldTakenAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldCreatedAt is only allowed on UpdateOne operations")
+		return v, fmt.Errorf("OldTakenAt is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldCreatedAt requires an ID field in the mutation")
+		return v, fmt.Errorf("OldTakenAt requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldTakenAt: %w", err)
 	}
-	return oldValue.CreatedAt, nil
+	return oldValue.TakenAt, nil
 }
 
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *PictureMutation) ResetCreatedAt() {
-	m.created_at = nil
+// ResetTakenAt resets all changes to the "taken_at" field.
+func (m *PictureMutation) ResetTakenAt() {
+	m.taken_at = nil
+}
+
+// SetUploadedAt sets the "uploaded_at" field.
+func (m *PictureMutation) SetUploadedAt(t time.Time) {
+	m.uploaded_at = &t
+}
+
+// UploadedAt returns the value of the "uploaded_at" field in the mutation.
+func (m *PictureMutation) UploadedAt() (r time.Time, exists bool) {
+	v := m.uploaded_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUploadedAt returns the old "uploaded_at" field's value of the Picture entity.
+// If the Picture object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PictureMutation) OldUploadedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUploadedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUploadedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUploadedAt: %w", err)
+	}
+	return oldValue.UploadedAt, nil
+}
+
+// ResetUploadedAt resets all changes to the "uploaded_at" field.
+func (m *PictureMutation) ResetUploadedAt() {
+	m.uploaded_at = nil
 }
 
 // SetAlbumID sets the "album" edge to the Album entity by id.
@@ -2350,15 +2387,18 @@ func (m *PictureMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PictureMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 4)
 	if m.body_part != nil {
 		fields = append(fields, picture.FieldBodyPart)
 	}
 	if m.key != nil {
 		fields = append(fields, picture.FieldKey)
 	}
-	if m.created_at != nil {
-		fields = append(fields, picture.FieldCreatedAt)
+	if m.taken_at != nil {
+		fields = append(fields, picture.FieldTakenAt)
+	}
+	if m.uploaded_at != nil {
+		fields = append(fields, picture.FieldUploadedAt)
 	}
 	return fields
 }
@@ -2372,8 +2412,10 @@ func (m *PictureMutation) Field(name string) (ent.Value, bool) {
 		return m.BodyPart()
 	case picture.FieldKey:
 		return m.Key()
-	case picture.FieldCreatedAt:
-		return m.CreatedAt()
+	case picture.FieldTakenAt:
+		return m.TakenAt()
+	case picture.FieldUploadedAt:
+		return m.UploadedAt()
 	}
 	return nil, false
 }
@@ -2387,8 +2429,10 @@ func (m *PictureMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldBodyPart(ctx)
 	case picture.FieldKey:
 		return m.OldKey(ctx)
-	case picture.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
+	case picture.FieldTakenAt:
+		return m.OldTakenAt(ctx)
+	case picture.FieldUploadedAt:
+		return m.OldUploadedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown Picture field %s", name)
 }
@@ -2412,12 +2456,19 @@ func (m *PictureMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetKey(v)
 		return nil
-	case picture.FieldCreatedAt:
+	case picture.FieldTakenAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetCreatedAt(v)
+		m.SetTakenAt(v)
+		return nil
+	case picture.FieldUploadedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUploadedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Picture field %s", name)
@@ -2474,8 +2525,11 @@ func (m *PictureMutation) ResetField(name string) error {
 	case picture.FieldKey:
 		m.ResetKey()
 		return nil
-	case picture.FieldCreatedAt:
-		m.ResetCreatedAt()
+	case picture.FieldTakenAt:
+		m.ResetTakenAt()
+		return nil
+	case picture.FieldUploadedAt:
+		m.ResetUploadedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown Picture field %s", name)

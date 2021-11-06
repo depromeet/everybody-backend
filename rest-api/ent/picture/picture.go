@@ -15,8 +15,10 @@ const (
 	FieldBodyPart = "body_part"
 	// FieldKey holds the string denoting the key field in the database.
 	FieldKey = "key"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
+	// FieldTakenAt holds the string denoting the taken_at field in the database.
+	FieldTakenAt = "taken_at"
+	// FieldUploadedAt holds the string denoting the uploaded_at field in the database.
+	FieldUploadedAt = "uploaded_at"
 	// EdgeAlbum holds the string denoting the album edge name in mutations.
 	EdgeAlbum = "album"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -44,7 +46,8 @@ var Columns = []string{
 	FieldID,
 	FieldBodyPart,
 	FieldKey,
-	FieldCreatedAt,
+	FieldTakenAt,
+	FieldUploadedAt,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "pictures"
@@ -70,6 +73,6 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
+	// DefaultUploadedAt holds the default value on creation for the "uploaded_at" field.
+	DefaultUploadedAt func() time.Time
 )

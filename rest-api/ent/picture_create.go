@@ -34,16 +34,22 @@ func (pc *PictureCreate) SetKey(s string) *PictureCreate {
 	return pc
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (pc *PictureCreate) SetCreatedAt(t time.Time) *PictureCreate {
-	pc.mutation.SetCreatedAt(t)
+// SetTakenAt sets the "taken_at" field.
+func (pc *PictureCreate) SetTakenAt(t time.Time) *PictureCreate {
+	pc.mutation.SetTakenAt(t)
 	return pc
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (pc *PictureCreate) SetNillableCreatedAt(t *time.Time) *PictureCreate {
+// SetUploadedAt sets the "uploaded_at" field.
+func (pc *PictureCreate) SetUploadedAt(t time.Time) *PictureCreate {
+	pc.mutation.SetUploadedAt(t)
+	return pc
+}
+
+// SetNillableUploadedAt sets the "uploaded_at" field if the given value is not nil.
+func (pc *PictureCreate) SetNillableUploadedAt(t *time.Time) *PictureCreate {
 	if t != nil {
-		pc.SetCreatedAt(*t)
+		pc.SetUploadedAt(*t)
 	}
 	return pc
 }
@@ -149,9 +155,9 @@ func (pc *PictureCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pc *PictureCreate) defaults() {
-	if _, ok := pc.mutation.CreatedAt(); !ok {
-		v := picture.DefaultCreatedAt()
-		pc.mutation.SetCreatedAt(v)
+	if _, ok := pc.mutation.UploadedAt(); !ok {
+		v := picture.DefaultUploadedAt()
+		pc.mutation.SetUploadedAt(v)
 	}
 }
 
@@ -163,8 +169,11 @@ func (pc *PictureCreate) check() error {
 	if _, ok := pc.mutation.Key(); !ok {
 		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "key"`)}
 	}
-	if _, ok := pc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
+	if _, ok := pc.mutation.TakenAt(); !ok {
+		return &ValidationError{Name: "taken_at", err: errors.New(`ent: missing required field "taken_at"`)}
+	}
+	if _, ok := pc.mutation.UploadedAt(); !ok {
+		return &ValidationError{Name: "uploaded_at", err: errors.New(`ent: missing required field "uploaded_at"`)}
 	}
 	if _, ok := pc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New("ent: missing required edge \"user\"")}
@@ -212,13 +221,21 @@ func (pc *PictureCreate) createSpec() (*Picture, *sqlgraph.CreateSpec) {
 		})
 		_node.Key = value
 	}
-	if value, ok := pc.mutation.CreatedAt(); ok {
+	if value, ok := pc.mutation.TakenAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: picture.FieldCreatedAt,
+			Column: picture.FieldTakenAt,
 		})
-		_node.CreatedAt = value
+		_node.TakenAt = value
+	}
+	if value, ok := pc.mutation.UploadedAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: picture.FieldUploadedAt,
+		})
+		_node.UploadedAt = value
 	}
 	if nodes := pc.mutation.AlbumIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

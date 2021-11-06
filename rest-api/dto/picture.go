@@ -17,6 +17,8 @@ type CreatePictureRequest struct {
 	BodyPart string `json:"body_part"`
 	// Gateway에서 image key 값도 같이 받음
 	Key string `json:"key"`
+	// TakenAt은 사진을 찍은 날짜(업로드 날짜와 다름)
+	TakenAt time.Time `json:"taken_at"`
 }
 
 // 사진 조회할 때 query string으로 오는 것 처리
@@ -38,7 +40,8 @@ type PictureDto struct {
 	ID           int       `json:"id"`
 	AlbumID      int       `json:"album_id"`
 	BodyPart     string    `json:"body_part"`
-	CreatedAt    time.Time `json:"created_at"`
+	TakenAt      time.Time `json:"taken_at"`
+	Uploaded_at  time.Time `json:"uploaded_at"`
 	ThumbnailURL string    `json:"thumbnail_url"`
 	PreviewURL   string    `json:"preview_url"`
 	ImageURL     string    `json:"image_url"`
@@ -66,7 +69,8 @@ func PictureToDto(src *ent.Picture) *PictureDto {
 		ID:           src.ID,
 		AlbumID:      src.Edges.Album.ID,
 		BodyPart:     src.BodyPart,
-		CreatedAt:    src.CreatedAt,
+		TakenAt:      src.TakenAt,
+		Uploaded_at:  src.UploadedAt,
 		ThumbnailURL: thumbnailURL,
 		PreviewURL:   previewURL,
 		ImageURL:     imageURL,

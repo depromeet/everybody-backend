@@ -42,16 +42,22 @@ func (pu *PictureUpdate) SetKey(s string) *PictureUpdate {
 	return pu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (pu *PictureUpdate) SetCreatedAt(t time.Time) *PictureUpdate {
-	pu.mutation.SetCreatedAt(t)
+// SetTakenAt sets the "taken_at" field.
+func (pu *PictureUpdate) SetTakenAt(t time.Time) *PictureUpdate {
+	pu.mutation.SetTakenAt(t)
 	return pu
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (pu *PictureUpdate) SetNillableCreatedAt(t *time.Time) *PictureUpdate {
+// SetUploadedAt sets the "uploaded_at" field.
+func (pu *PictureUpdate) SetUploadedAt(t time.Time) *PictureUpdate {
+	pu.mutation.SetUploadedAt(t)
+	return pu
+}
+
+// SetNillableUploadedAt sets the "uploaded_at" field if the given value is not nil.
+func (pu *PictureUpdate) SetNillableUploadedAt(t *time.Time) *PictureUpdate {
 	if t != nil {
-		pu.SetCreatedAt(*t)
+		pu.SetUploadedAt(*t)
 	}
 	return pu
 }
@@ -203,11 +209,18 @@ func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: picture.FieldKey,
 		})
 	}
-	if value, ok := pu.mutation.CreatedAt(); ok {
+	if value, ok := pu.mutation.TakenAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: picture.FieldCreatedAt,
+			Column: picture.FieldTakenAt,
+		})
+	}
+	if value, ok := pu.mutation.UploadedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: picture.FieldUploadedAt,
 		})
 	}
 	if pu.mutation.AlbumCleared() {
@@ -311,16 +324,22 @@ func (puo *PictureUpdateOne) SetKey(s string) *PictureUpdateOne {
 	return puo
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (puo *PictureUpdateOne) SetCreatedAt(t time.Time) *PictureUpdateOne {
-	puo.mutation.SetCreatedAt(t)
+// SetTakenAt sets the "taken_at" field.
+func (puo *PictureUpdateOne) SetTakenAt(t time.Time) *PictureUpdateOne {
+	puo.mutation.SetTakenAt(t)
 	return puo
 }
 
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (puo *PictureUpdateOne) SetNillableCreatedAt(t *time.Time) *PictureUpdateOne {
+// SetUploadedAt sets the "uploaded_at" field.
+func (puo *PictureUpdateOne) SetUploadedAt(t time.Time) *PictureUpdateOne {
+	puo.mutation.SetUploadedAt(t)
+	return puo
+}
+
+// SetNillableUploadedAt sets the "uploaded_at" field if the given value is not nil.
+func (puo *PictureUpdateOne) SetNillableUploadedAt(t *time.Time) *PictureUpdateOne {
 	if t != nil {
-		puo.SetCreatedAt(*t)
+		puo.SetUploadedAt(*t)
 	}
 	return puo
 }
@@ -496,11 +515,18 @@ func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err e
 			Column: picture.FieldKey,
 		})
 	}
-	if value, ok := puo.mutation.CreatedAt(); ok {
+	if value, ok := puo.mutation.TakenAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: picture.FieldCreatedAt,
+			Column: picture.FieldTakenAt,
+		})
+	}
+	if value, ok := puo.mutation.UploadedAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: picture.FieldUploadedAt,
 		})
 	}
 	if puo.mutation.AlbumCleared() {
