@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
@@ -15,6 +16,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
 )
+
+func init() {
+	rand.Seed(time.Now().Unix())
+}
 
 var (
 	pushAdapter push.PushAdapter

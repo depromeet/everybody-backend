@@ -30,6 +30,7 @@ func TestUserService_SignUp(t *testing.T) {
 	notificationSvc.On("Configure", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.ConfigureNotificationRequest")).Return(new(dto.NotificationConfigDto), nil)
 
 	userRepo.On("Create", mock.AnythingOfType("*ent.User")).Return(&ent.User{}, nil)
+	userRepo.On("FindByNicknameContainingOrderByNicknameDesc", mock.AnythingOfType("string")).Return(nil, &ent.NotFoundError{})
 
 	t.Run("성공) 회원가입", func(t *testing.T) {
 		user, err := userSvc.SignUp(&dto.SignUpRequest{
@@ -66,7 +67,6 @@ func TestUserService_SignUp(t *testing.T) {
 }
 
 func TestUserService_Update(t *testing.T) {
-
 	t.Run("성공) 유저 정보 변경", func(t *testing.T) {
 		userSvc := initializeUserTest(t)
 		original := &ent.User{
@@ -123,5 +123,4 @@ func TestUserService_Update(t *testing.T) {
 		_, err := userSvc.UpdateUser(999, &dto.UpdateUserRequest{})
 		assert.NotNil(t, err)
 	})
-
 }

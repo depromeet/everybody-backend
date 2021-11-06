@@ -24,7 +24,7 @@ func init() {
 		if errors.As(err, &viper.ConfigFileNotFoundError{}) {
 			log.Warningf("설정파일을 하나도 찾지 못했습니다. 올바른 환경을 설정하시고, 그에 대한 설정파일을 생성해주세요.")
 		} else {
-			log.Fatal("%#v", err)
+			log.Fatal(err)
 		}
 	} else {
 		log.Infof("%s 환경 대한 설정파일을 발견했습니다.", env)

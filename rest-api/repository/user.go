@@ -10,6 +10,7 @@ import (
 type UserRepository interface {
 	Create(user *ent.User) (*ent.User, error)
 	FindById(id int) (*ent.User, error)
+	FindByNicknameContainingOrderByNicknameDesc(nickname string) (*ent.User, error)
 	Update(id int, user *ent.User) (*ent.User, error)
 }
 
@@ -42,6 +43,17 @@ func (repo *userRepository) FindById(id int) (*ent.User, error) {
 	u, err := repo.db.User.Query().
 		Where(user.ID(id)).
 		Only(context.Background())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return u, nil
+}
+
+func (repo *userRepository) FindByNicknameContainingOrderByNicknameDesc(nickname string) (*ent.User, error) {
+	u, err := repo.db.User.Query().Where(user.NicknameContainsFold(nickname)).
+		Order(ent.Desc(user.FieldNickname)).
+		First(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

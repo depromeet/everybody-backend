@@ -58,6 +58,29 @@ func (_m *UserRepository) FindById(id int) (*ent.User, error) {
 	return r0, r1
 }
 
+// FindByNicknameContainingOrderByNicknameDesc provides a mock function with given fields: nickname
+func (_m *UserRepository) FindByNicknameContainingOrderByNicknameDesc(nickname string) (*ent.User, error) {
+	ret := _m.Called(nickname)
+
+	var r0 *ent.User
+	if rf, ok := ret.Get(0).(func(string) *ent.User); ok {
+		r0 = rf(nickname)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ent.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(nickname)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Update provides a mock function with given fields: id, user
 func (_m *UserRepository) Update(id int, user *ent.User) (*ent.User, error) {
 	ret := _m.Called(id, user)

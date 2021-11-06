@@ -1,12 +1,15 @@
 package service
 
 import (
+	"fmt"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	entUser "github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	"math/rand"
+	"strconv"
 )
 
 var (
@@ -14,6 +17,13 @@ var (
 	ErrMissingNotificationConfig = errors.New("알림 설정 관련 정보가 없습니다.")
 	ErrMissingDevice             = errors.New("디바이스 정보가 없습니다.")
 	signUpDefaultNickname        = "끈육몬"
+	randomNicknameAdjectives     = []string{
+		"배고픈", "귀여운", "열정적인", "빛나는", "튼튼한", "힘찬", "고독한", "따뜻한", "깜찍한", "꾸준한", "단단한",
+	}
+	randomNicknameNouns = []string{
+		"고양이", "멍멍이", "댕댕이", "냥이", "기요밍", "튼튼이", "헬린이", "뽀로로", "뿌앙이",
+	}
+	defaultMotto = "천천히 그리고 꾸준히!"
 )
 
 type UserService interface {
@@ -45,13 +55,9 @@ type userService struct {
 // 닉네임은 정의되지 않은 경우 "끈육몬"이 됨.
 // TODO: 트랜잭션 롤백이 안됨. 유저를 만들고 다른 것들을 만들다가 종료되면..?
 func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
-	if len(body.Nickname) == 0 {
-		body.Nickname = signUpDefaultNickname
-	}
-
 	user, err := s.userRepo.Create(&ent.User{
-		Nickname: body.Nickname,
-		Motto:    body.Motto,
+		Nickname: s.generateUniqueNickname(),
+		Motto:    defaultMotto,
 		Height:   body.Height,
 		Weight:   body.Weight,
 		Kind:     entUser.Kind(body.Kind),
@@ -106,4 +112,25 @@ func (s *userService) UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.User
 	}
 
 	return dto.UserToDto(user), err
+}
+
+func (s *userService) generateUniqueNickname() string {
+	suffix := 0
+	adj := randomNicknameAdjectives[rand.Intn(len(randomNicknameAdjectives))]
+	noun := randomNicknameNouns[rand.Intn(len(randomNicknameNouns))]
+
+	last, err := s.userRepo.FindByNicknameContainingOrderByNicknameDesc(adj + noun)
+	if ent.IsNotFound(err) {
+		return adj + noun
+	}
+	if len(adj+noun) != len(last.Nickname) {
+		suffix, err = strconv.Atoi(last.Nickname[len(adj+noun):])
+
+		if err != nil {
+			log.Errorf("랜덤 닉네임 생성 도중 오류가 발생했습니다. Suffix가 숫자가 아닙니다: %s", last.Nickname)
+			panic(errors.WithMessagef(err, "랜덤 닉네임 생성 도중 오류가 발생했습니다. Suffix가 숫자가 아닙니다."))
+		}
+	}
+
+	return fmt.Sprintf("%s%s%d", adj, noun, suffix+1)
 }
