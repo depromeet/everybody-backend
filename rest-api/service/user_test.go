@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
+	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/mocks"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -111,7 +112,7 @@ func TestUserService_Update(t *testing.T) {
 
 		// 수정되지 말아야하는 필드
 		assert.Equal(t, result.CreatedAt, original.CreatedAt)
-		assert.Equal(t, result.Kind, "SIMPLE")
+		assert.Equal(t, result.Kind, user.KindSIMPLE)
 	})
 
 	t.Run("실패) 존재하지 않는 유저에 대한 수정", func(t *testing.T) {

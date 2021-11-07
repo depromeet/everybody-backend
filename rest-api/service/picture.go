@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/depromeet/everybody-backend/rest-api/util"
 	"strconv"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
@@ -44,13 +45,19 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRe
 		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
 	}
 
+	takenAt, err := util.ConvertIntToTime(pictureReq.TakenAtYear, pictureReq.TakenAtMonth, pictureReq.TakenAtMonth)
+	if err != nil {
+		return nil, errors.Wrapf(err, "잘못된 날짜 형식입니다. (%4d, %2d, %2d", pictureReq.TakenAtYear, pictureReq.TakenAtMonth, pictureReq.TakenAtMonth)
+	}
+
 	picture := &ent.Picture{
 		BodyPart: pictureReq.BodyPart,
 		Edges: ent.PictureEdges{
 			User:  &ent.User{ID: userID},
 			Album: &ent.Album{ID: pictureReq.AlbumID},
 		},
-		Key: pictureReq.Key,
+		Key:     pictureReq.Key,
+		TakenAt: takenAt,
 	}
 
 	p, err := s.pictureRepo.Save(picture)
@@ -96,11 +103,6 @@ func (s *pictureService) GetAllPictures(userID int, pictureReq *dto.GetPictureRe
 			return nil, errors.WithStack(err)
 		}
 
-		// Notfounderr로 wrapping?
-		if len(pictures) == 0 {
-			return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
-		}
-
 		log.Info("사용자의 모든 사진들을 조회 완료")
 		return dto.PicturesToDto(pictures), nil
 	}
@@ -118,14 +120,11 @@ func (s *pictureService) GetAllPictures(userID int, pictureReq *dto.GetPictureRe
 			return nil, errors.WithStack(err)
 		}
 
-		// Notfounderr로 wrapping?
-		if len(pictures) == 0 {
-			return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
-		}
-
-		// forbiddenerr로 wrapping?
-		if userID != pictures[0].Edges.User.ID {
-			return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+		if len(pictures) > 0 {
+			// forbiddenerr로 wrapping?
+			if userID != pictures[0].Edges.User.ID {
+				return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+			}
 		}
 
 		log.Info("특정 앨범과 신체 부위에 맞는 사진들 조회")
@@ -137,14 +136,11 @@ func (s *pictureService) GetAllPictures(userID int, pictureReq *dto.GetPictureRe
 		return nil, errors.WithStack(err)
 	}
 
-	// Notfounderr로 wrapping?
-	if len(pictures) == 0 {
-		return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
-	}
-
-	// forbiddenerr로 wrapping?
-	if userID != pictures[0].Edges.User.ID {
-		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+	if len(pictures) > 0 {
+		// forbiddenerr로 wrapping?
+		if userID != pictures[0].Edges.User.ID {
+			return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+		}
 	}
 
 	log.Info("특정 앨범의 사진들 조회")

@@ -16,6 +16,8 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// ProfileImage holds the value of the "profile_image" field.
+	ProfileImage string `json:"profile_image,omitempty"`
 	// Nickname holds the value of the "nickname" field.
 	Nickname string `json:"nickname,omitempty"`
 	// Motto holds the value of the "motto" field.
@@ -102,7 +104,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldID, user.FieldHeight, user.FieldWeight:
 			values[i] = new(sql.NullInt64)
-		case user.FieldNickname, user.FieldMotto, user.FieldKind:
+		case user.FieldProfileImage, user.FieldNickname, user.FieldMotto, user.FieldKind:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
@@ -127,6 +129,12 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			u.ID = int(value.Int64)
+		case user.FieldProfileImage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field profile_image", values[i])
+			} else if value.Valid {
+				u.ProfileImage = value.String
+			}
 		case user.FieldNickname:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field nickname", values[i])
@@ -218,6 +226,8 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v", u.ID))
+	builder.WriteString(", profile_image=")
+	builder.WriteString(u.ProfileImage)
 	builder.WriteString(", nickname=")
 	builder.WriteString(u.Nickname)
 	builder.WriteString(", motto=")

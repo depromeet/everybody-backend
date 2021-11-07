@@ -34,6 +34,7 @@ func (r *albumRepository) Create(album *ent.Album) (*ent.Album, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	// TODO: 이 부분에서 근데 EagerLoading 안 잡아주면 에러날 것 같은데
 
 	return newAlbum, nil
 }
@@ -42,6 +43,13 @@ func (r *albumRepository) GetAllByUserID(userID int) ([]*ent.Album, error) {
 	albums, err := r.db.Album.Query().
 		Where(album.HasUserWith(user.ID(userID))).
 		WithUser().
+		WithPicture(func(query *ent.PictureQuery) {
+			query.WithAlbum(func(query *ent.AlbumQuery) {
+				query.Select("id")
+			}).
+				WithUser().
+				Order(ent.Asc("taken_at", "created_at"))
+		}).
 		All(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -54,6 +62,13 @@ func (r *albumRepository) Get(albumID int) (*ent.Album, error) {
 	albumData, err := r.db.Album.Query().
 		Where(album.ID(albumID)).
 		WithUser().
+		WithPicture(func(query *ent.PictureQuery) {
+			query.WithAlbum(func(query *ent.AlbumQuery) {
+				query.Select("id")
+			}).
+				WithUser().
+				Order(ent.Asc("taken_at", "created_at"))
+		}).
 		Only(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)

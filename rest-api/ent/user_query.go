@@ -435,12 +435,12 @@ func (uq *UserQuery) WithVideo(opts ...func(*VideoQuery)) *UserQuery {
 // Example:
 //
 //	var v []struct {
-//		Nickname string `json:"nickname,omitempty"`
+//		ProfileImage string `json:"profile_image,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		GroupBy(user.FieldNickname).
+//		GroupBy(user.FieldProfileImage).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 //
@@ -462,11 +462,11 @@ func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Nickname string `json:"nickname,omitempty"`
+//		ProfileImage string `json:"profile_image,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		Select(user.FieldNickname).
+//		Select(user.FieldProfileImage).
 //		Scan(ctx, &v)
 //
 func (uq *UserQuery) Select(fields ...string) *UserSelect {

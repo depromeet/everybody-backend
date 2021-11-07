@@ -34,6 +34,12 @@ func (pc *PictureCreate) SetKey(s string) *PictureCreate {
 	return pc
 }
 
+// SetTakenAt sets the "taken_at" field.
+func (pc *PictureCreate) SetTakenAt(t time.Time) *PictureCreate {
+	pc.mutation.SetTakenAt(t)
+	return pc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (pc *PictureCreate) SetCreatedAt(t time.Time) *PictureCreate {
 	pc.mutation.SetCreatedAt(t)
@@ -163,6 +169,9 @@ func (pc *PictureCreate) check() error {
 	if _, ok := pc.mutation.Key(); !ok {
 		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "key"`)}
 	}
+	if _, ok := pc.mutation.TakenAt(); !ok {
+		return &ValidationError{Name: "taken_at", err: errors.New(`ent: missing required field "taken_at"`)}
+	}
 	if _, ok := pc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
 	}
@@ -211,6 +220,14 @@ func (pc *PictureCreate) createSpec() (*Picture, *sqlgraph.CreateSpec) {
 			Column: picture.FieldKey,
 		})
 		_node.Key = value
+	}
+	if value, ok := pc.mutation.TakenAt(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: picture.FieldTakenAt,
+		})
+		_node.TakenAt = value
 	}
 	if value, ok := pc.mutation.CreatedAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

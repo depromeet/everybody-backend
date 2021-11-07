@@ -39,32 +39,33 @@ func init() {
 var Config *config
 
 type config struct {
-	Port int `yaml:"port"`
+	Port int
 	DB   struct {
 		MySQL struct {
-			Host         string `yaml:"host"`
-			Port         int    `yaml:"port"`
-			DatabaseName string `yaml:"databaseName"`
-			User         string `yaml:"user"`
-			Password     string `yaml:"password"`
-		} `yaml:"mySql"`
-	} `yaml:"db"`
+			Host         string
+			Port         int
+			DatabaseName string
+			User         string
+			Password     string
+		}
+	}
 
 	AWS struct {
-		Profile string `yaml:"profile"`
-		Region  string `yaml:"region"`
-		Bucket  string `yaml:"bucket"`
-	} `yaml:"aws"`
-	ImageRootUrl     string `yaml:"imageRootUrl"`
-	ImagePublicKeyID string `yaml:"imagePublicKeyID"`
-	ImagePrivateKey  string `yaml:"imagePrivateKey"`
-	Push             struct {
+		Profile string
+		Region  string
+		Bucket  string
+	}
+	PublicDriveRootURL string
+	ImageRootUrl       string
+	ImagePublicKeyID   string
+	ImagePrivateKey    string
+	Push               struct {
 		FCM struct {
-			ServiceAccountFile string `yaml:"ServiceAccountFile"`
-		} `yaml:"fcm"`
-	} `yaml:"push"`
+			ServiceAccountFile string
+		}
+	}
 	NotifyRoutine struct {
-		Enabled  bool `yaml:"enabled"`
-		Interval int  `yaml:"interval"`
-	} `yaml:"notifyRoutine"`
+		Enabled  bool
+		Interval int
+	}
 }

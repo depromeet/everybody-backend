@@ -42,6 +42,12 @@ func (pu *PictureUpdate) SetKey(s string) *PictureUpdate {
 	return pu
 }
 
+// SetTakenAt sets the "taken_at" field.
+func (pu *PictureUpdate) SetTakenAt(t time.Time) *PictureUpdate {
+	pu.mutation.SetTakenAt(t)
+	return pu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (pu *PictureUpdate) SetCreatedAt(t time.Time) *PictureUpdate {
 	pu.mutation.SetCreatedAt(t)
@@ -203,6 +209,13 @@ func (pu *PictureUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: picture.FieldKey,
 		})
 	}
+	if value, ok := pu.mutation.TakenAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: picture.FieldTakenAt,
+		})
+	}
 	if value, ok := pu.mutation.CreatedAt(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
@@ -308,6 +321,12 @@ func (puo *PictureUpdateOne) SetBodyPart(s string) *PictureUpdateOne {
 // SetKey sets the "key" field.
 func (puo *PictureUpdateOne) SetKey(s string) *PictureUpdateOne {
 	puo.mutation.SetKey(s)
+	return puo
+}
+
+// SetTakenAt sets the "taken_at" field.
+func (puo *PictureUpdateOne) SetTakenAt(t time.Time) *PictureUpdateOne {
+	puo.mutation.SetTakenAt(t)
 	return puo
 }
 
@@ -494,6 +513,13 @@ func (puo *PictureUpdateOne) sqlSave(ctx context.Context) (_node *Picture, err e
 			Type:   field.TypeString,
 			Value:  value,
 			Column: picture.FieldKey,
+		})
+	}
+	if value, ok := puo.mutation.TakenAt(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: picture.FieldTakenAt,
 		})
 	}
 	if value, ok := puo.mutation.CreatedAt(); ok {

@@ -32,6 +32,26 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
+// SetProfileImage sets the "profile_image" field.
+func (uu *UserUpdate) SetProfileImage(s string) *UserUpdate {
+	uu.mutation.SetProfileImage(s)
+	return uu
+}
+
+// SetNillableProfileImage sets the "profile_image" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableProfileImage(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetProfileImage(*s)
+	}
+	return uu
+}
+
+// ClearProfileImage clears the value of the "profile_image" field.
+func (uu *UserUpdate) ClearProfileImage() *UserUpdate {
+	uu.mutation.ClearProfileImage()
+	return uu
+}
+
 // SetNickname sets the "nickname" field.
 func (uu *UserUpdate) SetNickname(s string) *UserUpdate {
 	uu.mutation.SetNickname(s)
@@ -399,6 +419,19 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := uu.mutation.ProfileImage(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldProfileImage,
+		})
+	}
+	if uu.mutation.ProfileImageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: user.FieldProfileImage,
+		})
+	}
 	if value, ok := uu.mutation.Nickname(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
@@ -754,6 +787,26 @@ type UserUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserMutation
+}
+
+// SetProfileImage sets the "profile_image" field.
+func (uuo *UserUpdateOne) SetProfileImage(s string) *UserUpdateOne {
+	uuo.mutation.SetProfileImage(s)
+	return uuo
+}
+
+// SetNillableProfileImage sets the "profile_image" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableProfileImage(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetProfileImage(*s)
+	}
+	return uuo
+}
+
+// ClearProfileImage clears the value of the "profile_image" field.
+func (uuo *UserUpdateOne) ClearProfileImage() *UserUpdateOne {
+	uuo.mutation.ClearProfileImage()
+	return uuo
 }
 
 // SetNickname sets the "nickname" field.
@@ -1146,6 +1199,19 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := uuo.mutation.ProfileImage(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldProfileImage,
+		})
+	}
+	if uuo.mutation.ProfileImageCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Column: user.FieldProfileImage,
+		})
 	}
 	if value, ok := uuo.mutation.Nickname(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{

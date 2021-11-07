@@ -93,6 +93,13 @@ func IDLTE(id int) predicate.User {
 	})
 }
 
+// ProfileImage applies equality check predicate on the "profile_image" field. It's identical to ProfileImageEQ.
+func ProfileImage(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProfileImage), v))
+	})
+}
+
 // Nickname applies equality check predicate on the "nickname" field. It's identical to NicknameEQ.
 func Nickname(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -125,6 +132,131 @@ func Weight(v int) predicate.User {
 func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldCreatedAt), v))
+	})
+}
+
+// ProfileImageEQ applies the EQ predicate on the "profile_image" field.
+func ProfileImageEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageNEQ applies the NEQ predicate on the "profile_image" field.
+func ProfileImageNEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageIn applies the In predicate on the "profile_image" field.
+func ProfileImageIn(vs ...string) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldProfileImage), v...))
+	})
+}
+
+// ProfileImageNotIn applies the NotIn predicate on the "profile_image" field.
+func ProfileImageNotIn(vs ...string) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldProfileImage), v...))
+	})
+}
+
+// ProfileImageGT applies the GT predicate on the "profile_image" field.
+func ProfileImageGT(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageGTE applies the GTE predicate on the "profile_image" field.
+func ProfileImageGTE(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageLT applies the LT predicate on the "profile_image" field.
+func ProfileImageLT(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageLTE applies the LTE predicate on the "profile_image" field.
+func ProfileImageLTE(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageContains applies the Contains predicate on the "profile_image" field.
+func ProfileImageContains(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageHasPrefix applies the HasPrefix predicate on the "profile_image" field.
+func ProfileImageHasPrefix(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageHasSuffix applies the HasSuffix predicate on the "profile_image" field.
+func ProfileImageHasSuffix(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageIsNil applies the IsNil predicate on the "profile_image" field.
+func ProfileImageIsNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldProfileImage)))
+	})
+}
+
+// ProfileImageNotNil applies the NotNil predicate on the "profile_image" field.
+func ProfileImageNotNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldProfileImage)))
+	})
+}
+
+// ProfileImageEqualFold applies the EqualFold predicate on the "profile_image" field.
+func ProfileImageEqualFold(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldProfileImage), v))
+	})
+}
+
+// ProfileImageContainsFold applies the ContainsFold predicate on the "profile_image" field.
+func ProfileImageContainsFold(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldProfileImage), v))
 	})
 }
 

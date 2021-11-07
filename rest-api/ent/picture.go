@@ -22,6 +22,8 @@ type Picture struct {
 	BodyPart string `json:"body_part,omitempty"`
 	// Key holds the value of the "key" field.
 	Key string `json:"key,omitempty"`
+	// TakenAt holds the value of the "taken_at" field.
+	TakenAt time.Time `json:"taken_at,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -79,7 +81,7 @@ func (*Picture) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case picture.FieldBodyPart, picture.FieldKey:
 			values[i] = new(sql.NullString)
-		case picture.FieldCreatedAt:
+		case picture.FieldTakenAt, picture.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		case picture.ForeignKeys[0]: // album_picture
 			values[i] = new(sql.NullInt64)
@@ -117,6 +119,12 @@ func (pi *Picture) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field key", values[i])
 			} else if value.Valid {
 				pi.Key = value.String
+			}
+		case picture.FieldTakenAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field taken_at", values[i])
+			} else if value.Valid {
+				pi.TakenAt = value.Time
 			}
 		case picture.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -180,6 +188,8 @@ func (pi *Picture) String() string {
 	builder.WriteString(pi.BodyPart)
 	builder.WriteString(", key=")
 	builder.WriteString(pi.Key)
+	builder.WriteString(", taken_at=")
+	builder.WriteString(pi.TakenAt.Format(time.ANSIC))
 	builder.WriteString(", created_at=")
 	builder.WriteString(pi.CreatedAt.Format(time.ANSIC))
 	builder.WriteByte(')')

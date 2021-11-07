@@ -17,8 +17,8 @@ type Picture struct {
 func (Picture) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("body_part"),
-		// TODO: 이 부분은 location보다는 key가 좋을 것 같은데 어떨까요
 		field.String("key"),
+		field.Time("taken_at"),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),

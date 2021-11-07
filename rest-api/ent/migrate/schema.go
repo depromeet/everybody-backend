@@ -86,6 +86,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "body_part", Type: field.TypeString},
 		{Name: "key", Type: field.TypeString},
+		{Name: "taken_at", Type: field.TypeTime},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "album_picture", Type: field.TypeInt, Nullable: true},
 		{Name: "user_picture", Type: field.TypeInt, Nullable: true},
@@ -98,13 +99,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pictures_albums_picture",
-				Columns:    []*schema.Column{PicturesColumns[4]},
+				Columns:    []*schema.Column{PicturesColumns[5]},
 				RefColumns: []*schema.Column{AlbumsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "pictures_users_picture",
-				Columns:    []*schema.Column{PicturesColumns[5]},
+				Columns:    []*schema.Column{PicturesColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -113,6 +114,7 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "profile_image", Type: field.TypeString, Nullable: true},
 		{Name: "nickname", Type: field.TypeString},
 		{Name: "motto", Type: field.TypeString, Default: "눈바디와 함께 꾸준히 운동할테야!"},
 		{Name: "height", Type: field.TypeInt, Nullable: true},

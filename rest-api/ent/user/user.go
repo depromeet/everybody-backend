@@ -12,6 +12,8 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldProfileImage holds the string denoting the profile_image field in the database.
+	FieldProfileImage = "profile_image"
 	// FieldNickname holds the string denoting the nickname field in the database.
 	FieldNickname = "nickname"
 	// FieldMotto holds the string denoting the motto field in the database.
@@ -76,6 +78,7 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
+	FieldProfileImage,
 	FieldNickname,
 	FieldMotto,
 	FieldHeight,

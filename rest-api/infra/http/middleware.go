@@ -1,6 +1,9 @@
 package http
 
 import (
+	"encoding/json"
+	"fmt"
+  
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
@@ -19,11 +22,17 @@ type ErrorResponse struct {
 func errorHandle(ctx *fiber.Ctx, err error) error {
 	rootErr := errors.GetRootStackError(err)
 	log.Errorf("%+v", rootErr)
-	n := new(service.NotFoundError)
-	if errors.As(err, n) {
-		return ctx.Status(404).JSON(e("리소스를 찾을 수 없습니다.", reflect.TypeOf(err).Name()))
+
+	notFoundErr := new(service.NotFoundError)
+	unmarshalTypeErr := new(json.UnmarshalTypeError)
+
+	if errors.As(err, notFoundErr) {
+		return ctx.Status(404).JSON(newErrorResponse("리소스를 찾을 수 없습니다.", reflect.TypeOf(err).Name()))
+	} else if errors.As(err, &unmarshalTypeErr) {
+		e := errors.Cause(err).(*json.UnmarshalTypeError) // .Cause()는 .Cause()를 구현하지 않은 에러를 error로 리턴합니다.
+		return ctx.Status(400).JSON(newErrorResponse(fmt.Sprintf("%s에 대한 잘못된 타입의 값입니다. %s 타입을 이용해주세요.", e.Field, e.Type.Name()), reflect.TypeOf(e).Name()))
 	} else {
-		return ctx.Status(500).JSON(e("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internalError"))
+		return ctx.Status(500).JSON(newErrorResponse("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internalError"))
 	}
 }
 
@@ -35,8 +44,7 @@ func defaultLog(ctx *fiber.Ctx) error {
 	return ctx.Next()
 }
 
-// e 는 ErrorResponse를 간단히 생성하기 위한 Shortcut
-func e(message, errorType string) *ErrorResponse {
+func newErrorResponse(message, errorType string) *ErrorResponse {
 	return &ErrorResponse{
 		Message:   message,
 		ErrorType: errorType,

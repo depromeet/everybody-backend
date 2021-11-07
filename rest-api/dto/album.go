@@ -24,10 +24,13 @@ type AlbumRequest struct {
 
 type AlbumsDto []*AlbumDto
 type AlbumDto struct {
-	ID        int         `json:"id"`
-	Name      string      `json:"name"`
-	CreatedAt time.Time   `json:"created_at"`
-	Pictures  PicturesDto `json:"pictures"`
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	// 클라이언트측에서는 부위별로 분류된 사진 리스트가 필요함.
+	// TODO: 특정 부위의 사진이 한 장도 없을 때 클라이언트 측에서 맵을 사용하면서 undefined 나 no key(?) 같은 에러를 겪지 않게 하려면
+	// 서버측에서 부위에 대한 Enum을 정의해서 각 부위별로 사진이 하나도 없는 부위는 빈 리스트를 전달해줘야할 것 같아요.
+	Pictures map[string]PicturesDto `json:"pictures"`
 
 	// Videos    VideosDto   `json:"videos"`
 }
@@ -45,12 +48,15 @@ func AlbumsToDto(srcAlbums []*ent.Album) AlbumsDto {
 
 func AlbumToDto(srcAlbum *ent.Album, srcPictures []*ent.Picture) *AlbumDto {
 	picturesDto := PicturesToDto(srcPictures)
-
+	picturesMap := make(map[string]PicturesDto)
+	for _, pictureDto := range picturesDto {
+		picturesMap[pictureDto.BodyPart] = append(picturesMap[pictureDto.BodyPart], pictureDto)
+	}
 	return &AlbumDto{
 		ID:        srcAlbum.ID,
 		Name:      srcAlbum.Name,
 		CreatedAt: srcAlbum.CreatedAt,
-		Pictures:  picturesDto,
+		Pictures:  picturesMap,
 		// Videos:
 	}
 }

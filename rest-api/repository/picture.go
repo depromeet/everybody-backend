@@ -34,6 +34,7 @@ func (r *pictureRepository) Save(picture *ent.Picture) (*ent.Picture, error) {
 		SetAlbum(picture.Edges.Album).
 		SetBodyPart(picture.BodyPart).
 		SetKey(picture.Key).
+		SetTakenAt(picture.TakenAt).
 		Save(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -59,6 +60,7 @@ func (r *pictureRepository) GetAllByUserID(userID int) ([]*ent.Picture, error) {
 		Where(picture.HasUserWith(user.ID(userID))).
 		WithUser().
 		WithAlbum().
+		Order(ent.Asc("taken_at")).
 		All(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -73,6 +75,7 @@ func (r *pictureRepository) GetAllByAlbumID(albumID int) ([]*ent.Picture, error)
 		Where(picture.HasAlbumWith(album.ID(albumID))).
 		WithUser().
 		WithAlbum().
+		Order(ent.Asc("taken_at")).
 		All(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -100,6 +103,7 @@ func (r *pictureRepository) FindByAlbumIDAndBodyPart(albumID int, bodyPart strin
 		Where(picture.And(picture.HasAlbumWith(album.ID(albumID)), picture.BodyPart(bodyPart))).
 		WithUser().
 		WithAlbum().
+		Order(ent.Asc("taken_at")).
 		All(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)

@@ -54,28 +54,8 @@ func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 		return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
 	}
 
-	// album들의 각각의 사진들도 조회(사진이 없을 수도 있음)
-	allPictures, err := s.pictureRepo.GetAllByUserID(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	albumsWithPictures := make([]*ent.Album, 0)
-	for _, album := range albums {
-		pictures := make([]*ent.Picture, 0)
-		// 사용자의 전체 사진을 각 앨범에 맞게 조립...
-		for _, picture := range allPictures {
-			if album.ID == picture.Edges.Album.ID {
-				pictures = append(pictures, picture)
-			}
-		}
-
-		album.Edges.Picture = pictures
-		albumsWithPictures = append(albumsWithPictures, album)
-	}
-
-	log.Info("전체 앨범과 그 앨범들의 사진들을 조회 완료")
-	return dto.AlbumsToDto(albumsWithPictures), nil
+	log.Info("전체 앨범 조회 완료 (그 속 사진들은 Eager loading으로 조회)")
+	return dto.AlbumsToDto(albums), nil
 }
 
 // GetAlbum은 alubm 정보와 album의 사진 정보들도 조회

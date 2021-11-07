@@ -25,6 +25,20 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
+// SetProfileImage sets the "profile_image" field.
+func (uc *UserCreate) SetProfileImage(s string) *UserCreate {
+	uc.mutation.SetProfileImage(s)
+	return uc
+}
+
+// SetNillableProfileImage sets the "profile_image" field if the given value is not nil.
+func (uc *UserCreate) SetNillableProfileImage(s *string) *UserCreate {
+	if s != nil {
+		uc.SetProfileImage(*s)
+	}
+	return uc
+}
+
 // SetNickname sets the "nickname" field.
 func (uc *UserCreate) SetNickname(s string) *UserCreate {
 	uc.mutation.SetNickname(s)
@@ -306,6 +320,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if id, ok := uc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := uc.mutation.ProfileImage(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldProfileImage,
+		})
+		_node.ProfileImage = value
 	}
 	if value, ok := uc.mutation.Nickname(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

@@ -107,6 +107,13 @@ func Key(v string) predicate.Picture {
 	})
 }
 
+// TakenAt applies equality check predicate on the "taken_at" field. It's identical to TakenAtEQ.
+func TakenAt(v time.Time) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTakenAt), v))
+	})
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
@@ -333,6 +340,82 @@ func KeyEqualFold(v string) predicate.Picture {
 func KeyContainsFold(v string) predicate.Picture {
 	return predicate.Picture(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldKey), v))
+	})
+}
+
+// TakenAtEQ applies the EQ predicate on the "taken_at" field.
+func TakenAtEQ(v time.Time) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTakenAt), v))
+	})
+}
+
+// TakenAtNEQ applies the NEQ predicate on the "taken_at" field.
+func TakenAtNEQ(v time.Time) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTakenAt), v))
+	})
+}
+
+// TakenAtIn applies the In predicate on the "taken_at" field.
+func TakenAtIn(vs ...time.Time) predicate.Picture {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Picture(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTakenAt), v...))
+	})
+}
+
+// TakenAtNotIn applies the NotIn predicate on the "taken_at" field.
+func TakenAtNotIn(vs ...time.Time) predicate.Picture {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Picture(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTakenAt), v...))
+	})
+}
+
+// TakenAtGT applies the GT predicate on the "taken_at" field.
+func TakenAtGT(v time.Time) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTakenAt), v))
+	})
+}
+
+// TakenAtGTE applies the GTE predicate on the "taken_at" field.
+func TakenAtGTE(v time.Time) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTakenAt), v))
+	})
+}
+
+// TakenAtLT applies the LT predicate on the "taken_at" field.
+func TakenAtLT(v time.Time) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTakenAt), v))
+	})
+}
+
+// TakenAtLTE applies the LTE predicate on the "taken_at" field.
+func TakenAtLTE(v time.Time) predicate.Picture {
+	return predicate.Picture(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTakenAt), v))
 	})
 }
 
