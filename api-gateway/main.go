@@ -23,6 +23,7 @@ func main() {
 
 	e := echo.New()
 
+	e.GET("/", (&controller.IndexController{}).Index)
 	// server health check api
 	e.GET(config.Config.ApiGw.HealthCheckPath, func(c echo.Context) error {
 		c.Response().Header().Set("Health-Checked-Time", time.Now().Format(time.RFC3339))
