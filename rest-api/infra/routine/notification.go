@@ -6,6 +6,7 @@
 package routine
 
 import (
+	"fmt"
 	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
 	"github.com/depromeet/everybody-backend/rest-api/config"
 	"github.com/depromeet/everybody-backend/rest-api/service"
@@ -38,7 +39,7 @@ func (r *NotifyRoutine) Run() (err error) {
 		// panic 된 것들도 recover 해서 최대한 Run()이 종료되지 않게 함.
 		if r := recover(); r != nil {
 			log.Errorf("%+v:\n%s", r, debug.Stack())
-			err = errors.WithMessagef(ErrNotifyRoutine, "%s", r)
+			err = errors.Wrap(ErrNotifyRoutine, fmt.Sprintf("%s", r))
 		} else {
 			if err != nil {
 				log.Errorf("%+v", err)

@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"fmt"
+  
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"

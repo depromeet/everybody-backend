@@ -33,6 +33,9 @@ func NewPictureService(pictureRepo repository.PictureRepositoryInterface, albumR
 func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRequest) (*dto.PictureDto, error) {
 	album, err := s.albumRepo.Get(pictureReq.AlbumID)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, errors.WithStack(NotFoundError(err))
+		}
 		// 사진 저장할 앨범 id가 존재하지 않는 등의 에러
 		return nil, errors.WithStack(err)
 	}
