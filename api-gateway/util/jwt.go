@@ -29,7 +29,6 @@ func CreateAccessToken(userId int) (string, error) {
 		log.Error(err)
 		return "", err
 	}
-	encToken = "Bearer " + encToken
 
 	log.Info("Token create Success -> userId=", userId)
 	return encToken, nil
