@@ -3,11 +3,11 @@ package handler
 import (
 	"strconv"
 
+	"github.com/pkg/errors"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/gofiber/fiber/v2"
-	"github.com/pkg/errors"
 )
 
 type AlbumHandler struct {

@@ -128,7 +128,7 @@ func (s *userService) generateUniqueNickname() string {
 
 		if err != nil {
 			log.Errorf("랜덤 닉네임 생성 도중 오류가 발생했습니다. Suffix가 숫자가 아닙니다: %s", last.Nickname)
-			panic(errors.WithMessagef(err, "랜덤 닉네임 생성 도중 오류가 발생했습니다. Suffix가 숫자가 아닙니다."))
+			panic(errors.Wrap(err, "랜덤 닉네임 생성 도중 오류가 발생했습니다. Suffix가 숫자가 아닙니다."))
 		}
 	}
 
