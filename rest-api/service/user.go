@@ -23,6 +23,10 @@ var (
 	randomNicknameNouns = []string{
 		"고양이", "멍멍이", "댕댕이", "냥이", "기요밍", "튼튼이", "헬린이", "뽀로로", "뿌앙이",
 	}
+	// randomProfileImageKey 는 public drive s3에 미리 업로드 해둔 샘플이다.
+	randomProfileImageKey = []string{
+		"beam-1.png", "beam-2.png", "beam-3.png", "beam-4.png", "beam-5.png", "beam-6.png",
+	}
 	defaultMotto = "천천히 그리고 꾸준히!"
 )
 
@@ -56,11 +60,12 @@ type userService struct {
 // TODO: 트랜잭션 롤백이 안됨. 유저를 만들고 다른 것들을 만들다가 종료되면..?
 func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 	user, err := s.userRepo.Create(&ent.User{
-		Nickname: s.generateUniqueNickname(),
-		Motto:    defaultMotto,
-		Height:   body.Height,
-		Weight:   body.Weight,
-		Kind:     entUser.Kind(body.Kind),
+		Nickname:     s.generateUniqueNickname(),
+		Motto:        defaultMotto,
+		Height:       body.Height,
+		Weight:       body.Weight,
+		ProfileImage: s.getRandomProfileImageKey(),
+		Kind:         entUser.Kind(body.Kind),
 	})
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -114,6 +119,9 @@ func (s *userService) UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.User
 	return dto.UserToDto(user), err
 }
 
+func (s *userService) getRandomProfileImageKey() string {
+	return randomProfileImageKey[rand.Intn(len(randomProfileImageKey))]
+}
 func (s *userService) generateUniqueNickname() string {
 	suffix := 0
 	adj := randomNicknameAdjectives[rand.Intn(len(randomNicknameAdjectives))]

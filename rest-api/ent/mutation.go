@@ -2635,6 +2635,7 @@ type UserMutation struct {
 	op                         Op
 	typ                        string
 	id                         *int
+	profile_image              *string
 	nickname                   *string
 	motto                      *string
 	height                     *int
@@ -2747,6 +2748,55 @@ func (m *UserMutation) ID() (id int, exists bool) {
 		return
 	}
 	return *m.id, true
+}
+
+// SetProfileImage sets the "profile_image" field.
+func (m *UserMutation) SetProfileImage(s string) {
+	m.profile_image = &s
+}
+
+// ProfileImage returns the value of the "profile_image" field in the mutation.
+func (m *UserMutation) ProfileImage() (r string, exists bool) {
+	v := m.profile_image
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProfileImage returns the old "profile_image" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldProfileImage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldProfileImage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldProfileImage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProfileImage: %w", err)
+	}
+	return oldValue.ProfileImage, nil
+}
+
+// ClearProfileImage clears the value of the "profile_image" field.
+func (m *UserMutation) ClearProfileImage() {
+	m.profile_image = nil
+	m.clearedFields[user.FieldProfileImage] = struct{}{}
+}
+
+// ProfileImageCleared returns if the "profile_image" field was cleared in this mutation.
+func (m *UserMutation) ProfileImageCleared() bool {
+	_, ok := m.clearedFields[user.FieldProfileImage]
+	return ok
+}
+
+// ResetProfileImage resets all changes to the "profile_image" field.
+func (m *UserMutation) ResetProfileImage() {
+	m.profile_image = nil
+	delete(m.clearedFields, user.FieldProfileImage)
 }
 
 // SetNickname sets the "nickname" field.
@@ -3322,7 +3372,10 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
+	if m.profile_image != nil {
+		fields = append(fields, user.FieldProfileImage)
+	}
 	if m.nickname != nil {
 		fields = append(fields, user.FieldNickname)
 	}
@@ -3349,6 +3402,8 @@ func (m *UserMutation) Fields() []string {
 // schema.
 func (m *UserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case user.FieldProfileImage:
+		return m.ProfileImage()
 	case user.FieldNickname:
 		return m.Nickname()
 	case user.FieldMotto:
@@ -3370,6 +3425,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case user.FieldProfileImage:
+		return m.OldProfileImage(ctx)
 	case user.FieldNickname:
 		return m.OldNickname(ctx)
 	case user.FieldMotto:
@@ -3391,6 +3448,13 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 // type.
 func (m *UserMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case user.FieldProfileImage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProfileImage(v)
+		return nil
 	case user.FieldNickname:
 		v, ok := value.(string)
 		if !ok {
@@ -3490,6 +3554,9 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(user.FieldProfileImage) {
+		fields = append(fields, user.FieldProfileImage)
+	}
 	if m.FieldCleared(user.FieldHeight) {
 		fields = append(fields, user.FieldHeight)
 	}
@@ -3510,6 +3577,9 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
+	case user.FieldProfileImage:
+		m.ClearProfileImage()
+		return nil
 	case user.FieldHeight:
 		m.ClearHeight()
 		return nil
@@ -3524,6 +3594,9 @@ func (m *UserMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *UserMutation) ResetField(name string) error {
 	switch name {
+	case user.FieldProfileImage:
+		m.ResetProfileImage()
+		return nil
 	case user.FieldNickname:
 		m.ResetNickname()
 		return nil

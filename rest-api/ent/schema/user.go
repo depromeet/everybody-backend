@@ -19,6 +19,7 @@ type User struct {
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("id"),
+		field.String("profile_image").Optional(),
 		field.String("nickname"),
 		field.String("motto").Default("눈바디와 함께 꾸준히 운동할테야!"),
 		field.Int("height").Optional().Nillable(),

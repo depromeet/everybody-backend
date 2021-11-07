@@ -28,6 +28,7 @@ func (repo *userRepository) Create(user *ent.User) (*ent.User, error) {
 	result, err := repo.db.User.Create().
 		SetNickname(user.Nickname).
 		SetMotto(user.Motto).
+		SetProfileImage(user.ProfileImage).
 		SetKind(user.Kind).
 		SetNillableHeight(user.Height).
 		SetNillableWeight(user.Weight).
