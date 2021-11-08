@@ -1,4 +1,4 @@
-name: Rest-CI
+name: APIGateway-CI
 on: 
   workflow_dispatch:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  rest-ci:
+  apigw-ci:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -39,13 +39,7 @@ jobs:
         path: ${{ steps.cache-paths.outputs.mod-cache }}
         key: ${{ runner.os }}-mod-cache-${{ hashFiles('**/go.sum') }}
         
-    - name: Build rest-api
+    - name: Build api-gateway
       run: |
-        GOOS=linux GOARCH=amd64 go build -o rest main.go
-      working-directory: rest-api
-
-    - name: Test rest-api
-      # go test -v ./...()
-      run: |
-        go test -v ./service
-      working-directory: rest-api
+        GOOS=linux GOARCH=amd64 go build -o apigw main.go
+      working-directory: api-gateway
