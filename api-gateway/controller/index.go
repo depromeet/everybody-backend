@@ -2,10 +2,10 @@ package controller
 
 import (
 	"fmt"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
-type IndexController struct {}
+type IndexController struct{}
 
 func (c *IndexController) Index(ctx echo.Context) error {
 	ctx.Response().Header().Set("Content-Type", "text/html")
