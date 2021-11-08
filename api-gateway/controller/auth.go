@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/depromeet/everybody-backend/api-gateway/model"
@@ -103,7 +103,7 @@ func SignUp(c echo.Context) error {
 	}
 	req, _ := http.NewRequest("", "", bytes.NewReader(reqMapByte)) // method and url will be set bottom
 	req.Header.Set("Content-Type", "application/json")
-	code, _, resBody := callRestApi(c, req, "/users", "POST")
+	code, header, resBody := callRestApi(c, req, "/users", "POST")
 
 	// 성공인 경우, UserAuth 테이블에 삽입하고, user_id/password만 리턴해줌
 	if code == http.StatusOK {
@@ -125,10 +125,15 @@ func SignUp(c echo.Context) error {
 		ua.UserId = userId
 		ua.Password = password.(string)
 		model.SetUserAuth(ua)
-		return c.JSON(http.StatusOK, ua) // 성공 시 user_id와 password만 리턴
 
 	} else { // restapi 서버에서 응답이 200이 아닌 경우, DB 접근x
 		log.Error("rest-api Request fail... code=" + strconv.Itoa(code) + " resBody=" + resBody)
-		return c.String(code, resBody) // 실패 시 rest-api로부터 받은 실패코드와 메세지를 그대로 리턴해줌
 	}
+	
+	// rest에게 받은 응답을 그대로 전달
+	for k, v := range header {
+		c.Response().Header().Set(k, v.(string))
+	}
+
+	return c.String(code, resBody)
 }

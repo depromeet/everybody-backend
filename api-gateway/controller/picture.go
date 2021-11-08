@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
@@ -86,18 +86,24 @@ func UploadPicture(c echo.Context) error {
 	req, _ := http.NewRequest("", "", bytes.NewBuffer(reqMapByte)) // method and url will be set bottom
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("user", strconv.Itoa(userId))
-	code, _, resBody := callRestApi(c, req, "/pictures", "POST")
+	code, header, resBody := callRestApi(c, req, "/pictures", "POST")
 
-	if code == http.StatusOK {
-		return c.String(code, resBody) // rest-api로 부터 받은 결과 그대로 리턴
-
-	} else {
+	if code != http.StatusOK {
 		// TODO: fatal로 프로세스 죽기 전에 S3에서 이미 업로드된 사진을 삭제해줘야함
 
 		// 람다 업로드는 성공했으나 rest-api 호출이 실패한 경우에도 프로세스 죽음에 주의(fatal)
+		// => Fatal은 아마 os.Exit() 하는 걸로 아는데 log.Panic이 더 괜찮을 수도 있을 것 같아요.
+		// 가장 베스트는 callRestApi에서 error을 리턴해주고 c.JSON(500, err) 하는 게 좋을 것 같긴하네요.
+		// lambda나 rest가 응답하는 코드가 http.StatusOK가 아닐 수 있기도 하구요.
 		log.Fatal("rest-api Request fail... code=" + strconv.Itoa(code) + " resBody=" + resBody)
-		return c.String(code, "rest-api Request fail...")
 	}
+
+	// lambda에게 받은 응답을 그대로 전달
+	for k, v := range header {
+		c.Response().Header().Set(k, v.(string))
+	}
+
+	return c.String(code, resBody)
 }
 
 func callLambdaImageUpload(userId int, imageFile *multipart.FileHeader) (int, map[string]interface{}, string) {
