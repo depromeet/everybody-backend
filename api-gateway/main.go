@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
@@ -25,6 +25,7 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 
+	e.GET("/", (&controller.IndexController{}).Index)
 	// server health check api
 	e.GET(config.Config.ApiGw.HealthCheckPath, func(c echo.Context) error {
 		c.Response().Header().Set("Health-Checked-Time", time.Now().Format(time.RFC3339))
