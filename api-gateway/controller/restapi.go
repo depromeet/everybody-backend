@@ -17,17 +17,20 @@ type RestApiController struct {
 }
 
 func (c RestApiController) Init(g *echo.Group) {
-	// main에서 걸리지 않은 모든 path는 rest-api로 포워딩
-	g.GET("/*", func(c echo.Context) error {
+	// picures apis
+	g.POST("pictures", func(c echo.Context) error {
+		return UploadPicture(c)
+	})
+	g.GET("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "GET")
 	})
-	g.POST("/*", func(c echo.Context) error {
+	g.POST("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "POST")
 	})
-	g.PUT("/*", func(c echo.Context) error {
+	g.PUT("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "PUT")
 	})
-	g.DELETE("/*", func(c echo.Context) error {
+	g.DELETE("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "DELETE")
 	})
 

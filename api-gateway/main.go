@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
@@ -22,6 +23,7 @@ func main() {
 	db.Close()
 
 	e := echo.New()
+	e.Use(middleware.Logger())
 
 	e.GET("/", (&controller.IndexController{}).Index)
 	// server health check api
@@ -39,14 +41,8 @@ func main() {
 		return controller.SignUp(c)
 	})
 
-	// picures apis
-	e.POST("/pictures", func(c echo.Context) error {
-		return controller.UploadPicture(c)
-	})
-
 	// fowarding to rest-api server apis
 	controller.RestApiController{}.Init(e.Group("/*"))
-
 	// run server...
 	if err := e.Start(":" + strconv.Itoa(config.Config.ApiGw.Port)); err != nil {
 		log.Fatal(err)
