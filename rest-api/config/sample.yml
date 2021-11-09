@@ -31,4 +31,14 @@ notifyRoutine:
   # 루틴을 반복할 떄의 interval. 초 단위
   interval: 60 # e.g. 60 = 60초
 
+slack:
+  # 알림을 보내려는 경우에만 활성화. 로컬 개발 시에는 비활성화할 것을 추천.
+  enabled: false
+  # 슬랙 웹훅 앱 URL
+  webhook: 슬랙 웹훅 앱 URL
+  # 알림 보낼 채널명
+  channel: "#아무알림이나-보내봐~"
+  username: 눈바디 경비원
+  # 알림보낼 때 프사
+  iconEmoji: :cop
 
