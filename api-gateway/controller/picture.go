@@ -54,6 +54,24 @@ func UploadPicture(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "get Formfile fail...")
 	}
 
+	takenAtYear, err := strconv.Atoi(c.FormValue("taken_at_year"))
+	if err != nil {
+		log.Error("takenAtYear parse error... takenAtYear=", c.FormValue("takenAtYear"))
+		return c.String(http.StatusBadRequest, "takenAtYear parse error...")
+	}
+
+	takenAtMonth, err := strconv.Atoi(c.FormValue("taken_at_month"))
+	if err != nil {
+		log.Error("takenAtMonth parse error... takenAtMonth=", c.FormValue("takenAtMonth"))
+		return c.String(http.StatusBadRequest, "takenAtMonth parse error...")
+	}
+
+	takenAtDay, err := strconv.Atoi(c.FormValue("taken_at_day"))
+	if err != nil {
+		log.Error("takenAtDay parse error... takenAtDay=", c.FormValue("takenAtDay"))
+		return c.String(http.StatusBadRequest, "takenAtDay parse error...")
+	}
+
 	// 람다 호출해서 이미지 업로드
 	lambdaResCode, _, lambdaResBody := callLambdaImageUpload(userId, imageFile)
 	if lambdaResCode != 200 {
@@ -81,6 +99,9 @@ func UploadPicture(c echo.Context) error {
 	reqMap["key"] = lambdaResObj.Data.Keys[0] // 현재는 사진 1장씩만 해서 리스트의 첫번째 원소만 업로드함...
 	reqMap["album_id"] = albumId
 	reqMap["body_part"] = bodyPart
+	reqMap["taken_at_year"] = takenAtYear
+	reqMap["taken_at_month"] = takenAtMonth
+	reqMap["taken_at_day"] = takenAtDay
 	reqMapByte, _ := json.Marshal(reqMap)
 
 	req, _ := http.NewRequest("", "", bytes.NewBuffer(reqMapByte)) // method and url will be set bottom
@@ -98,7 +119,7 @@ func UploadPicture(c echo.Context) error {
 		log.Fatal("rest-api Request fail... code=" + strconv.Itoa(code) + " resBody=" + resBody)
 	}
 
-	// lambda에게 받은 응답을 그대로 전달
+	// rest에게 받은 응답을 그대로 전달
 	for k, v := range header {
 		c.Response().Header().Set(k, v.(string))
 	}
