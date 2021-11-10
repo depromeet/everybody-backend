@@ -50,8 +50,6 @@ var (
 )
 
 func main() {
-	log.SetReportCaller(true)
-
 	initialize()
 	if err := server.Listen(fmt.Sprintf(":%d", config.Config.Port)); err != nil {
 		log.Error(err)
@@ -59,6 +57,8 @@ func main() {
 }
 
 func initialize() {
+	initializeLogger()
+
 	dbClient := repository.Connect()
 	pushAdapter = push.NewFirebasePushAdapter()
 
