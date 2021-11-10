@@ -26,7 +26,7 @@ func (c RestApiController) Init(g *echo.Group) {
 	g.PUT("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "PUT")
 	})
-	g.DELETE("*", zfunc(c echo.Context) error {
+	g.DELETE("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "DELETE")
 	})
 	// picures apis

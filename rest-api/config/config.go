@@ -68,4 +68,11 @@ type config struct {
 		Enabled  bool
 		Interval int
 	}
+	Slack struct {
+		Enabled   bool
+		Webhook   string
+		Channel   string
+		Username  string
+		IconEmoji string
+	}
 }
