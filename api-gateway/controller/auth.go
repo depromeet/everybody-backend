@@ -24,7 +24,7 @@ func Login(c echo.Context) error {
 	data, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
 		log.Error(err)
-		panic(err)
+		panic(err) // TODO: log.panic으로 바꾸고.. middleware recover 도입.. https://echo.labstack.com/middleware/recover/
 	}
 	d := json.NewDecoder(strings.NewReader(string(data)))
 	d.UseNumber()
@@ -77,7 +77,7 @@ func SignUp(c echo.Context) error {
 	data, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
 		log.Error(err)
-		panic(err)
+		panic(err) // TODO: log.panic으로 바꾸고.. middleware recover 도입.. https://echo.labstack.com/middleware/recover/
 	}
 	d := json.NewDecoder(strings.NewReader(string(data)))
 	d.UseNumber()
@@ -99,7 +99,7 @@ func SignUp(c echo.Context) error {
 	reqMapByte, err := json.Marshal(reqMap)
 	if err != nil {
 		log.Error(err)
-		panic(err)
+		panic(err) // TODO: log.panic으로 바꾸고.. middleware recover 도입.. https://echo.labstack.com/middleware/recover/
 	}
 	req, _ := http.NewRequest("", "", bytes.NewReader(reqMapByte)) // method and url will be set bottom
 	req.Header.Set("Content-Type", "application/json")
@@ -129,11 +129,12 @@ func SignUp(c echo.Context) error {
 	} else { // restapi 서버에서 응답이 200이 아닌 경우, DB 접근x
 		log.Error("rest-api Request fail... code=" + strconv.Itoa(code) + " resBody=" + resBody)
 	}
-	
-	// rest에게 받은 응답을 그대로 전달
-	for k, v := range header {
-		c.Response().Header().Set(k, v.(string))
-	}
 
+	// rest에게 받은 응답을 그대로 전달
+	if header != nil {
+		for k, v := range header {
+			c.Response().Header().Set(k, v.(string))
+		}
+	}
 	return c.String(code, resBody)
 }

@@ -3,7 +3,6 @@ package util
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -21,8 +20,8 @@ func CreateAccessToken(userId int) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 
-	claims["exp"] = time.Now().Add(time.Duration(config.Config.ApiGw.AccessTokenExpireTimeMin * 60000000000)).Unix() // 60000000000ns = 1min = time.Minute
-	claims["user_id"] = strconv.Itoa(userId)
+	claims["exp"] = time.Now().Add(time.Duration(config.Config.ApiGw.AccessTokenExpireTimeMin * int64(time.Minute))).Unix()
+	claims["user_id"] = userId
 
 	encToken, err := token.SignedString([]byte(config.Config.ApiGw.AccessTokenSecret))
 	if err != nil {
@@ -58,11 +57,7 @@ func VerifyAccessToken(t string) (int, error) {
 	if !ok || !token.Valid {
 		return 0, fmt.Errorf("token not valid")
 	}
-
-	userId, err := strconv.Atoi(claims["user_id"].(string))
-	if err != nil {
-		return 0, fmt.Errorf("token not valid")
-	}
+	userId := claims["user_id"].(int)
 
 	log.Info("token verified userId=", userId)
 	return userId, nil

@@ -56,27 +56,28 @@ func UploadPicture(c echo.Context) error {
 
 	takenAtYear, err := strconv.Atoi(c.FormValue("taken_at_year"))
 	if err != nil {
-		log.Error("takenAtYear parse error... takenAtYear=", c.FormValue("takenAtYear"))
+		log.Error("takenAtYear parse error... takenAtYear=", c.FormValue("taken_at_year"))
 		return c.String(http.StatusBadRequest, "takenAtYear parse error...")
 	}
 
 	takenAtMonth, err := strconv.Atoi(c.FormValue("taken_at_month"))
 	if err != nil {
-		log.Error("takenAtMonth parse error... takenAtMonth=", c.FormValue("takenAtMonth"))
+		log.Error("takenAtMonth parse error... takenAtMonth=", c.FormValue("taken_at_month"))
 		return c.String(http.StatusBadRequest, "takenAtMonth parse error...")
 	}
 
 	takenAtDay, err := strconv.Atoi(c.FormValue("taken_at_day"))
 	if err != nil {
-		log.Error("takenAtDay parse error... takenAtDay=", c.FormValue("takenAtDay"))
+		log.Error("takenAtDay parse error... takenAtDay=", c.FormValue("taken_at_day"))
 		return c.String(http.StatusBadRequest, "takenAtDay parse error...")
 	}
 
 	// 람다 호출해서 이미지 업로드
 	lambdaResCode, _, lambdaResBody := callLambdaImageUpload(userId, imageFile)
 	if lambdaResCode != 200 {
-		log.Fatal("image upload fail... code=" + strconv.Itoa(lambdaResCode) + " err=" + lambdaResBody)
 		// 람다 업로드 실패시 프로세스 죽음에 주의(fatal)
+		log.Fatal("image upload fail... code=" + strconv.Itoa(lambdaResCode) + " err=" + lambdaResBody)
+		// TODO: 에러 처리방안 논의 후 fatal -> panic? error? 로 수정 필요
 		return c.String(http.StatusInternalServerError, "image upload fail... err="+lambdaResBody)
 
 	} else {
@@ -110,20 +111,19 @@ func UploadPicture(c echo.Context) error {
 	code, header, resBody := callRestApi(c, req, "/pictures", "POST")
 
 	if code != http.StatusOK {
-		// TODO: fatal로 프로세스 죽기 전에 S3에서 이미 업로드된 사진을 삭제해줘야함
+		// TODO: 200 아니면 S3에서 이미 업로드된 사진을 삭제해줘야함
 
-		// 람다 업로드는 성공했으나 rest-api 호출이 실패한 경우에도 프로세스 죽음에 주의(fatal)
-		// => Fatal은 아마 os.Exit() 하는 걸로 아는데 log.Panic이 더 괜찮을 수도 있을 것 같아요.
-		// 가장 베스트는 callRestApi에서 error을 리턴해주고 c.JSON(500, err) 하는 게 좋을 것 같긴하네요.
-		// lambda나 rest가 응답하는 코드가 http.StatusOK가 아닐 수 있기도 하구요.
-		log.Fatal("rest-api Request fail... code=" + strconv.Itoa(code) + " resBody=" + resBody)
+		log.Panic("rest-api Request fail... code=" + strconv.Itoa(code) + " resBody=" + resBody)
+		// TODO: middleware recover 도입.. https://echo.labstack.com/middleware/recover/
+		// TODO: 에러 처리방안 논의 후 수정 필요.. 일단 그냥 if 바깥으로 빠져서 rest-api한테 받은거 그대로 리턴하게함 //return c.JSON(http.StatusInternalServerError, resBody)
 	}
 
 	// rest에게 받은 응답을 그대로 전달
-	for k, v := range header {
-		c.Response().Header().Set(k, v.(string))
+	if header != nil {
+		for k, v := range header {
+			c.Response().Header().Set(k, v.(string))
+		}
 	}
-
 	return c.String(code, resBody)
 }
 
@@ -184,7 +184,7 @@ func callLambdaImageUpload(userId int, imageFile *multipart.FileHeader) (int, ma
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Error("resp.Body read error... err=", err)
-		panic(err)
+		panic(err) // TODO: log.panic으로 바꾸고.. middleware recover 도입.. https://echo.labstack.com/middleware/recover/
 	}
 
 	return resp.StatusCode, h, string(data)
