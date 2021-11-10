@@ -17,6 +17,10 @@ type RestApiController struct {
 }
 
 func (c RestApiController) Init(g *echo.Group) {
+	// picures apis => 여기에 POST /pictures 를 정의하면 밑에 *에게 오버라이드 되는 것 같음
+	//g.POST("pictures", func(c echo.Context) error {
+	//	return UploadPicture(c)
+	//})
 	g.GET("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "GET")
 	})
@@ -29,7 +33,7 @@ func (c RestApiController) Init(g *echo.Group) {
 	g.DELETE("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "DELETE")
 	})
-	// picures apis
+	// picures apis => 여기에 POST /pictures 를 정의하면 위의 *을 오버라이드 할 수 있는 듯!
 	g.POST("pictures", func(c echo.Context) error {
 		return UploadPicture(c)
 	})
