@@ -41,5 +41,5 @@ jobs:
         
     - name: Build api-gateway
       run: |
-        GOOS=linux GOARCH=amd64 go build -o apigw main.go
+        GOOS=linux GOARCH=amd64 go build -o apigw .
       working-directory: api-gateway

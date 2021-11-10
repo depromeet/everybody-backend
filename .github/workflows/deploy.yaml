@@ -35,12 +35,12 @@ jobs:
     - name: Build rest-api
       working-directory: rest-api
       run: |
-        GOOS=linux GOARCH=amd64 go build -o rest main.go
+        GOOS=linux GOARCH=amd64 go build -o rest .
 
     - name: Build api-gateway
       working-directory: api-gateway
       run: |
-        GOOS=linux GOARCH=amd64 go build -o gw main.go
+        GOOS=linux GOARCH=amd64 go build -o gw .
 
     - name: prepare to deploy
       run: |

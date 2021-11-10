@@ -17,10 +17,6 @@ type RestApiController struct {
 }
 
 func (c RestApiController) Init(g *echo.Group) {
-	// picures apis
-	g.POST("pictures", func(c echo.Context) error {
-		return UploadPicture(c)
-	})
 	g.GET("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "GET")
 	})
@@ -30,10 +26,13 @@ func (c RestApiController) Init(g *echo.Group) {
 	g.PUT("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "PUT")
 	})
-	g.DELETE("*", func(c echo.Context) error {
+	g.DELETE("*", zfunc(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "DELETE")
 	})
-
+	// picures apis
+	g.POST("pictures", func(c echo.Context) error {
+		return UploadPicture(c)
+	})
 }
 
 func forwardWithAuthProc(c echo.Context, path string, method string) error {
