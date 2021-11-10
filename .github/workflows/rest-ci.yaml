@@ -41,7 +41,7 @@ jobs:
         
     - name: Build rest-api
       run: |
-        GOOS=linux GOARCH=amd64 go build -o rest main.go
+        GOOS=linux GOARCH=amd64 go build -o rest .
       working-directory: rest-api
 
     - name: Test rest-api
