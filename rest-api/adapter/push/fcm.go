@@ -45,10 +45,6 @@ func (a *firebasePushAdapter) Send(title, content string, deviceInfo *ent.Device
 		log.Fatalf("error getting Messaging client: %v\n", err)
 	}
 
-	// This registration token comes from the client FCM SDKs.
-	// jinsu vm
-
-	// 우선은 개발용이니까 진수 VM 토큰 이용
 	registrationToken := deviceInfo.PushToken
 
 	var response string

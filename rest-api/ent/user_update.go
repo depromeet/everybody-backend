@@ -161,19 +161,23 @@ func (uu *UserUpdate) AddDevices(d ...*Device) *UserUpdate {
 	return uu.AddDeviceIDs(ids...)
 }
 
-// AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by IDs.
-func (uu *UserUpdate) AddNotificationConfigIDs(ids ...int) *UserUpdate {
-	uu.mutation.AddNotificationConfigIDs(ids...)
+// SetNotificationConfigID sets the "notification_config" edge to the NotificationConfig entity by ID.
+func (uu *UserUpdate) SetNotificationConfigID(id int) *UserUpdate {
+	uu.mutation.SetNotificationConfigID(id)
 	return uu
 }
 
-// AddNotificationConfig adds the "notification_config" edges to the NotificationConfig entity.
-func (uu *UserUpdate) AddNotificationConfig(n ...*NotificationConfig) *UserUpdate {
-	ids := make([]int, len(n))
-	for i := range n {
-		ids[i] = n[i].ID
+// SetNillableNotificationConfigID sets the "notification_config" edge to the NotificationConfig entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableNotificationConfigID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetNotificationConfigID(*id)
 	}
-	return uu.AddNotificationConfigIDs(ids...)
+	return uu
+}
+
+// SetNotificationConfig sets the "notification_config" edge to the NotificationConfig entity.
+func (uu *UserUpdate) SetNotificationConfig(n *NotificationConfig) *UserUpdate {
+	return uu.SetNotificationConfigID(n.ID)
 }
 
 // AddAlbumIDs adds the "album" edge to the Album entity by IDs.
@@ -247,25 +251,10 @@ func (uu *UserUpdate) RemoveDevices(d ...*Device) *UserUpdate {
 	return uu.RemoveDeviceIDs(ids...)
 }
 
-// ClearNotificationConfig clears all "notification_config" edges to the NotificationConfig entity.
+// ClearNotificationConfig clears the "notification_config" edge to the NotificationConfig entity.
 func (uu *UserUpdate) ClearNotificationConfig() *UserUpdate {
 	uu.mutation.ClearNotificationConfig()
 	return uu
-}
-
-// RemoveNotificationConfigIDs removes the "notification_config" edge to NotificationConfig entities by IDs.
-func (uu *UserUpdate) RemoveNotificationConfigIDs(ids ...int) *UserUpdate {
-	uu.mutation.RemoveNotificationConfigIDs(ids...)
-	return uu
-}
-
-// RemoveNotificationConfig removes "notification_config" edges to NotificationConfig entities.
-func (uu *UserUpdate) RemoveNotificationConfig(n ...*NotificationConfig) *UserUpdate {
-	ids := make([]int, len(n))
-	for i := range n {
-		ids[i] = n[i].ID
-	}
-	return uu.RemoveNotificationConfigIDs(ids...)
 }
 
 // ClearAlbum clears all "album" edges to the Album entity.
@@ -556,7 +545,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.NotificationConfigCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.NotificationConfigTable,
 			Columns: []string{user.NotificationConfigColumn},
@@ -567,31 +556,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 					Column: notificationconfig.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedNotificationConfigIDs(); len(nodes) > 0 && !uu.mutation.NotificationConfigCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.NotificationConfigTable,
-			Columns: []string{user.NotificationConfigColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: notificationconfig.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uu.mutation.NotificationConfigIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.NotificationConfigTable,
 			Columns: []string{user.NotificationConfigColumn},
@@ -918,19 +888,23 @@ func (uuo *UserUpdateOne) AddDevices(d ...*Device) *UserUpdateOne {
 	return uuo.AddDeviceIDs(ids...)
 }
 
-// AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by IDs.
-func (uuo *UserUpdateOne) AddNotificationConfigIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.AddNotificationConfigIDs(ids...)
+// SetNotificationConfigID sets the "notification_config" edge to the NotificationConfig entity by ID.
+func (uuo *UserUpdateOne) SetNotificationConfigID(id int) *UserUpdateOne {
+	uuo.mutation.SetNotificationConfigID(id)
 	return uuo
 }
 
-// AddNotificationConfig adds the "notification_config" edges to the NotificationConfig entity.
-func (uuo *UserUpdateOne) AddNotificationConfig(n ...*NotificationConfig) *UserUpdateOne {
-	ids := make([]int, len(n))
-	for i := range n {
-		ids[i] = n[i].ID
+// SetNillableNotificationConfigID sets the "notification_config" edge to the NotificationConfig entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableNotificationConfigID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetNotificationConfigID(*id)
 	}
-	return uuo.AddNotificationConfigIDs(ids...)
+	return uuo
+}
+
+// SetNotificationConfig sets the "notification_config" edge to the NotificationConfig entity.
+func (uuo *UserUpdateOne) SetNotificationConfig(n *NotificationConfig) *UserUpdateOne {
+	return uuo.SetNotificationConfigID(n.ID)
 }
 
 // AddAlbumIDs adds the "album" edge to the Album entity by IDs.
@@ -1004,25 +978,10 @@ func (uuo *UserUpdateOne) RemoveDevices(d ...*Device) *UserUpdateOne {
 	return uuo.RemoveDeviceIDs(ids...)
 }
 
-// ClearNotificationConfig clears all "notification_config" edges to the NotificationConfig entity.
+// ClearNotificationConfig clears the "notification_config" edge to the NotificationConfig entity.
 func (uuo *UserUpdateOne) ClearNotificationConfig() *UserUpdateOne {
 	uuo.mutation.ClearNotificationConfig()
 	return uuo
-}
-
-// RemoveNotificationConfigIDs removes the "notification_config" edge to NotificationConfig entities by IDs.
-func (uuo *UserUpdateOne) RemoveNotificationConfigIDs(ids ...int) *UserUpdateOne {
-	uuo.mutation.RemoveNotificationConfigIDs(ids...)
-	return uuo
-}
-
-// RemoveNotificationConfig removes "notification_config" edges to NotificationConfig entities.
-func (uuo *UserUpdateOne) RemoveNotificationConfig(n ...*NotificationConfig) *UserUpdateOne {
-	ids := make([]int, len(n))
-	for i := range n {
-		ids[i] = n[i].ID
-	}
-	return uuo.RemoveNotificationConfigIDs(ids...)
 }
 
 // ClearAlbum clears all "album" edges to the Album entity.
@@ -1337,7 +1296,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.NotificationConfigCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.NotificationConfigTable,
 			Columns: []string{user.NotificationConfigColumn},
@@ -1348,31 +1307,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 					Column: notificationconfig.FieldID,
 				},
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedNotificationConfigIDs(); len(nodes) > 0 && !uuo.mutation.NotificationConfigCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.NotificationConfigTable,
-			Columns: []string{user.NotificationConfigColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
-					Column: notificationconfig.FieldID,
-				},
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uuo.mutation.NotificationConfigIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.NotificationConfigTable,
 			Columns: []string{user.NotificationConfigColumn},

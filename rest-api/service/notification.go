@@ -128,7 +128,6 @@ func (s *notificationService) NotifyPeriodicNoonBody(errChan chan<- error) {
 		return
 	}
 
-	//now := time.Now()
 	for _, nc := range notificationConfigs {
 		if nc.IsActivated == true {
 			if s.needsNotify(nc) {
@@ -138,12 +137,16 @@ func (s *notificationService) NotifyPeriodicNoonBody(errChan chan<- error) {
 				if err != nil {
 					errChan <- err
 				} else {
-					devices := nc.Edges.User.Edges.Devices
-					for _, device := range devices {
-						if err := s.pushAdapter.Send("눈바디 찍는 날이에요!", "우리 같이 꾸준히 눈바디를 기록해나가요!", device); err != nil {
-							errChan <- errors.WithStack(err)
+					if nc.Edges.User == nil {
+						log.Errorf("%s의 유저가 존재하지 않습니다.", nc)
+					} else {
+						devices := nc.Edges.User.Edges.Devices
+						for _, device := range devices {
+							if err := s.pushAdapter.Send("눈바디 찍는 날이에요!", "우리 같이 꾸준히 눈바디를 기록해나가요!", device); err != nil {
+								errChan <- errors.WithStack(err)
+							}
+							logger.Infof("Device(pushToken=%s)에게 정기 눈바디 알림을 보냈습니다", device.PushToken[:int(math.Min(float64(len(device.PushToken)), 10))])
 						}
-						logger.Infof("Device(pushToken=%s)에게 정기 눈바디 알림을 보냈습니다", device.PushToken[:int(math.Min(float64(len(device.PushToken)), 10))])
 					}
 				}
 
@@ -156,5 +159,40 @@ func (s *notificationService) NotifyPeriodicNoonBody(errChan chan<- error) {
 
 func (s *notificationService) needsNotify(nc *ent.NotificationConfig) bool {
 	// TODO: 우선 항상 알림 보내고 있음!
-	return true
+	if !nc.IsActivated {
+		return false
+	}
+	now := time.Now()
+	// 한 번도 알림을 받은 적 없다.
+	if nc.LastNotifiedAt == nil {
+		// 지금이 preferred랑 비교
+		return nc.PreferredTimeHour <= now.Hour() && nc.PreferredTimeMinute <= now.Minute()
+	}
+
+	// 이미 오늘 보냈으면
+	if nc.LastNotifiedAt.Year() == now.Year() &&
+		nc.LastNotifiedAt.Month() == now.Month() &&
+		nc.LastNotifiedAt.Day() == now.Day() {
+		return false
+	}
+
+	if
+	// 오늘이 활성화되어있는가
+	(nc.Monday && now.Weekday() == time.Monday ||
+		nc.Tuesday && now.Weekday() == time.Tuesday ||
+		nc.Wednesday && now.Weekday() == time.Wednesday ||
+		nc.Thursday && now.Weekday() == time.Thursday ||
+		nc.Friday && now.Weekday() == time.Friday ||
+		nc.Saturday && now.Weekday() == time.Saturday ||
+		nc.Sunday && now.Weekday() == time.Sunday) &&
+		// 한 번도 보낸 적이 없는가
+		(nc.LastNotifiedAt == nil ||
+			// 오늘 알림을 보낸 적이 없는가
+			(nc.LastNotifiedAt.Year() != now.Year() ||
+				nc.LastNotifiedAt.Month() != now.Month() ||
+				nc.LastNotifiedAt.Day() != now.Day())) {
+		return nc.PreferredTimeHour <= now.Hour() && nc.PreferredTimeMinute <= now.Minute()
+	}
+
+	return false
 }

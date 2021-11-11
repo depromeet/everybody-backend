@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"time"
 
 	"entgo.io/ent"
@@ -35,7 +36,11 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("devices", Device.Type),
-		edge.To("notification_config", NotificationConfig.Type),
+		edge.To("notification_config", NotificationConfig.Type).
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}).
+			Unique(),
 		edge.To("album", Album.Type),
 		edge.To("picture", Picture.Type),
 		edge.To("video", Video.Type),

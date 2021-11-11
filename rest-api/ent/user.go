@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/depromeet/everybody-backend/rest-api/ent/notificationconfig"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
 )
 
@@ -40,7 +41,7 @@ type UserEdges struct {
 	// Devices holds the value of the devices edge.
 	Devices []*Device `json:"devices,omitempty"`
 	// NotificationConfig holds the value of the notification_config edge.
-	NotificationConfig []*NotificationConfig `json:"notification_config,omitempty"`
+	NotificationConfig *NotificationConfig `json:"notification_config,omitempty"`
 	// Album holds the value of the album edge.
 	Album []*Album `json:"album,omitempty"`
 	// Picture holds the value of the picture edge.
@@ -62,9 +63,14 @@ func (e UserEdges) DevicesOrErr() ([]*Device, error) {
 }
 
 // NotificationConfigOrErr returns the NotificationConfig value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) NotificationConfigOrErr() ([]*NotificationConfig, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) NotificationConfigOrErr() (*NotificationConfig, error) {
 	if e.loadedTypes[1] {
+		if e.NotificationConfig == nil {
+			// The edge notification_config was loaded in eager-loading,
+			// but was not found.
+			return nil, &NotFoundError{label: notificationconfig.Label}
+		}
 		return e.NotificationConfig, nil
 	}
 	return nil, &NotLoadedError{edge: "notification_config"}

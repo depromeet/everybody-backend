@@ -820,7 +820,7 @@ func HasNotificationConfig() predicate.User {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(NotificationConfigTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, NotificationConfigTable, NotificationConfigColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, NotificationConfigTable, NotificationConfigColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -832,7 +832,7 @@ func HasNotificationConfigWith(preds ...predicate.NotificationConfig) predicate.
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(NotificationConfigInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, NotificationConfigTable, NotificationConfigColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, NotificationConfigTable, NotificationConfigColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

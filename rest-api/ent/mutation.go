@@ -2648,8 +2648,7 @@ type UserMutation struct {
 	devices                    map[int]struct{}
 	removeddevices             map[int]struct{}
 	cleareddevices             bool
-	notification_config        map[int]struct{}
-	removednotification_config map[int]struct{}
+	notification_config        *int
 	clearednotification_config bool
 	album                      map[int]struct{}
 	removedalbum               map[int]struct{}
@@ -3137,14 +3136,9 @@ func (m *UserMutation) ResetDevices() {
 	m.removeddevices = nil
 }
 
-// AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by ids.
-func (m *UserMutation) AddNotificationConfigIDs(ids ...int) {
-	if m.notification_config == nil {
-		m.notification_config = make(map[int]struct{})
-	}
-	for i := range ids {
-		m.notification_config[ids[i]] = struct{}{}
-	}
+// SetNotificationConfigID sets the "notification_config" edge to the NotificationConfig entity by id.
+func (m *UserMutation) SetNotificationConfigID(id int) {
+	m.notification_config = &id
 }
 
 // ClearNotificationConfig clears the "notification_config" edge to the NotificationConfig entity.
@@ -3157,29 +3151,20 @@ func (m *UserMutation) NotificationConfigCleared() bool {
 	return m.clearednotification_config
 }
 
-// RemoveNotificationConfigIDs removes the "notification_config" edge to the NotificationConfig entity by IDs.
-func (m *UserMutation) RemoveNotificationConfigIDs(ids ...int) {
-	if m.removednotification_config == nil {
-		m.removednotification_config = make(map[int]struct{})
-	}
-	for i := range ids {
-		delete(m.notification_config, ids[i])
-		m.removednotification_config[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedNotificationConfig returns the removed IDs of the "notification_config" edge to the NotificationConfig entity.
-func (m *UserMutation) RemovedNotificationConfigIDs() (ids []int) {
-	for id := range m.removednotification_config {
-		ids = append(ids, id)
+// NotificationConfigID returns the "notification_config" edge ID in the mutation.
+func (m *UserMutation) NotificationConfigID() (id int, exists bool) {
+	if m.notification_config != nil {
+		return *m.notification_config, true
 	}
 	return
 }
 
 // NotificationConfigIDs returns the "notification_config" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// NotificationConfigID instead. It exists only for internal usage by the builders.
 func (m *UserMutation) NotificationConfigIDs() (ids []int) {
-	for id := range m.notification_config {
-		ids = append(ids, id)
+	if id := m.notification_config; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -3188,7 +3173,6 @@ func (m *UserMutation) NotificationConfigIDs() (ids []int) {
 func (m *UserMutation) ResetNotificationConfig() {
 	m.notification_config = nil
 	m.clearednotification_config = false
-	m.removednotification_config = nil
 }
 
 // AddAlbumIDs adds the "album" edge to the Album entity by ids.
@@ -3651,11 +3635,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		}
 		return ids
 	case user.EdgeNotificationConfig:
-		ids := make([]ent.Value, 0, len(m.notification_config))
-		for id := range m.notification_config {
-			ids = append(ids, id)
+		if id := m.notification_config; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case user.EdgeAlbum:
 		ids := make([]ent.Value, 0, len(m.album))
 		for id := range m.album {
@@ -3684,9 +3666,6 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removeddevices != nil {
 		edges = append(edges, user.EdgeDevices)
 	}
-	if m.removednotification_config != nil {
-		edges = append(edges, user.EdgeNotificationConfig)
-	}
 	if m.removedalbum != nil {
 		edges = append(edges, user.EdgeAlbum)
 	}
@@ -3706,12 +3685,6 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	case user.EdgeDevices:
 		ids := make([]ent.Value, 0, len(m.removeddevices))
 		for id := range m.removeddevices {
-			ids = append(ids, id)
-		}
-		return ids
-	case user.EdgeNotificationConfig:
-		ids := make([]ent.Value, 0, len(m.removednotification_config))
-		for id := range m.removednotification_config {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3780,6 +3753,9 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *UserMutation) ClearEdge(name string) error {
 	switch name {
+	case user.EdgeNotificationConfig:
+		m.ClearNotificationConfig()
+		return nil
 	}
 	return fmt.Errorf("unknown User unique edge %s", name)
 }

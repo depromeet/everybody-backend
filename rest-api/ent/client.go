@@ -478,7 +478,7 @@ func (c *NotificationConfigClient) QueryUser(nc *NotificationConfig) *UserQuery 
 		step := sqlgraph.NewStep(
 			sqlgraph.From(notificationconfig.Table, notificationconfig.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, notificationconfig.UserTable, notificationconfig.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, notificationconfig.UserTable, notificationconfig.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(nc.driver.Dialect(), step)
 		return fromV, nil
@@ -722,7 +722,7 @@ func (c *UserClient) QueryNotificationConfig(u *User) *NotificationConfigQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(notificationconfig.Table, notificationconfig.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationConfigTable, user.NotificationConfigColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.NotificationConfigTable, user.NotificationConfigColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

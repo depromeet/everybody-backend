@@ -78,7 +78,7 @@ func (ncq *NotificationConfigQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(notificationconfig.Table, notificationconfig.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, notificationconfig.UserTable, notificationconfig.UserColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, notificationconfig.UserTable, notificationconfig.UserColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ncq.driver.Dialect(), step)
 		return fromU, nil
