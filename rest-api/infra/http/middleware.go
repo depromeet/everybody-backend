@@ -22,11 +22,9 @@ type ErrorResponse struct {
 // 예상치 못한 에러의 경우 500 에러로 응답합니다.
 func errorHandle(ctx *fiber.Ctx, err error) error {
 	log.Errorf("%+v", err)
-
-	notFoundErr := new(ent.NotFoundError)
 	unmarshalTypeErr := new(json.UnmarshalTypeError)
 
-	if errors.As(err, &notFoundErr) {
+	if ent.IsNotFound(err) {
 		return ctx.Status(404).JSON(newErrorResponse("리소스를 찾을 수 없습니다.", "not_found_error"))
 	} else if errors.Is(err, service.UnsupportedDeviceError) {
 		return ctx.Status(400).JSON(newErrorResponse(util.GetErrorMessageForClient(err.Error()), "unsupported_device_error"))
@@ -35,6 +33,7 @@ func errorHandle(ctx *fiber.Ctx, err error) error {
 		return ctx.Status(400).JSON(newErrorResponse(fmt.Sprintf("%s에 대한 잘못된 타입의 값입니다. %s 타입을 이용해주세요.", e.Field, e.Type.Name()), "json_unmarshal_type_error"))
 	} else if errors.Is(err, service.ForbiddenError) {
 		return ctx.Status(400).JSON(newErrorResponse(util.GetErrorMessageForClient(err.Error()), "forbidden_error"))
+		//return ctx.Status(400).JSON(newErrorResponse(err.Error(), "forbidden_error"))
 	} else {
 		return ctx.Status(500).JSON(newErrorResponse("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internal_error"))
 	}
