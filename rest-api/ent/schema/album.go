@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"time"
 
 	"entgo.io/ent"
@@ -30,6 +31,9 @@ func (Album) Edges() []ent.Edge {
 			Ref("album").
 			Required().
 			Unique(),
-		edge.To("picture", Picture.Type),
+		edge.To("picture", Picture.Type).Annotations(entsql.Annotation{
+			// 앨범을 삭제할 때 사진도 삭제한다.
+			OnDelete: entsql.Cascade,
+		}),
 	}
 }

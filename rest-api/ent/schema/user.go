@@ -38,6 +38,7 @@ func (User) Edges() []ent.Edge {
 		edge.To("devices", Device.Type),
 		edge.To("notification_config", NotificationConfig.Type).
 			Annotations(entsql.Annotation{
+				// 유저를 지울 때 notification config도 지움
 				OnDelete: entsql.Cascade,
 			}).
 			Unique(),
