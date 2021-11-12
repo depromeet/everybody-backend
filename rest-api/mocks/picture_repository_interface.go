@@ -12,6 +12,20 @@ type PictureRepositoryInterface struct {
 	mock.Mock
 }
 
+// Delete provides a mock function with given fields: pictureID
+func (_m *PictureRepositoryInterface) Delete(pictureID int) error {
+	ret := _m.Called(pictureID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int) error); ok {
+		r0 = rf(pictureID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // FindByAlbumIDAndBodyPart provides a mock function with given fields: albumID, bodyPart
 func (_m *PictureRepositoryInterface) FindByAlbumIDAndBodyPart(albumID int, bodyPart string) ([]*ent.Picture, error) {
 	ret := _m.Called(albumID, bodyPart)

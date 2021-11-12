@@ -35,6 +35,20 @@ func (_m *AlbumServiceInterface) CreateAlbum(userID int, albumReq *dto.AlbumRequ
 	return r0, r1
 }
 
+// DeleteAlbum provides a mock function with given fields: userID, albumID
+func (_m *AlbumServiceInterface) DeleteAlbum(userID int, albumID int) error {
+	ret := _m.Called(userID, albumID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int, int) error); ok {
+		r0 = rf(userID, albumID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetAlbum provides a mock function with given fields: userID, albumID
 func (_m *AlbumServiceInterface) GetAlbum(userID int, albumID int) (*dto.AlbumDto, error) {
 	ret := _m.Called(userID, albumID)
@@ -74,6 +88,29 @@ func (_m *AlbumServiceInterface) GetAllAlbums(userID int) (dto.AlbumsDto, error)
 	var r1 error
 	if rf, ok := ret.Get(1).(func(int) error); ok {
 		r1 = rf(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateAlbum provides a mock function with given fields: userID, albumID, body
+func (_m *AlbumServiceInterface) UpdateAlbum(userID int, albumID int, body *dto.UpdateAlbumRequest) (*dto.AlbumDto, error) {
+	ret := _m.Called(userID, albumID, body)
+
+	var r0 *dto.AlbumDto
+	if rf, ok := ret.Get(0).(func(int, int, *dto.UpdateAlbumRequest) *dto.AlbumDto); ok {
+		r0 = rf(userID, albumID, body)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*dto.AlbumDto)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int, int, *dto.UpdateAlbumRequest) error); ok {
+		r1 = rf(userID, albumID, body)
 	} else {
 		r1 = ret.Error(1)
 	}

@@ -101,7 +101,7 @@ var (
 				Symbol:     "pictures_albums_picture",
 				Columns:    []*schema.Column{PicturesColumns[5]},
 				RefColumns: []*schema.Column{AlbumsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "pictures_users_picture",

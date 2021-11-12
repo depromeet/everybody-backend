@@ -15,3 +15,24 @@ func TestLoggerHook(t *testing.T) {
 	log.Error("5")
 	time.Sleep(time.Second)
 }
+
+//func Test(t *testing.T) {
+//	type A interface {
+//	}
+//	type B interface {
+//	}
+//
+//	var (
+//		a A
+//		b B
+//	)
+//
+//	a = 3
+//	b = a
+//	num, ok := a.(int)
+//	fmt.Println(num, ok)
+//	convert, ok := a.(B)
+//	fmt.Println(convert, ok)
+//	fmt.Println(b)
+//
+//}

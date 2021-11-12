@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrUnsupportedDevice = errors.New("지원되지 않는 기기 운영체제 입니다.")
+	UnsupportedDeviceError = errors.New("지원되지 않는 기기 운영체제 입니다.")
 )
 
 type DeviceService interface {
@@ -42,7 +42,7 @@ func (s *deviceService) Register(requestUser int, body *dto.RegisterDeviceReques
 				// validation error의 경우 특정 에러 타입이나 미리 정의된 에러 변수를 이용하지 않음.
 				// ent 측에서 그냥 fmt.Errorf()로 에러를 생성해버림
 				// 따라서 우리가 알아서 에러를 정의한 뒤 사용해야함
-				return nil, errors.WithStack(ErrUnsupportedDevice)
+				return nil, errors.WithStack(UnsupportedDeviceError)
 			}
 			// 생성
 			return s.deviceRepo.CreateDevice(&ent.Device{

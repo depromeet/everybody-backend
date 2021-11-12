@@ -58,6 +58,8 @@ func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {
 	group.Post("", albumHandler.CreateAlbum)
 	group.Get("", albumHandler.GetAllAlbums)
 	group.Get("/:album_id", albumHandler.GetAlbum)
+	group.Put("/:album_id", albumHandler.UpdateAlbum)
+	group.Delete("/:album_id", albumHandler.DeleteAlbum)
 }
 
 func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) {
@@ -66,6 +68,7 @@ func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) 
 	// query string으로 구분(uploader=?&album=?&body_part=?)
 	group.Get("", pictureHandler.GetAllPictures)
 	group.Get("/:picture_id", pictureHandler.GetPicture)
+	group.Delete("/:picture_id", pictureHandler.DeletePicture)
 }
 
 func addVideoHandlers(app *fiber.App, videoHandler *handler.VideoHandler) {

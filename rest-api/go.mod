@@ -17,5 +17,3 @@ require (
 	github.com/stretchr/testify v1.7.0
 	moul.io/http2curl v1.0.0 // indirect
 )
-
-replace github.com/pkg/errors v0.9.1 => github.com/depromeet/errors v0.9.2

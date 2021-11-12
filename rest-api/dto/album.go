@@ -40,15 +40,15 @@ func AlbumsToDto(srcAlbums []*ent.Album) AlbumsDto {
 	albumsDto := make(AlbumsDto, 0)
 
 	for _, srcAlbum := range srcAlbums {
-		albumDto := AlbumToDto(srcAlbum, srcAlbum.Edges.Picture)
+		albumDto := AlbumToDto(srcAlbum)
 		albumsDto = append(albumsDto, albumDto)
 	}
 
 	return albumsDto
 }
 
-func AlbumToDto(srcAlbum *ent.Album, srcPictures []*ent.Picture) *AlbumDto {
-	picturesDto := PicturesToDto(srcPictures)
+func AlbumToDto(srcAlbum *ent.Album) *AlbumDto {
+	picturesDto := PicturesToDto(srcAlbum.Edges.Picture)
 	picturesMap := make(map[string]PicturesDto)
 	for _, pictureDto := range picturesDto {
 		picturesMap[pictureDto.BodyPart] = append(picturesMap[pictureDto.BodyPart], pictureDto)
@@ -64,4 +64,9 @@ func AlbumToDto(srcAlbum *ent.Album, srcPictures []*ent.Picture) *AlbumDto {
 		Pictures:    picturesMap,
 		// Videos:
 	}
+}
+
+// 현재 기획상으로는 앨범의 이름만 변경할 수 있음.
+type UpdateAlbumRequest struct {
+	Name string
 }

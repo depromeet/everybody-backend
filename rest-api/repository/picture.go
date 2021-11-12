@@ -20,6 +20,7 @@ type PictureRepositoryInterface interface {
 	GetAllByAlbumID(albumID int) ([]*ent.Picture, error)
 	Get(pictureID int) (*ent.Picture, error)
 	FindByAlbumIDAndBodyPart(albumID int, bodyPart string) ([]*ent.Picture, error)
+	Delete(pictureID int) error
 }
 
 func NewPictureRepository(db *ent.Client) PictureRepositoryInterface {
@@ -110,4 +111,13 @@ func (r *pictureRepository) FindByAlbumIDAndBodyPart(albumID int, bodyPart strin
 	}
 
 	return pictures, nil
+}
+
+func (r *pictureRepository) Delete(pictureID int) error {
+	err := r.db.Picture.DeleteOneID(pictureID).Exec(context.Background())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return nil
 }

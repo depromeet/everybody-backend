@@ -17,6 +17,8 @@ type AlbumRepositoryInterface interface {
 	Create(album *ent.Album) (*ent.Album, error)
 	GetAllByUserID(userID int) ([]*ent.Album, error)
 	Get(albumID int) (*ent.Album, error)
+	Update(albumID int, album *ent.Album) (*ent.Album, error)
+	Delete(albumID int) error
 }
 
 func NewAlbumRepository(db *ent.Client) AlbumRepositoryInterface {
@@ -75,4 +77,24 @@ func (r *albumRepository) Get(albumID int) (*ent.Album, error) {
 	}
 
 	return albumData, nil
+}
+
+func (r *albumRepository) Update(id int, a *ent.Album) (*ent.Album, error) {
+	updated, err := r.db.Album.UpdateOneID(id).
+		SetName(a.Name).
+		Save(context.Background())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return updated, nil
+}
+
+func (r *albumRepository) Delete(id int) error {
+	err := r.db.Album.DeleteOneID(id).Exec(context.Background())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return nil
 }
