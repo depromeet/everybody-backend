@@ -105,3 +105,22 @@ func (h *AlbumHandler) UpdateAlbum(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(album)
 }
+
+func (h *AlbumHandler) DeleteAlbum(ctx *fiber.Ctx) error {
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	albumID, err := strconv.Atoi(ctx.Params("album_id"))
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	err = h.albumService.DeleteAlbum(userID, albumID)
+	if err != nil {
+		return errors.WithMessage(err, "")
+	}
+
+	return ctx.SendStatus(204)
+}

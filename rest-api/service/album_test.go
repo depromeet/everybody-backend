@@ -139,3 +139,52 @@ func TestAlbumService_UpdateAlbum(t *testing.T) {
 		assert.Nil(t, updated)
 	})
 }
+
+func TestAlbumService_DeleteAlbum(t *testing.T) {
+	t.Run("본인의 앨범 삭제", func(t *testing.T) {
+		albumSvc := initializeAlbumService(t)
+		album := &ent.Album{
+			ID: 1,
+			Edges: ent.AlbumEdges{
+				User: &ent.User{ID: 1},
+			},
+		}
+
+		albumRepo.On("Get", mock.AnythingOfType("int")).Return(album, nil).Once()
+		albumRepo.On("Delete", mock.AnythingOfType("int")).Return(nil).Once()
+
+		err := albumSvc.DeleteAlbum(1, 1)
+		assert.NoError(t, err)
+	})
+
+	t.Run("에러) 남의 앨범 삭제", func(t *testing.T) {
+		albumSvc := initializeAlbumService(t)
+		album := &ent.Album{
+			ID: 1,
+			Edges: ent.AlbumEdges{
+				User: &ent.User{ID: 2},
+			},
+		}
+
+		albumRepo.On("Get", mock.AnythingOfType("int")).Return(album, nil).Once()
+
+		err := albumSvc.DeleteAlbum(1, 1)
+		assert.ErrorIs(t, err, ForbiddenError)
+	})
+
+	t.Run("에러) 존재하지 않는 앨범 삭제", func(t *testing.T) {
+		albumSvc := initializeAlbumService(t)
+		album := &ent.Album{
+			ID: 1,
+			Edges: ent.AlbumEdges{
+				User: &ent.User{ID: 1},
+			},
+		}
+
+		albumRepo.On("Get", mock.AnythingOfType("int")).Return(album, nil).Once()
+		albumRepo.On("Delete", mock.AnythingOfType("int")).Return(&ent.NotFoundError{}).Once()
+
+		err := albumSvc.DeleteAlbum(1, 1)
+		assert.True(t, ent.IsNotFound(err))
+	})
+}

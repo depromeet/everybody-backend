@@ -18,6 +18,7 @@ type AlbumServiceInterface interface {
 	GetAllAlbums(userID int) (dto.AlbumsDto, error)
 	GetAlbum(userID, albumID int) (*dto.AlbumDto, error)
 	UpdateAlbum(userID, albumID int, body *dto.UpdateAlbumRequest) (*dto.AlbumDto, error)
+	DeleteAlbum(userID, albumID int) error
 }
 
 func NewAlbumService(albumRepo repository.AlbumRepositoryInterface, pictureRepo repository.PictureRepositoryInterface) AlbumServiceInterface {
@@ -96,4 +97,26 @@ func (s *albumService) UpdateAlbum(userID, albumID int, body *dto.UpdateAlbumReq
 	log.Infof("앨범 수정 완료: %v", updated)
 
 	return dto.AlbumToDto(updated), nil
+}
+
+func (s *albumService) DeleteAlbum(userID, albumID int) error {
+	album, err := s.albumRepo.Get(albumID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return errors.WithMessage(err, "존재하지 않는 앨범입니다.")
+		}
+
+		return errors.WithMessage(err, "알 수 없는 오류가 발생했습니다.")
+	}
+	if album.Edges.User == nil || album.Edges.User.ID != userID {
+		return errors.WithMessage(ForbiddenError, "본인의 앨범만 삭제할 수 있습니다.")
+	}
+
+	err = s.albumRepo.Delete(albumID)
+	if err != nil {
+		return errors.WithMessage(err, "")
+	}
+	log.Infof("앨범 삭제 완료: %v", album)
+
+	return nil
 }

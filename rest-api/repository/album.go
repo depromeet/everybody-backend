@@ -18,6 +18,7 @@ type AlbumRepositoryInterface interface {
 	GetAllByUserID(userID int) ([]*ent.Album, error)
 	Get(albumID int) (*ent.Album, error)
 	Update(albumID int, album *ent.Album) (*ent.Album, error)
+	Delete(albumID int) error
 }
 
 func NewAlbumRepository(db *ent.Client) AlbumRepositoryInterface {

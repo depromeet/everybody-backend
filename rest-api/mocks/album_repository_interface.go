@@ -35,6 +35,20 @@ func (_m *AlbumRepositoryInterface) Create(album *ent.Album) (*ent.Album, error)
 	return r0, r1
 }
 
+// Delete provides a mock function with given fields: albumID
+func (_m *AlbumRepositoryInterface) Delete(albumID int) error {
+	ret := _m.Called(albumID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int) error); ok {
+		r0 = rf(albumID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Get provides a mock function with given fields: albumID
 func (_m *AlbumRepositoryInterface) Get(albumID int) (*ent.Album, error) {
 	ret := _m.Called(albumID)
