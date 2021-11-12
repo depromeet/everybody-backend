@@ -57,7 +57,7 @@ func VerifyAccessToken(t string) (int, error) {
 	if !ok || !token.Valid {
 		return 0, fmt.Errorf("token not valid")
 	}
-	userId := claims["user_id"].(int)
+	userId := int(claims["user_id"].(float64))
 
 	log.Info("token verified userId=", userId)
 	return userId, nil
