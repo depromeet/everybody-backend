@@ -65,7 +65,7 @@ var (
 		{Name: "preferred_time_minute", Type: field.TypeInt, Nullable: true},
 		{Name: "last_notified_at", Type: field.TypeTime, Nullable: true},
 		{Name: "is_activated", Type: field.TypeBool, Default: true},
-		{Name: "user_notification_config", Type: field.TypeInt, Nullable: true},
+		{Name: "user_notification_config", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
 	// NotificationConfigsTable holds the schema information for the "notification_configs" table.
 	NotificationConfigsTable = &schema.Table{
@@ -77,7 +77,7 @@ var (
 				Symbol:     "notification_configs_users_notification_config",
 				Columns:    []*schema.Column{NotificationConfigsColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}

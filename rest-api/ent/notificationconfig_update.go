@@ -434,7 +434,7 @@ func (ncu *NotificationConfigUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if ncu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   notificationconfig.UserTable,
 			Columns: []string{notificationconfig.UserColumn},
@@ -450,7 +450,7 @@ func (ncu *NotificationConfigUpdate) sqlSave(ctx context.Context) (n int, err er
 	}
 	if nodes := ncu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   notificationconfig.UserTable,
 			Columns: []string{notificationconfig.UserColumn},
@@ -915,7 +915,7 @@ func (ncuo *NotificationConfigUpdateOne) sqlSave(ctx context.Context) (_node *No
 	}
 	if ncuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   notificationconfig.UserTable,
 			Columns: []string{notificationconfig.UserColumn},
@@ -931,7 +931,7 @@ func (ncuo *NotificationConfigUpdateOne) sqlSave(ctx context.Context) (_node *No
 	}
 	if nodes := ncuo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   notificationconfig.UserTable,
 			Columns: []string{notificationconfig.UserColumn},
