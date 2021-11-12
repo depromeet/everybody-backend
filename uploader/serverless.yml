@@ -6,7 +6,7 @@ provider:
   runtime: python3.7 # 3.8버전부터는 opencv나 numpy를 위한 dependency가 완전히 보장되지 않는 linux image를 쓰게 됨
   lambdaHashingVersion: '20201221'
   region: ap-northeast-2
-  stage: ${env:EVERYBODY_STAGE,'dev'}
+  stage: ${env:EVERYBODY_ENVIRONMENT,'sandbox'}
   profile: depromeet-everybody
 #  TODO: internal하게 everybody-api-gateway만이 호출할 수 있게
 #  endpointType: PRIVATE
@@ -22,7 +22,7 @@ functions:
     handler: handler.handle
     layers:
       - { Ref: PythonRequirementsLambdaLayer }
-    description: 전달 받은 이미지를 리사이즈 후 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
+    description: ${self:provider.stage}) 전달 받은 이미지를 리사이즈 후 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
     timeout: 20 # optional, in seconds, default is 6. 이미지 변환 도중 timeout 날 수도 있음.
     events:
       - httpApi:
