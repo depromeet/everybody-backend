@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/depromeet/everybody-backend/rest-api/ent"
@@ -30,8 +31,8 @@ type AlbumDto struct {
 	// 클라이언트측에서는 부위별로 분류된 사진 리스트가 필요함.
 	// TODO: 특정 부위의 사진이 한 장도 없을 때 클라이언트 측에서 맵을 사용하면서 undefined 나 no key(?) 같은 에러를 겪지 않게 하려면
 	// 서버측에서 부위에 대한 Enum을 정의해서 각 부위별로 사진이 하나도 없는 부위는 빈 리스트를 전달해줘야할 것 같아요.
-	Pictures map[string]PicturesDto `json:"pictures"`
-
+	Pictures    map[string]PicturesDto `json:"pictures"`
+	Description string                 `json:"description"`
 	// Videos    VideosDto   `json:"videos"`
 }
 
@@ -52,11 +53,15 @@ func AlbumToDto(srcAlbum *ent.Album, srcPictures []*ent.Picture) *AlbumDto {
 	for _, pictureDto := range picturesDto {
 		picturesMap[pictureDto.BodyPart] = append(picturesMap[pictureDto.BodyPart], pictureDto)
 	}
+	duration := time.Now().Sub(srcAlbum.CreatedAt)
+	description := fmt.Sprintf("%d일 간의 기록", int(duration.Hours())/24+1)
+
 	return &AlbumDto{
-		ID:        srcAlbum.ID,
-		Name:      srcAlbum.Name,
-		CreatedAt: srcAlbum.CreatedAt,
-		Pictures:  picturesMap,
+		ID:          srcAlbum.ID,
+		Name:        srcAlbum.Name,
+		Description: description,
+		CreatedAt:   srcAlbum.CreatedAt,
+		Pictures:    picturesMap,
 		// Videos:
 	}
 }
