@@ -79,10 +79,10 @@ func (s *albumService) UpdateAlbum(userID, albumID int, body *dto.UpdateAlbumReq
 	album, err := s.albumRepo.Get(albumID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, errors.Wrap(err, "존재하지 않는 앨범입니다.")
+			return nil, errors.WithMessage(err, "존재하지 않는 앨범입니다.")
 		}
 
-		return nil, errors.Wrap(err, "알 수 없는 오류가 발생했습니다.")
+		return nil, errors.WithMessage(err, "알 수 없는 오류가 발생했습니다.")
 	}
 	if album.Edges.User == nil || album.Edges.User.ID != userID {
 		return nil, errors.Wrap(ForbiddenError, "본인의 앨범만 수정할 수 있습니다.")
@@ -109,12 +109,12 @@ func (s *albumService) DeleteAlbum(userID, albumID int) error {
 		return errors.WithMessage(err, "알 수 없는 오류가 발생했습니다.")
 	}
 	if album.Edges.User == nil || album.Edges.User.ID != userID {
-		return errors.WithMessage(ForbiddenError, "본인의 앨범만 삭제할 수 있습니다.")
+		return errors.Wrap(ForbiddenError, "본인의 앨범만 삭제할 수 있습니다.")
 	}
 
 	err = s.albumRepo.Delete(albumID)
 	if err != nil {
-		return errors.WithMessage(err, "")
+		return errors.WithMessagef(err, "")
 	}
 	log.Infof("앨범 삭제 완료: %v", album)
 
