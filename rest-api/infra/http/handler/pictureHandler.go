@@ -89,3 +89,22 @@ func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
 
 	return ctx.JSON(pictures)
 }
+
+func (h *PictureHandler) DeletePicture(ctx *fiber.Ctx) error {
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.Wrap(err, "잘못된 유저 ID입니다.")
+	}
+
+	pictureID, err := strconv.Atoi(ctx.Params("picture_id"))
+	if err != nil {
+		return errors.Wrap(err, "올바르지 않은 사진 ID입니다.")
+	}
+
+	err = h.pictureService.Delete(userID, pictureID)
+	if err != nil {
+		return errors.WithMessage(err, "")
+	}
+
+	return ctx.SendStatus(fiber.StatusNoContent)
+}

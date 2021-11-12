@@ -122,5 +122,5 @@ func (h *AlbumHandler) DeleteAlbum(ctx *fiber.Ctx) error {
 		return errors.WithMessage(err, "")
 	}
 
-	return ctx.SendStatus(204)
+	return ctx.SendStatus(fiber.StatusNoContent)
 }

@@ -68,6 +68,7 @@ func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) 
 	// query string으로 구분(uploader=?&album=?&body_part=?)
 	group.Get("", pictureHandler.GetAllPictures)
 	group.Get("/:picture_id", pictureHandler.GetPicture)
+	group.Delete("/:picture_id", pictureHandler.DeletePicture)
 }
 
 func addVideoHandlers(app *fiber.App, videoHandler *handler.VideoHandler) {

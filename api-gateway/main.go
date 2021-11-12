@@ -42,7 +42,7 @@ func main() {
 	})
 
 	// fowarding to rest-api server apis
-	controller.RestApiController{}.Init(e.Group("/*"))
+	controller.RestApiController{}.Init(e.Group("/"))
 	// run server...
 	if err := e.Start(":" + strconv.Itoa(config.Config.ApiGw.Port)); err != nil {
 		log.Fatal(err)

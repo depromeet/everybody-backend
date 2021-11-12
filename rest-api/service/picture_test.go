@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/pkg/errors"
 	"testing"
 	"time"
 
@@ -109,4 +110,52 @@ func TestPictureServiceGet(t *testing.T) {
 	})
 
 	// TODO: error test
+}
+
+func TestPictureService_Delete(t *testing.T) {
+	t.Run("성공) 본인 사진 삭제 ", func(t *testing.T) {
+		pictureSvc := initializePictureTest(t)
+		picture := &ent.Picture{
+			// dto를 제공하기 위한 URL 맵핑을 하려면 어떤 유저인지를 알아야함.
+			Edges: ent.PictureEdges{
+				User:  &ent.User{ID: 1},
+				Album: &ent.Album{ID: 1},
+			},
+		}
+
+		pictureRepo.On("Get", mock.AnythingOfType("int")).Return(picture, nil)
+		pictureRepo.On("Delete", mock.AnythingOfType("int")).Return(nil)
+		err := pictureSvc.Delete(1, 0)
+		assert.NoError(t, err)
+	})
+
+	t.Run("에러) 남의 사진 삭제 ", func(t *testing.T) {
+		pictureSvc := initializePictureTest(t)
+		picture := &ent.Picture{
+			// dto를 제공하기 위한 URL 맵핑을 하려면 어떤 유저인지를 알아야함.
+			Edges: ent.PictureEdges{
+				User:  &ent.User{ID: 2},
+				Album: &ent.Album{ID: 1},
+			},
+		}
+
+		pictureRepo.On("Get", mock.AnythingOfType("int")).Return(picture, nil)
+		err := pictureSvc.Delete(1, 0)
+		assert.ErrorIs(t, err, ForbiddenError)
+	})
+
+	t.Run("에러) 존재하지 않는 사진 삭제 ", func(t *testing.T) {
+		pictureSvc := initializePictureTest(t)
+		picture := &ent.Picture{
+			// dto를 제공하기 위한 URL 맵핑을 하려면 어떤 유저인지를 알아야함.
+			Edges: ent.PictureEdges{
+				User:  &ent.User{ID: 1},
+				Album: &ent.Album{ID: 1},
+			},
+		}
+
+		pictureRepo.On("Get", mock.AnythingOfType("int")).Return(picture, errors.WithStack(&ent.NotFoundError{}))
+		err := pictureSvc.Delete(1, 0)
+		assert.True(t, ent.IsNotFound(err))
+	})
 }

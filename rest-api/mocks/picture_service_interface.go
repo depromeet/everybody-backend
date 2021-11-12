@@ -12,6 +12,20 @@ type PictureServiceInterface struct {
 	mock.Mock
 }
 
+// Delete provides a mock function with given fields: userID, pictureID
+func (_m *PictureServiceInterface) Delete(userID int, pictureID int) error {
+	ret := _m.Called(userID, pictureID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int, int) error); ok {
+		r0 = rf(userID, pictureID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetAllPictures provides a mock function with given fields: userID, pictureReq
 func (_m *PictureServiceInterface) GetAllPictures(userID int, pictureReq *dto.GetPictureRequest) (dto.PicturesDto, error) {
 	ret := _m.Called(userID, pictureReq)

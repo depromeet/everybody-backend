@@ -20,6 +20,7 @@ type PictureServiceInterface interface {
 	SavePicture(userID int, pictureReq *dto.CreatePictureRequest) (*dto.PictureDto, error)
 	GetPicture(userID, pictureID int) (*dto.PictureDto, error)
 	GetAllPictures(userID int, pictureReq *dto.GetPictureRequest) (dto.PicturesDto, error)
+	Delete(userID, pictureID int) error
 }
 
 func NewPictureService(pictureRepo repository.PictureRepositoryInterface, albumRepo repository.AlbumRepositoryInterface) PictureServiceInterface {
@@ -145,4 +146,25 @@ func (s *pictureService) GetAllPictures(userID int, pictureReq *dto.GetPictureRe
 
 	log.Info("특정 앨범의 사진들 조회")
 	return dto.PicturesToDto(pictures), nil
+}
+
+func (s *pictureService) Delete(userID, pictureID int) error {
+	picture, err := s.pictureRepo.Get(pictureID)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return errors.WithMessage(err, "존재하지 않는 사진입니다.")
+		}
+		return errors.WithMessage(err, "")
+	}
+
+	if picture.Edges.User == nil || picture.Edges.User.ID != userID {
+		return errors.Wrap(ForbiddenError, "본인의 사진만 삭제할 수 있습니다.")
+	}
+
+	err = s.pictureRepo.Delete(pictureID)
+	if err != nil {
+		return errors.WithMessage(err, "")
+	}
+
+	return nil
 }
