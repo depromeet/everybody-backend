@@ -2,13 +2,19 @@ package controller
 
 import (
 	"fmt"
+	"time"
+
+	log "github.com/sirupsen/logrus"
+
 	"github.com/labstack/echo/v4"
 )
 
 type IndexController struct{}
 
 func (c *IndexController) Index(ctx echo.Context) error {
+	log.Debug("Index OK...")
 	ctx.Response().Header().Set("Content-Type", "text/html")
+	ctx.Response().Header().Set("Health-Checked-Time", time.Now().Format(time.RFC3339))
 	return ctx.String(200, fmt.Sprint(`
 <html>
 <head>

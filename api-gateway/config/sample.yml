@@ -1,6 +1,6 @@
 apiGw:
   port: 8080
-  healthCheckPath: /health
+  healthCheckPath: /
   authEnable: true
   accessTokenSecret: 123123
   accessTokenExpireTimeMin: 1
@@ -15,8 +15,8 @@ db:
 
 targetServer:
   restApi: 
-    address: http://localhost:8080/health
+    address: http://localhost:8080
     prefix: restapi
   lambdaImageUpload:
-    address: http://localhost:8080/health
+    address: http://localhost:8080
     method: POST

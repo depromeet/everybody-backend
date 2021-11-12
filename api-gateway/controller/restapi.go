@@ -29,10 +29,6 @@ func (c RestApiController) Init(g *echo.Group) {
 	g.DELETE("*", func(c echo.Context) error {
 		return forwardWithAuthProc(c, c.Request().URL.String(), "DELETE")
 	})
-	// picures apis
-	g.POST("pictures", func(c echo.Context) error {
-		return UploadPicture(c)
-	})
 }
 
 func forwardWithAuthProc(c echo.Context, path string, method string) error {
@@ -66,8 +62,10 @@ func forwardWithAuthProc(c echo.Context, path string, method string) error {
 	log.Info("forwardWithAuthProc -> userId=" + strconv.Itoa(userId) + " path=" + path)
 
 	code, header, body := callRestApi(c, c.Request(), path, method)
-	for k := range header {
-		c.Response().Header().Set(k, header[k].(string))
+	if header != nil {
+		for k, v := range header {
+			c.Response().Header().Set(k, v.(string))
+		}
 	}
 	return c.String(code, body)
 }
@@ -106,7 +104,7 @@ func callRestApi(c echo.Context, req *http.Request, path string, method string) 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Error("resp.Body read error... err=", err)
-		panic(err)
+		panic(err) // TODO: log.panic으로 바꾸고.. middleware recover 도입.. https://echo.labstack.com/middleware/recover/
 	}
 	return resp.StatusCode, h, string(data)
 }
