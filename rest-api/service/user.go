@@ -91,7 +91,7 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 	}
 	log.Infof("디바이스 정보를 생성했습니다. Device(id=%d)", device.ID)
 
-	return dto.UserToDto(user), err
+	return dto.UserToDto(user), nil
 }
 
 // GetUser 는 유저 정보를 조회합니다.
@@ -101,7 +101,7 @@ func (s *userService) GetUser(id int) (*dto.UserDto, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	return dto.UserToDto(user), err
+	return dto.UserToDto(user), nil
 }
 
 // GetUser 는 유저가 수정할 수 있는 유저 정보의 필드들을 수정합니다.
@@ -116,7 +116,7 @@ func (s *userService) UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.User
 		return nil, errors.WithStack(err)
 	}
 
-	return dto.UserToDto(user), err
+	return dto.UserToDto(user), nil
 }
 
 func (s *userService) getRandomProfileImageKey() string {
@@ -136,7 +136,7 @@ func (s *userService) generateUniqueNickname() string {
 
 		if err != nil {
 			log.Errorf("랜덤 닉네임 생성 도중 오류가 발생했습니다. Suffix가 숫자가 아닙니다: %s", last.Nickname)
-			panic(errors.Wrap(err, "랜덤 닉네임 생성 도중 오류가 발생했습니다. Suffix가 숫자가 아닙니다."))
+			panic(errors.WithMessage(err, "랜덤 닉네임 생성 도중 오류가 발생했습니다. Suffix가 숫자가 아닙니다."))
 		}
 	}
 

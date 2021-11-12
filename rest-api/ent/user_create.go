@@ -128,19 +128,23 @@ func (uc *UserCreate) AddDevices(d ...*Device) *UserCreate {
 	return uc.AddDeviceIDs(ids...)
 }
 
-// AddNotificationConfigIDs adds the "notification_config" edge to the NotificationConfig entity by IDs.
-func (uc *UserCreate) AddNotificationConfigIDs(ids ...int) *UserCreate {
-	uc.mutation.AddNotificationConfigIDs(ids...)
+// SetNotificationConfigID sets the "notification_config" edge to the NotificationConfig entity by ID.
+func (uc *UserCreate) SetNotificationConfigID(id int) *UserCreate {
+	uc.mutation.SetNotificationConfigID(id)
 	return uc
 }
 
-// AddNotificationConfig adds the "notification_config" edges to the NotificationConfig entity.
-func (uc *UserCreate) AddNotificationConfig(n ...*NotificationConfig) *UserCreate {
-	ids := make([]int, len(n))
-	for i := range n {
-		ids[i] = n[i].ID
+// SetNillableNotificationConfigID sets the "notification_config" edge to the NotificationConfig entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableNotificationConfigID(id *int) *UserCreate {
+	if id != nil {
+		uc = uc.SetNotificationConfigID(*id)
 	}
-	return uc.AddNotificationConfigIDs(ids...)
+	return uc
+}
+
+// SetNotificationConfig sets the "notification_config" edge to the NotificationConfig entity.
+func (uc *UserCreate) SetNotificationConfig(n *NotificationConfig) *UserCreate {
+	return uc.SetNotificationConfigID(n.ID)
 }
 
 // AddAlbumIDs adds the "album" edge to the Album entity by IDs.
@@ -398,7 +402,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if nodes := uc.mutation.NotificationConfigIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.NotificationConfigTable,
 			Columns: []string{user.NotificationConfigColumn},

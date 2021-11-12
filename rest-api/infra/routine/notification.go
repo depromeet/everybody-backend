@@ -35,22 +35,25 @@ func NewNotifyRoutine(adapter push.PushAdapter, notificationService service.Noti
 
 // Run 은 Routine이 계속해서 백그라운드에서 돌게 한다.
 func (r *NotifyRoutine) Run() (err error) {
-	defer func() {
-		// panic 된 것들도 recover 해서 최대한 Run()이 종료되지 않게 함.
-		if r := recover(); r != nil {
-			log.Errorf("%+v:\n%s", r, debug.Stack())
-			err = errors.Wrap(ErrNotifyRoutine, fmt.Sprintf("%s", r))
-		} else {
-			if err != nil {
-				log.Errorf("%+v", err)
-			}
-		}
-	}()
-
 	for {
 		log.Info("Notify Routine 루틴 시작")
 		errChan := make(chan error)
-		go r.notificationService.NotifyPeriodicNoonBody(errChan)
+		go func() {
+			// panic 된 것들도 recover 해서 최대한 Run()이 종료되지 않게 함.
+			// 각 goroutine에 대한 panic은 각 goroutine이 책임져야하나..?
+			// => 헐 그런가보네... 처음 알았다;;;;;
+			defer func() {
+				if r := recover(); r != nil {
+					log.Errorf("%+v:\n%s", r, debug.Stack())
+					err = errors.Wrap(ErrNotifyRoutine, fmt.Sprintf("%s", r))
+				} else {
+					if err != nil {
+						log.Errorf("%+v", err)
+					}
+				}
+			}()
+			r.notificationService.NotifyPeriodicNoonBody(errChan)
+		}()
 		for err := range errChan {
 			log.Errorf("%+v", err)
 		}

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrDuplicatedDevice = errors.New("같은 디바이스에 대한 정보가 이미 존재합니다.")
+	ErrUnsupportedDevice = errors.New("지원되지 않는 기기 운영체제 입니다.")
 )
 
 type DeviceService interface {
@@ -34,13 +34,15 @@ func (s *deviceService) Register(requestUser int, body *dto.RegisterDeviceReques
 	// 동일한 디바이스 토큰 정보가 이미 존재하는지
 	d, err := s.deviceRepo.FindByDeviceToken(body.DeviceToken)
 	if err != nil {
-		//
 		notFoundErr := new(ent.NotFoundError)
 		if errors.As(err, &notFoundErr) {
 			// 해당 device token의 기기가 존재하지 않으면 생성
 			os := device.DeviceOs(body.DeviceOS)
 			if err = device.DeviceOsValidator(os); err != nil {
-				return nil, errors.WithStack(err)
+				// validation error의 경우 특정 에러 타입이나 미리 정의된 에러 변수를 이용하지 않음.
+				// ent 측에서 그냥 fmt.Errorf()로 에러를 생성해버림
+				// 따라서 우리가 알아서 에러를 정의한 뒤 사용해야함
+				return nil, errors.WithStack(ErrUnsupportedDevice)
 			}
 			// 생성
 			return s.deviceRepo.CreateDevice(&ent.Device{
@@ -72,5 +74,5 @@ func (s *deviceService) GetDevice(id int) (*ent.Device, error) {
 		return nil, errors.WithStack(err)
 	}
 
-	return device, err
+	return device, nil
 }

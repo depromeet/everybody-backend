@@ -108,7 +108,7 @@ func (uq *UserQuery) QueryNotificationConfig() *NotificationConfigQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(notificationconfig.Table, notificationconfig.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.NotificationConfigTable, user.NotificationConfigColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.NotificationConfigTable, user.NotificationConfigColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -557,7 +557,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
-			nodes[i].Edges.NotificationConfig = []*NotificationConfig{}
 		}
 		query.withFKs = true
 		query.Where(predicate.NotificationConfig(func(s *sql.Selector) {
@@ -576,7 +575,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_notification_config" returned %v for node %v`, *fk, n.ID)
 			}
-			node.Edges.NotificationConfig = append(node.Edges.NotificationConfig, n)
+			node.Edges.NotificationConfig = n
 		}
 	}
 

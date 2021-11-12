@@ -3,12 +3,12 @@ package http
 import (
 	"encoding/json"
 	"fmt"
-  
+	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/service"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"reflect"
 	"strings"
 )
 
@@ -23,16 +23,18 @@ func errorHandle(ctx *fiber.Ctx, err error) error {
 	rootErr := errors.GetRootStackError(err)
 	log.Errorf("%+v", rootErr)
 
-	notFoundErr := new(service.NotFoundError)
+	notFoundErr := new(*ent.NotFoundError)
 	unmarshalTypeErr := new(json.UnmarshalTypeError)
 
 	if errors.As(err, notFoundErr) {
-		return ctx.Status(404).JSON(newErrorResponse("리소스를 찾을 수 없습니다.", reflect.TypeOf(err).Name()))
+		return ctx.Status(404).JSON(newErrorResponse("리소스를 찾을 수 없습니다.", "err_not_found"))
+	} else if errors.Is(err, service.ErrUnsupportedDevice) {
+		return ctx.Status(400).JSON(newErrorResponse(err.Error(), "err_unsupported_device"))
 	} else if errors.As(err, &unmarshalTypeErr) {
 		e := errors.Cause(err).(*json.UnmarshalTypeError) // .Cause()는 .Cause()를 구현하지 않은 에러를 error로 리턴합니다.
-		return ctx.Status(400).JSON(newErrorResponse(fmt.Sprintf("%s에 대한 잘못된 타입의 값입니다. %s 타입을 이용해주세요.", e.Field, e.Type.Name()), reflect.TypeOf(e).Name()))
+		return ctx.Status(400).JSON(newErrorResponse(fmt.Sprintf("%s에 대한 잘못된 타입의 값입니다. %s 타입을 이용해주세요.", e.Field, e.Type.Name()), "json_unmarshal_type_error"))
 	} else {
-		return ctx.Status(500).JSON(newErrorResponse("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internalError"))
+		return ctx.Status(500).JSON(newErrorResponse("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internal_error"))
 	}
 }
 
