@@ -23,11 +23,11 @@ func errorHandle(ctx *fiber.Ctx, err error) error {
 	rootErr := errors.GetRootStackError(err)
 	log.Errorf("%+v", rootErr)
 
-	notFoundErr := new(*ent.NotFoundError)
+	notFoundErr := new(ent.NotFoundError)
 	unmarshalTypeErr := new(json.UnmarshalTypeError)
 
-	if errors.As(err, notFoundErr) {
-		return ctx.Status(404).JSON(newErrorResponse("리소스를 찾을 수 없습니다.", "err_not_found"))
+	if errors.As(err, &notFoundErr) {
+		return ctx.Status(404).JSON(newErrorResponse("리소스를 찾을 수 없습니다.", reflect.TypeOf(err).Name()))
 	} else if errors.Is(err, service.ErrUnsupportedDevice) {
 		return ctx.Status(400).JSON(newErrorResponse(err.Error(), "err_unsupported_device"))
 	} else if errors.As(err, &unmarshalTypeErr) {

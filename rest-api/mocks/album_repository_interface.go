@@ -80,3 +80,26 @@ func (_m *AlbumRepositoryInterface) GetAllByUserID(userID int) ([]*ent.Album, er
 
 	return r0, r1
 }
+
+// Update provides a mock function with given fields: albumID, album
+func (_m *AlbumRepositoryInterface) Update(albumID int, album *ent.Album) (*ent.Album, error) {
+	ret := _m.Called(albumID, album)
+
+	var r0 *ent.Album
+	if rf, ok := ret.Get(0).(func(int, *ent.Album) *ent.Album); ok {
+		r0 = rf(albumID, album)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ent.Album)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int, *ent.Album) error); ok {
+		r1 = rf(albumID, album)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

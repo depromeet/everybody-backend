@@ -3,11 +3,11 @@ package handler
 import (
 	"strconv"
 
-	"github.com/pkg/errors"
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pkg/errors"
 )
 
 type AlbumHandler struct {
@@ -79,4 +79,29 @@ func (h *AlbumHandler) GetAlbum(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(albumData)
+}
+
+func (h *AlbumHandler) UpdateAlbum(ctx *fiber.Ctx) error {
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	albumID, err := strconv.Atoi(ctx.Params("album_id"))
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	body := new(dto.UpdateAlbumRequest)
+	err = ctx.BodyParser(body)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	album, err := h.albumService.UpdateAlbum(userID, albumID, body)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return ctx.JSON(album)
 }

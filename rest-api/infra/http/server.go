@@ -58,6 +58,7 @@ func addAlbumHandlers(app *fiber.App, albumHandler *handler.AlbumHandler) {
 	group.Post("", albumHandler.CreateAlbum)
 	group.Get("", albumHandler.GetAllAlbums)
 	group.Get("/:album_id", albumHandler.GetAlbum)
+	group.Put("/:album_id", albumHandler.UpdateAlbum)
 }
 
 func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) {
