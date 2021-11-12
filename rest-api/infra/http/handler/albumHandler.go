@@ -100,7 +100,7 @@ func (h *AlbumHandler) UpdateAlbum(ctx *fiber.Ctx) error {
 
 	album, err := h.albumService.UpdateAlbum(userID, albumID, body)
 	if err != nil {
-		return errors.WithStack(err)
+		return errors.WithMessage(err, "")
 	}
 
 	return ctx.JSON(album)
