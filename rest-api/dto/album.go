@@ -12,29 +12,21 @@ type AlbumRequest struct {
 	Name string `json:"name"`
 }
 
-// PictureDto는 AlbumID 필드도 가지고 있음
-// AlbumDto 할 때 picture에도 album_id를 중복으로
-// 가지는 것이 불필요해서 AlbumPicture 구조체를 선언하려고
-// 생각하다가 우선은 PictureDto로 하는 걸로...
-// type AlbumPicture struct {
-// 	PictureID int       `json:"picture_id"`
-// 	BodyPart  string    `json:"body_part"`
-// 	CreatedAt time.Time `json:"created_at"`
-// 	Key  string    `json:"location"`
-// }
-
 type AlbumsDto []*AlbumDto
 type AlbumDto struct {
-	ID        int       `json:"id"`
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	ThumbnailURL *string   `json:"thumbnail_url"`
+	CreatedAt    time.Time `json:"created_at"`
+	Description  string    `json:"description"`
 	// 클라이언트측에서는 부위별로 분류된 사진 리스트가 필요함.
 	// TODO: 특정 부위의 사진이 한 장도 없을 때 클라이언트 측에서 맵을 사용하면서 undefined 나 no key(?) 같은 에러를 겪지 않게 하려면
 	// 서버측에서 부위에 대한 Enum을 정의해서 각 부위별로 사진이 하나도 없는 부위는 빈 리스트를 전달해줘야할 것 같아요.
-	Pictures    map[string]PicturesDto `json:"pictures"`
-	Description string                 `json:"description"`
+	Pictures map[string]PicturesDto `json:"pictures"`
 	// Videos    VideosDto   `json:"videos"`
 }
+
+var bodyPartKey = []string{"whole", "upper", "lower"}
 
 func AlbumsToDto(srcAlbums []*ent.Album) AlbumsDto {
 	albumsDto := make(AlbumsDto, 0)
@@ -50,19 +42,32 @@ func AlbumsToDto(srcAlbums []*ent.Album) AlbumsDto {
 func AlbumToDto(srcAlbum *ent.Album) *AlbumDto {
 	picturesDto := PicturesToDto(srcAlbum.Edges.Picture)
 	picturesMap := make(map[string]PicturesDto)
+
+	// 각 신체부위 key에 대한 초기화
+	for _, bodyPart := range bodyPartKey {
+		picturesMap[bodyPart] = make(PicturesDto, 0)
+	}
+
 	for _, pictureDto := range picturesDto {
 		picturesMap[pictureDto.BodyPart] = append(picturesMap[pictureDto.BodyPart], pictureDto)
 	}
+
+	// 각 앨범의 대표 썸네일(가장 최신 사진으로)
+	var thumbnail *string
+	if len(picturesDto) > 0 {
+		thumbnail = &picturesDto[len(picturesDto)-1].ThumbnailURL
+	}
+
 	duration := time.Now().Sub(srcAlbum.CreatedAt)
 	description := fmt.Sprintf("%d일 간의 기록", int(duration.Hours())/24+1)
 
 	return &AlbumDto{
-		ID:          srcAlbum.ID,
-		Name:        srcAlbum.Name,
-		Description: description,
-		CreatedAt:   srcAlbum.CreatedAt,
-		Pictures:    picturesMap,
-		// Videos:
+		ID:           srcAlbum.ID,
+		Name:         srcAlbum.Name,
+		ThumbnailURL: thumbnail,
+		Description:  description,
+		CreatedAt:    srcAlbum.CreatedAt,
+		Pictures:     picturesMap,
 	}
 }
 

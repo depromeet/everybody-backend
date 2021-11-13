@@ -1,12 +1,12 @@
 package service
 
 import (
-	"github.com/depromeet/everybody-backend/rest-api/util"
 	"strconv"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
+	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -43,7 +43,7 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRe
 
 	// 요청한 유저와 앨범의 소유주와 다르다면 그 앨범에 사진이 저장이 되면 안됨
 	if userID != album.Edges.User.ID {
-		return nil, errors.Wrap(ForbiddenError, "본인의 사진만을 조회할 수 있습니다.")
+		return nil, errors.Wrap(ForbiddenError, "본인의 앨범에만 사진을 업로드할 수 있습니다.")
 	}
 
 	takenAt, err := util.ConvertIntToTime(pictureReq.TakenAtYear, pictureReq.TakenAtMonth, pictureReq.TakenAtMonth)
