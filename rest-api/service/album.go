@@ -38,7 +38,7 @@ func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto
 
 	newAlbum, err := s.albumRepo.Create(album)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		return nil, errors.WithMessage(err, "알 수 없는 오류가 발생했습니다.")
 	}
 
 	log.Info("앨범 생성 완료")
@@ -49,11 +49,7 @@ func (s *albumService) CreateAlbum(userID int, albumReq *dto.AlbumRequest) (*dto
 func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 	albums, err := s.albumRepo.GetAllByUserID(userID)
 	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if len(albums) == 0 {
-		return nil, errors.WithStack(errors.New("해당하는 리소스를 찾지 못했습니다."))
+		return nil, errors.WithMessage(err, "알 수 없는 오류가 발생했습니다.")
 	}
 
 	log.Info("전체 앨범 조회 완료 (그 속 사진들은 Eager loading으로 조회)")
@@ -64,11 +60,14 @@ func (s *albumService) GetAllAlbums(userID int) (dto.AlbumsDto, error) {
 func (s *albumService) GetAlbum(userID, albumID int) (*dto.AlbumDto, error) {
 	album, err := s.albumRepo.Get(albumID)
 	if err != nil {
-		return nil, errors.WithStack(err)
+		if ent.IsNotFound(err) {
+			return nil, errors.WithMessage(err, "존재하지 않는 앨범입니다.")
+		}
+		return nil, errors.WithMessage(err, "알 수 없는 오류가 발생했습니다.")
 	}
 
 	if userID != album.Edges.User.ID {
-		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+		return nil, errors.Wrap(ForbiddenError, "본인의 앨범만 조회할 수 있습니다.")
 	}
 
 	log.Info("앨범과 그 앨범의 사진들을 조회 완료")
