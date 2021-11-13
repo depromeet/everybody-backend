@@ -73,10 +73,10 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 	log.Infof("유저를 생성했습니다. User(id=%d)", user.ID)
 
 	if body.NotificationConfig == nil {
-		return nil, errors.WithStack(ErrMissingNotificationConfig)
+		log.Info("NotificationConfig가 존재하지 않습니다. Default 값으로 설정합니다.")
+		body.NotificationConfig = s.defaultConfigureNotificationRequest()
 	}
 	_, err = s.notificationService.Configure(user.ID, body.NotificationConfig)
-
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -119,6 +119,20 @@ func (s *userService) UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.User
 	return dto.UserToDto(user), nil
 }
 
+func (s *userService) defaultConfigureNotificationRequest() *dto.ConfigureNotificationRequest {
+	return &dto.ConfigureNotificationRequest{
+		Monday:              true,
+		Tuesday:             false,
+		Wednesday:           true,
+		Thursday:            false,
+		Friday:              true,
+		Saturday:            false,
+		Sunday:              false,
+		PreferredTimeHour:   20,
+		PreferredTimeMinute: 0,
+		IsActivated:         true,
+	}
+}
 func (s *userService) getRandomProfileImageKey() string {
 	return randomProfileImageKey[rand.Intn(len(randomProfileImageKey))]
 }

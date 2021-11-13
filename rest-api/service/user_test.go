@@ -50,12 +50,12 @@ func TestUserService_SignUp(t *testing.T) {
 		t.Logf("유저 생성 %#v", user)
 	})
 
-	t.Run("오류) 회원가입 시 알림 설정 없음", func(t *testing.T) {
+	t.Run("성공) 회원가입 시 알림 설정 없으면 default config 적용", func(t *testing.T) {
 		user, err := userSvc.SignUp(&dto.SignUpRequest{
 			Device: &dto.RegisterDeviceRequest{},
 		})
-		assert.ErrorIs(t, err, ErrMissingNotificationConfig)
-		assert.Nil(t, user)
+		assert.NoError(t, err)
+		assert.NotNil(t, user)
 	})
 
 	t.Run("오류) 회원가입 시 디바이스 정보 없음", func(t *testing.T) {
