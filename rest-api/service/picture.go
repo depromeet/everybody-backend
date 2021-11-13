@@ -43,7 +43,7 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRe
 
 	// 요청한 유저와 앨범의 소유주와 다르다면 그 앨범에 사진이 저장이 되면 안됨
 	if userID != album.Edges.User.ID {
-		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+		return nil, errors.Wrap(ForbiddenError, "본인의 사진만을 조회할 수 있습니다.")
 	}
 
 	takenAt, err := util.ConvertIntToTime(pictureReq.TakenAtYear, pictureReq.TakenAtMonth, pictureReq.TakenAtMonth)
@@ -76,7 +76,6 @@ func (s *pictureService) GetPicture(userID, pictureID int) (*dto.PictureDto, err
 		return nil, errors.WithStack(err)
 	}
 
-	// TODO: forbidden error로 wrapping?
 	if userID != picture.Edges.User.ID {
 		return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
 	}
@@ -96,7 +95,7 @@ func (s *pictureService) GetAllPictures(userID int, pictureReq *dto.GetPictureRe
 
 		// forbiddenerr로 wrapping?
 		if userID != uploaderID {
-			return nil, errors.WithStack(errors.New("요청한 유저는 리소스에 접근할 권한이 없습니다."))
+			return nil, errors.Wrap(ForbiddenError, "본인의 사진만을 조회할 수 있습니다.")
 		}
 
 		pictures, err := s.pictureRepo.GetAllByUserID(uploaderID)

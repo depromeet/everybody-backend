@@ -79,7 +79,7 @@ func (h *PictureHandler) GetAllPictures(ctx *fiber.Ctx) error {
 
 	// query string으로 uploader, album이 둘 다 없다면 잘못된 요청
 	if len(pictureReq.Uploader) == 0 && len(pictureReq.Album) == 0 {
-		return errors.WithStack(errors.New("적절한 query string으로 요청해주세요"))
+		return &BadRequestError{errors.New("적절한 query string으로 요청해주세요")}
 	}
 
 	pictures, err := h.pictureService.GetAllPictures(userID, pictureReq)

@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
+	"github.com/depromeet/everybody-backend/rest-api/infra/http/handler"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
@@ -23,7 +25,8 @@ type ErrorResponse struct {
 func errorHandle(ctx *fiber.Ctx, err error) error {
 	log.Errorf("%+v", err)
 	unmarshalTypeErr := new(json.UnmarshalTypeError)
-
+	strconvNumErr := new(strconv.NumError)
+	badRequestErr := new(handler.BadRequestError)
 	if ent.IsNotFound(err) {
 		return ctx.Status(404).JSON(newErrorResponse("리소스를 찾을 수 없습니다.", "not_found_error"))
 	} else if errors.Is(err, service.UnsupportedDeviceError) {
@@ -31,9 +34,12 @@ func errorHandle(ctx *fiber.Ctx, err error) error {
 	} else if errors.As(err, &unmarshalTypeErr) {
 		e := errors.Cause(err).(*json.UnmarshalTypeError) // .Cause()는 .Cause()를 구현하지 않은 에러를 error로 리턴합니다.
 		return ctx.Status(400).JSON(newErrorResponse(fmt.Sprintf("%s에 대한 잘못된 타입의 값입니다. %s 타입을 이용해주세요.", e.Field, e.Type.Name()), "json_unmarshal_type_error"))
+	} else if errors.As(err, &strconvNumErr) {
+		return ctx.Status(400).JSON(newErrorResponse(util.GetErrorMessageForClient(err.Error()), "number_conversion_error"))
+	} else if errors.As(err, &badRequestErr) {
+		return ctx.Status(400).JSON(newErrorResponse(util.GetErrorMessageForClient(err.Error()), "bad_request"))
 	} else if errors.Is(err, service.ForbiddenError) {
-		return ctx.Status(400).JSON(newErrorResponse(util.GetErrorMessageForClient(err.Error()), "forbidden_error"))
-		//return ctx.Status(400).JSON(newErrorResponse(err.Error(), "forbidden_error"))
+		return ctx.Status(403).JSON(newErrorResponse(util.GetErrorMessageForClient(err.Error()), "forbidden_error"))
 	} else {
 		return ctx.Status(500).JSON(newErrorResponse("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internal_error"))
 	}
