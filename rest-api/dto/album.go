@@ -43,16 +43,13 @@ func AlbumToDto(srcAlbum *ent.Album) *AlbumDto {
 	picturesDto := PicturesToDto(srcAlbum.Edges.Picture)
 	picturesMap := make(map[string]PicturesDto)
 
-	for _, pictureDto := range picturesDto {
-		picturesMap[pictureDto.BodyPart] = append(picturesMap[pictureDto.BodyPart], pictureDto)
+	// 각 신체부위 key에 대한 초기화
+	for _, bodyPart := range bodyPartKey {
+		picturesMap[bodyPart] = make(PicturesDto, 0)
 	}
 
-	emptyPicturesDto := make(PicturesDto, 0)
-	for _, bodyPart := range bodyPartKey {
-		// bodyPart가 없는 사진들 빈 리스트로 초기화
-		if _, ok := picturesMap[bodyPart]; !ok {
-			picturesMap[bodyPart] = emptyPicturesDto
-		}
+	for _, pictureDto := range picturesDto {
+		picturesMap[pictureDto.BodyPart] = append(picturesMap[pictureDto.BodyPart], pictureDto)
 	}
 
 	// 각 앨범의 대표 썸네일(가장 최신 사진으로)
