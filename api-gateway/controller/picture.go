@@ -72,6 +72,12 @@ func UploadPicture(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "takenAtDay parse error...")
 	}
 
+	takenAt := c.FormValue("taken_at")
+	if err != nil {
+		log.Error("takenAt parse error... takenAt=", c.FormValue("takenAt"))
+		return c.String(http.StatusBadRequest, "takenAt parse error...")
+	}
+
 	// 람다 호출해서 이미지 업로드
 	lambdaResCode, _, lambdaResBody := callLambdaImageUpload(userId, imageFile)
 	if lambdaResCode != 200 {
@@ -103,6 +109,7 @@ func UploadPicture(c echo.Context) error {
 	reqMap["taken_at_year"] = takenAtYear
 	reqMap["taken_at_month"] = takenAtMonth
 	reqMap["taken_at_day"] = takenAtDay
+	reqMap["taken_at"] = takenAt
 	reqMapByte, _ := json.Marshal(reqMap)
 
 	req, _ := http.NewRequest("", "", bytes.NewBuffer(reqMapByte)) // method and url will be set bottom
