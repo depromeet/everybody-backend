@@ -14,6 +14,10 @@ import (
 // fiber의 application/json에 대한 default decoder는 json unmarshaller
 type CustomTime time.Time
 
+var (
+	location, _ = time.LoadLocation("Asia/Seoul")
+)
+
 // ct에 저장
 func (ct *CustomTime) UnmarshalJSON(b []byte) error {
 	var s string
@@ -24,7 +28,9 @@ func (ct *CustomTime) UnmarshalJSON(b []byte) error {
 		return errors.WithStack(err)
 	} else {
 		// 전달받은 건 한국시인데 해석할 때에는 같은 절대 시간값으로 UTC로 해석하기 때문에 9시간을 더해준다.
+		t.In(location)
 		t.Add(9 * time.Hour)
+
 		*ct = CustomTime(t)
 		return nil
 	}
@@ -32,7 +38,8 @@ func (ct *CustomTime) UnmarshalJSON(b []byte) error {
 
 // ct를 []byte에 저장
 func (ct CustomTime) MarshalJSON() ([]byte, error) {
-	return json.Marshal(ct)
+	// KST이지만 직렬화될 땐 UTC를 기준으로 되기 때문에 9시간을 더해준다.
+	return json.Marshal(time.Time(ct).Add(9 * time.Hour).Format("2006-01-02 15:04:05"))
 }
 
 func GetRequestUserID(ctx *fiber.Ctx) (int, error) {

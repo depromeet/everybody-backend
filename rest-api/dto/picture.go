@@ -47,9 +47,9 @@ type PictureDto struct {
 	PreviewURL   string `json:"preview_url"`
 	ImageURL     string `json:"image_url"`
 	// image의 object key
-	Key       string    `json:"key"`
-	TakenAt   time.Time `json:"taken_at"`
-	CreatedAt time.Time `json:"created_at"`
+	Key       string          `json:"key"`
+	TakenAt   util.CustomTime `json:"taken_at"`
+	CreatedAt time.Time       `json:"created_at"`
 }
 
 func PictureToDto(src *ent.Picture) *PictureDto {
@@ -78,7 +78,7 @@ func PictureToDto(src *ent.Picture) *PictureDto {
 		PreviewURL:   previewURL,
 		ImageURL:     imageURL,
 		Key:          src.Key,
-		TakenAt:      src.TakenAt,
+		TakenAt:      util.CustomTime(src.TakenAt),
 		CreatedAt:    src.CreatedAt,
 	}
 }
