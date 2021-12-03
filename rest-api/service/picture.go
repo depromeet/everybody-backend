@@ -2,11 +2,11 @@ package service
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
-	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -46,7 +46,6 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRe
 		return nil, errors.Wrap(ForbiddenError, "본인의 앨범에만 사진을 업로드할 수 있습니다.")
 	}
 
-	takenAt, err := util.ConvertIntToTime(pictureReq.TakenAtYear, pictureReq.TakenAtMonth, pictureReq.TakenAtMonth)
 	if err != nil {
 		return nil, errors.Wrapf(err, "잘못된 날짜 형식입니다. (%4d, %2d, %2d", pictureReq.TakenAtYear, pictureReq.TakenAtMonth, pictureReq.TakenAtMonth)
 	}
@@ -58,7 +57,7 @@ func (s *pictureService) SavePicture(userID int, pictureReq *dto.CreatePictureRe
 			Album: &ent.Album{ID: pictureReq.AlbumID},
 		},
 		Key:     pictureReq.Key,
-		TakenAt: takenAt,
+		TakenAt: time.Time(pictureReq.TakenAt),
 	}
 
 	p, err := s.pictureRepo.Save(picture)

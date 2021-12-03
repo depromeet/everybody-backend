@@ -17,10 +17,11 @@ type CreatePictureRequest struct {
 	AlbumID  int    `json:"album_id"`
 	BodyPart string `json:"body_part"`
 	// Gateway에서 image key 값도 같이 받음
-	Key          string `json:"key"`
-	TakenAtYear  int    `json:"taken_at_year"`
-	TakenAtMonth int    `json:"taken_at_month"`
-	TakenAtDay   int    `json:"taken_at_day"`
+	Key          string          `json:"key"`
+	TakenAtYear  int             `json:"taken_at_year"`
+	TakenAtMonth int             `json:"taken_at_month"`
+	TakenAtDay   int             `json:"taken_at_day"`
+	TakenAt      util.CustomTime `json:"taken_at"`
 }
 
 // 사진 조회할 때 query string으로 오는 것 처리
@@ -46,11 +47,9 @@ type PictureDto struct {
 	PreviewURL   string `json:"preview_url"`
 	ImageURL     string `json:"image_url"`
 	// image의 object key
-	Key          string    `json:"key"`
-	TakenAtYear  int       `json:"taken_at_year"`
-	TakenAtMonth int       `json:"taken_at_month"`
-	TakenAtDay   int       `json:"taken_at_day"`
-	CreatedAt    time.Time `json:"created_at"`
+	Key       string    `json:"key"`
+	TakenAt   time.Time `json:"taken_at"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func PictureToDto(src *ent.Picture) *PictureDto {
@@ -70,7 +69,7 @@ func PictureToDto(src *ent.Picture) *PictureDto {
 	if err != nil {
 		log.Error(err)
 	}
-	year, month, day := util.ConvertTimeToStr(src.TakenAt)
+
 	return &PictureDto{
 		ID:           src.ID,
 		AlbumID:      src.Edges.Album.ID,
@@ -79,9 +78,7 @@ func PictureToDto(src *ent.Picture) *PictureDto {
 		PreviewURL:   previewURL,
 		ImageURL:     imageURL,
 		Key:          src.Key,
-		TakenAtYear:  year,
-		TakenAtMonth: month,
-		TakenAtDay:   day,
+		TakenAt:      src.TakenAt,
 		CreatedAt:    src.CreatedAt,
 	}
 }
