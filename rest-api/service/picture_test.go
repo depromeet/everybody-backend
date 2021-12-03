@@ -35,13 +35,10 @@ func TestPictureServiceSave(t *testing.T) {
 		albumRepo.On("Get", mock.AnythingOfType("int")).Return(expectedAlbum, nil)
 		pictureRepo.On("Save", mock.AnythingOfType("*ent.Picture")).Return(expectedPicture, nil)
 		picture, err := pictureSvc.SavePicture(0, &dto.CreatePictureRequest{
-			ID:           0,
-			AlbumID:      0,
-			BodyPart:     "",
-			Key:          "",
-			TakenAtYear:  2021,
-			TakenAtMonth: 11,
-			TakenAtDay:   5,
+			ID:       0,
+			AlbumID:  0,
+			BodyPart: "",
+			Key:      "",
 		})
 		assert.NoError(t, err)
 		assert.Equal(t, dto.PictureToDto(expectedPicture), picture)

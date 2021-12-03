@@ -54,24 +54,6 @@ func UploadPicture(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "get Formfile fail...")
 	}
 
-	takenAtYear, err := strconv.Atoi(c.FormValue("taken_at_year"))
-	if err != nil {
-		log.Error("takenAtYear parse error... takenAtYear=", c.FormValue("taken_at_year"))
-		return c.String(http.StatusBadRequest, "takenAtYear parse error...")
-	}
-
-	takenAtMonth, err := strconv.Atoi(c.FormValue("taken_at_month"))
-	if err != nil {
-		log.Error("takenAtMonth parse error... takenAtMonth=", c.FormValue("taken_at_month"))
-		return c.String(http.StatusBadRequest, "takenAtMonth parse error...")
-	}
-
-	takenAtDay, err := strconv.Atoi(c.FormValue("taken_at_day"))
-	if err != nil {
-		log.Error("takenAtDay parse error... takenAtDay=", c.FormValue("taken_at_day"))
-		return c.String(http.StatusBadRequest, "takenAtDay parse error...")
-	}
-
 	takenAt := c.FormValue("taken_at")
 	if err != nil {
 		log.Error("takenAt parse error... takenAt=", c.FormValue("takenAt"))
@@ -106,9 +88,6 @@ func UploadPicture(c echo.Context) error {
 	reqMap["key"] = lambdaResObj.Data.Keys[0] // 현재는 사진 1장씩만 해서 리스트의 첫번째 원소만 업로드함...
 	reqMap["album_id"] = albumId
 	reqMap["body_part"] = bodyPart
-	reqMap["taken_at_year"] = takenAtYear
-	reqMap["taken_at_month"] = takenAtMonth
-	reqMap["taken_at_day"] = takenAtDay
 	reqMap["taken_at"] = takenAt
 	reqMapByte, _ := json.Marshal(reqMap)
 

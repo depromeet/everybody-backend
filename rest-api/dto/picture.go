@@ -17,11 +17,8 @@ type CreatePictureRequest struct {
 	AlbumID  int    `json:"album_id"`
 	BodyPart string `json:"body_part"`
 	// Gateway에서 image key 값도 같이 받음
-	Key          string          `json:"key"`
-	TakenAtYear  int             `json:"taken_at_year"`
-	TakenAtMonth int             `json:"taken_at_month"`
-	TakenAtDay   int             `json:"taken_at_day"`
-	TakenAt      util.CustomTime `json:"taken_at"`
+	Key     string          `json:"key"`
+	TakenAt util.CustomTime `json:"taken_at"`
 }
 
 // 사진 조회할 때 query string으로 오는 것 처리

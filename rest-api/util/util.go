@@ -38,8 +38,7 @@ func (ct *CustomTime) UnmarshalJSON(b []byte) error {
 
 // ct를 []byte에 저장
 func (ct CustomTime) MarshalJSON() ([]byte, error) {
-	// KST이지만 직렬화될 땐 UTC를 기준으로 되기 때문에 9시간을 더해준다.
-	return json.Marshal(time.Time(ct).Add(9 * time.Hour).Format("2006-01-02 15:04:05"))
+	return json.Marshal(time.Time(ct).Format("2006-01-02 15:04:05"))
 }
 
 func GetRequestUserID(ctx *fiber.Ctx) (int, error) {
