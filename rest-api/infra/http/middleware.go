@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
+	"github.com/depromeet/everybody-backend/rest-api/er"
 	"github.com/depromeet/everybody-backend/rest-api/infra/http/handler"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
@@ -41,6 +42,12 @@ func errorHandle(ctx *fiber.Ctx, err error) error {
 	} else if errors.Is(err, service.ForbiddenError) {
 		return ctx.Status(403).JSON(newErrorResponse(util.GetErrorMessageForClient(err.Error()), "forbidden_error"))
 	} else {
+		cause := errors.Cause(err)
+		wrongTimeFormatErr := new(er.WrongTimeFormatErr)
+		if errors.As(cause, &wrongTimeFormatErr) {
+			return ctx.Status(400).JSON(newErrorResponse(util.GetErrorMessageForClient(err.Error()), "wrong_time_format_error"))
+		}
+
 		return ctx.Status(500).JSON(newErrorResponse("알 수 없는 에러가 발생했습니다. 에브리바디에 문의해주세요.", "internal_error"))
 	}
 }
