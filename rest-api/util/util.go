@@ -3,8 +3,9 @@ package util
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/depromeet/everybody-backend/rest-api/er"
 	"github.com/gofiber/fiber/v2"
-	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
 	"time"
@@ -19,13 +20,16 @@ var (
 )
 
 // ct에 저장
+// util 함수들은 굳이 stack 정보를 제공할 필요까지는 없을 듯
+// util을 호출한 쪽의 스택 정보 정도만 있으면 됨.
 func (ct *CustomTime) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {
-		return errors.WithStack(err)
+		log.Error(err)
+		return &er.WrongTimeFormatErr{Err: err}
 	}
 	if t, err := time.Parse("2006-01-02 15:04:05", s); err != nil {
-		return errors.WithStack(err)
+		return &er.WrongTimeFormatErr{Err: err}
 	} else {
 		// 전달받은 건 한국시인데 해석할 때에는 같은 절대 시간값으로 UTC로 해석하기 때문에 9시간을 더해준다.
 		t.In(location)
