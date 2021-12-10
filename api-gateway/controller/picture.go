@@ -34,6 +34,12 @@ func UploadPicture(c echo.Context) error {
 	}
 
 	log.Info("UploadPicture -> userId=", userId)
+	f, err := c.MultipartForm()
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "multipart form error")
+	}
+
+	log.Infof("UploadPicture request body: %+v", f)
 
 	// 필요한 파라미터 값들 획득
 	albumId, err := strconv.Atoi(c.FormValue("album_id"))
@@ -55,10 +61,6 @@ func UploadPicture(c echo.Context) error {
 	}
 
 	takenAt := c.FormValue("taken_at")
-	if err != nil {
-		log.Error("takenAt parse error... takenAt=", c.FormValue("takenAt"))
-		return c.String(http.StatusBadRequest, "takenAt parse error...")
-	}
 
 	// 람다 호출해서 이미지 업로드
 	lambdaResCode, _, lambdaResBody := callLambdaImageUpload(userId, imageFile)
