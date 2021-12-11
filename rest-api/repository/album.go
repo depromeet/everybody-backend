@@ -52,6 +52,7 @@ func (r *albumRepository) GetAllByUserID(userID int) ([]*ent.Album, error) {
 				WithUser().
 				Order(ent.Asc("taken_at", "created_at"))
 		}).
+		Order(ent.Desc("created_at")).
 		All(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)

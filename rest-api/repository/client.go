@@ -9,6 +9,7 @@ import (
 	"github.com/depromeet/everybody-backend/rest-api/ent/migrate"
 	_ "github.com/go-sql-driver/mysql"
 	log "github.com/sirupsen/logrus"
+	"os"
 	"time"
 )
 
@@ -38,18 +39,27 @@ func Connect() *ent.Client {
 	defer conn.Close()
 
 	ent.Debug()
-	ent.Log(func(i ...interface{}) {
-		log.Debug(i...)
-	})
 
 	client := ent.NewClient(ent.Driver(drv))
 	log.Warning("DB Schema를 적용합니다.")
-	err = client.Schema.Create(
+	if err := client.Schema.WriteTo(
+		context.TODO(),
+		os.Stdout,
+		migrate.WithDropIndex(true),
+		migrate.WithForeignKeys(true),
+		//migrate.WithDropColumn(true), // 데이터 날아갈 수도 있음...
+	); err != nil {
+		log.Error(err)
+	}
+
+	if err = client.Schema.Create(
 		context.TODO(),
 		migrate.WithDropIndex(true),
 		migrate.WithForeignKeys(true),
 		//migrate.WithDropColumn(true), // 데이터 날아갈 수도 있음...
-	)
+	); err != nil {
+		log.Error(err)
+	}
 
 	if err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
