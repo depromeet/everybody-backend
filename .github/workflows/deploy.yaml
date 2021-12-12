@@ -31,6 +31,7 @@ jobs:
       run: |
         echo "${{ secrets.REST_CONFIG_DEV }}" > rest-api/config/dev.yml
         echo "${{ secrets.GATEWAY_CONFIG_DEV }}" > api-gateway/config/dev.yml
+        echo "${{ secrets.SERVICE_ACCOUNT_DEV }}" > api-gateway/config/service-account-dev.yml
 
     - name: Build rest-api
       working-directory: rest-api
