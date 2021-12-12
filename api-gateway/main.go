@@ -3,6 +3,7 @@ package main
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -13,6 +14,16 @@ import (
 	"github.com/depromeet/everybody-backend/api-gateway/util"
 )
 
+func init() {
+	// timezone을 global하게 잡아주지 않으면
+	// local에선 KST를 사용하지만, EC2는 UTC를 사용한다.
+	if loc, err := time.LoadLocation("Asia/Seoul"); err != nil {
+		log.Fatal(err)
+	} else {
+		time.Local = loc
+		log.Infof("Timezone을 설정합니다: %+v", time.Local)
+	}
+}
 func main() {
 	log.Info("SERVER START.....")
 
