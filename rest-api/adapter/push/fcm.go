@@ -48,18 +48,22 @@ func (a *firebasePushAdapter) Send(title, content string, deviceInfo *ent.Device
 	registrationToken := deviceInfo.PushToken
 
 	var response string
-	if deviceInfo.DeviceOs == device.DeviceOsANDROID {
+	fmt.Println(deviceInfo.DeviceToken)
+	fmt.Println(device.DeviceOs(deviceInfo.DeviceToken))
+	fmt.Println(device.DeviceOs(deviceInfo.DeviceToken) == device.DeviceOsANDROID)
+
+	switch deviceInfo.DeviceOs {
+	case device.DeviceOsANDROID:
+		fallthrough
+	case device.DeviceOsIOS:
 		// See documentation on defining a message payload.
-		message := newAndroidMessage(registrationToken, title, content)
+		message := newMessage(registrationToken, title, content)
 		// Send a message to the device corresponding to the provided
 		// registration token.
 		response, err = client.Send(ctx, message)
 
-	} else {
-		return errors.New("아직 지원되지 않는 OS. ANDROID만 지원 중.")
-	}
-	if err != nil {
-		return errors.WithStack(err)
+	default:
+		return errors.New("아직 지원되지 않는 OS. iOS와 ANDROID만 지원 중.")
 	}
 
 	// Response is a message ID string.
@@ -69,15 +73,11 @@ func (a *firebasePushAdapter) Send(title, content string, deviceInfo *ent.Device
 
 }
 
-func newAndroidMessage(token, title, content string) *messaging.Message {
+func newMessage(token, title, content string) *messaging.Message {
 	message := &messaging.Message{
-		Android: &messaging.AndroidConfig{
-			Notification: &messaging.AndroidNotification{
-				Title: title,
-				Body:  content,
-				Icon:  "stock_ticker_update",
-				Color: "#7448FF",
-			},
+		Notification: &messaging.Notification{
+			Title: title,
+			Body:  content,
 		},
 		Token: token,
 	}

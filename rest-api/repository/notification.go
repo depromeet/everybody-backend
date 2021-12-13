@@ -90,7 +90,7 @@ func (repo *notificationRepository) FindByUser(userID int) (*ent.NotificationCon
 }
 
 func (repo *notificationRepository) Update(id int, config *ent.NotificationConfig) (*ent.NotificationConfig, error) {
-	return repo.db.NotificationConfig.UpdateOneID(id).
+	builder := repo.db.NotificationConfig.UpdateOneID(id).
 		SetUser(config.Edges.User).
 		SetMonday(config.Monday).
 		SetTuesday(config.Tuesday).
@@ -101,9 +101,18 @@ func (repo *notificationRepository) Update(id int, config *ent.NotificationConfi
 		SetSunday(config.Sunday).
 		SetPreferredTimeHour(config.PreferredTimeHour).
 		SetPreferredTimeMinute(config.PreferredTimeMinute).
-		SetNillableLastNotifiedAt(config.LastNotifiedAt).
-		SetIsActivated(config.IsActivated).
-		Save(context.Background())
+		SetIsActivated(config.IsActivated)
+	if config.LastNotifiedAt == nil {
+		builder = builder.ClearLastNotifiedAt()
+	} else {
+		builder = builder.SetLastNotifiedAt(*config.LastNotifiedAt)
+	}
+	cfg, err := builder.Save(context.Background())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return cfg, nil
 }
 
 func (repo *notificationRepository) UpdateLastNotifiedAt(id int, lastNotifiedAt time.Time) (*ent.NotificationConfig, error) {

@@ -46,9 +46,18 @@ type notificationService struct {
 func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNotificationRequest) (*dto.NotificationConfigDto, error) {
 	// 생성
 	config, err := s.notificationRepo.FindByUser(requestUser)
+	n := time.Now()
+	log.Warning(n.Hour(), n.Minute())
 	if err != nil {
 		errNotFound := new(ent.NotFoundError)
 		if errors.As(err, &errNotFound) {
+			var lastNotifiedAt *time.Time
+			now := time.Now()
+			// 알림 선호 시간이 지금을 지났으면 오늘 알림을 보내지 않도록 lastNotifiedAt에 값을 넣어준다.
+			if body.PreferredTimeHour <= now.Hour() && body.PreferredTimeMinute < now.Minute() {
+				lastNotifiedAt = &now
+			}
+
 			// 이 유저의 push 설정이 없으면 만든다.
 			result, err := s.notificationRepo.CreateNotificationConfig(&ent.NotificationConfig{
 				Monday:              body.Monday, // 기본값
@@ -60,7 +69,7 @@ func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNoti
 				Sunday:              body.Sunday,
 				PreferredTimeHour:   body.PreferredTimeHour,
 				PreferredTimeMinute: body.PreferredTimeMinute,
-				LastNotifiedAt:      nil,
+				LastNotifiedAt:      lastNotifiedAt,
 				IsActivated:         body.IsActivated,
 				Edges: ent.NotificationConfigEdges{
 					User: &ent.User{ID: requestUser},
@@ -77,6 +86,13 @@ func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNoti
 	}
 
 	// 수정
+	var lastNotifiedAt *time.Time
+	now := time.Now()
+
+	// 알림 선호 시간이 지금을 지났으면 오늘 알림을 보내지 않도록 lastNotifiedAt에 값을 넣어준다.
+	if body.PreferredTimeHour <= now.Hour() && body.PreferredTimeMinute < now.Minute() {
+		lastNotifiedAt = &now
+	}
 	result, err := s.notificationRepo.Update(config.ID, &ent.NotificationConfig{
 		Monday:              body.Monday, // 기본값
 		Tuesday:             body.Tuesday,
@@ -87,7 +103,7 @@ func (s *notificationService) Configure(requestUser int, body *dto.ConfigureNoti
 		Sunday:              body.Sunday,
 		PreferredTimeHour:   body.PreferredTimeHour,
 		PreferredTimeMinute: body.PreferredTimeMinute,
-		LastNotifiedAt:      config.LastNotifiedAt, // 이건 변하지 않는다.
+		LastNotifiedAt:      lastNotifiedAt, // 이건 변하지 않는다.
 		IsActivated:         body.IsActivated,
 		Edges:               config.Edges, // 이건 변하지 않는다.
 	})
