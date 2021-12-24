@@ -27,11 +27,18 @@ jobs:
         mkdir -p rest-api/deploy
         mkdir -p api-gateway/deploy
 
+    - name: Configure AWS credentials from Test account
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
+
     - name: Copy config file
       run: |
-        echo '${{ secrets.REST_CONFIG_DEV }}' > rest-api/config/dev.yml
-        echo '${{ secrets.SERVICE_ACCOUNT_DEV }}' > rest-api/config/service-account-dev.json
-        echo '${{ secrets.GATEWAY_CONFIG_DEV }}' > api-gateway/config/dev.yml
+        aws ssm get-parameter --name ${{ secrets.REST_PARAMETER_NAME_DEV }} --query "Parameter.Value" --output text > rest-api/config/dev.yml
+        aws ssm get-parameter --name ${{ secrets.SERVICE_ACCOUNT_PARAMETER_NAME_DEV }} --query "Parameter.Value" --output text > rest-api/config/service-account-dev.json
+        aws ssm get-parameter --name ${{ secrets.GATEWAY_PARAMETER_NAME_DEV }} --query "Parameter.Value" --output text > api-gateway/config/dev.yml
 
     - name: Build rest-api
       working-directory: rest-api
