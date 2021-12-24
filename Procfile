@@ -1,2 +1,2 @@
-rest: ./rest-api/rest
-web: ./api-gateway/gw
+rest: cd rest-api && ./rest
+web: cd api-gateway && ./gw
