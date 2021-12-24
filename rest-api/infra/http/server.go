@@ -73,7 +73,6 @@ func addPictureHandlers(app *fiber.App, pictureHandler *handler.PictureHandler) 
 
 func addVideoHandlers(app *fiber.App, videoHandler *handler.VideoHandler) {
 	group := app.Group("/videos")
-	group.Post("", videoHandler.DownloadVideo)
 	group.Post("", videoHandler.SaveVideo)
 	group.Get("", videoHandler.GetAllVideos)
 	group.Get("/:video_id", videoHandler.GetVideo)

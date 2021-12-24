@@ -24,7 +24,7 @@ func init() {
 	if err := viper.ReadInConfig(); err != nil {
 		if errors.As(err, &viper.ConfigFileNotFoundError{}) {
 			log.Warningf("설정파일을 하나도 찾지 못했습니다. 올바른 환경을 설정하시고, 그에 대한 설정파일을 생성해주세요.")
-		} else{
+		} else {
 			log.Fatal("%#v", err)
 		}
 	} else {
@@ -66,6 +66,10 @@ type config struct {
 		LambdaImageUpload struct {
 			Address string `yaml:"address"`
 			Method  string `yaml:"method"`
-		} `yaml:"lambdaImageUpload"`
+		}
+		LambdaVideoDownload struct {
+			Address string
+			Method  string
+		}
 	} `yaml:"targetServer"`
 }
