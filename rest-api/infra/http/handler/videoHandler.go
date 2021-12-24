@@ -20,6 +20,27 @@ func NewVideoHandler(videoService service.VideoServiceInterface) *VideoHandler {
 	}
 }
 
+func (h *VideoHandler) DownloadVideo(ctx *fiber.Ctx) error {
+	userID, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	body := new(dto.DownloadVideoRequest)
+	err = ctx.BodyParser(body)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	video, err := h.videoService.DownloadVideo(userID, body)
+	if err != nil {
+		return err
+	}
+	ctx.Response().Header.Add("Content-Type", "video/mp4")
+
+	return ctx.SendStream(video)
+}
+
 func (h *VideoHandler) SaveVideo(ctx *fiber.Ctx) error {
 	userID, err := util.GetRequestUserID(ctx)
 	if err != nil {

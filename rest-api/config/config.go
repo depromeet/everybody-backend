@@ -75,4 +75,7 @@ type config struct {
 		Username  string
 		IconEmoji string
 	}
+	Video struct {
+		APIRoot string
+	}
 }
