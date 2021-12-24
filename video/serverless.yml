@@ -34,7 +34,7 @@ functions:
     events:
       - httpApi:
           path: /video
-          method: get
+          method: post
 
 plugins:
   - serverless-offline
