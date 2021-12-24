@@ -16,6 +16,7 @@ var (
 	pictureRepo      *mocks.PictureRepositoryInterface
 	videoRepo        *mocks.VideoRepositoryInterface
 	pushAdapter      *mocks.PushAdapter
+	videoPort        *mocks.VideoPort
 )
 
 // initialize 는 서비스 계층 이외의 것들을 초기화합니다.
@@ -28,4 +29,5 @@ func initialize(t *testing.T) {
 	pictureRepo = new(mocks.PictureRepositoryInterface)
 	videoRepo = new(mocks.VideoRepositoryInterface)
 	pushAdapter = new(mocks.PushAdapter)
+	videoPort = new(mocks.VideoPort)
 }

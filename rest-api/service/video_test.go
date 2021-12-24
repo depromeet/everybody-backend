@@ -12,7 +12,7 @@ import (
 func initializeVideoTest(t *testing.T) *videoService {
 	initialize(t)
 
-	return NewVideoService(videoRepo).(*videoService)
+	return NewVideoService(videoRepo, pictureRepo, videoPort).(*videoService)
 }
 
 func TestVideoServiceSave(t *testing.T) {
