@@ -33,7 +33,7 @@ func init() {
 			log.Fatal(err)
 		}
 	}
-	log.Info(Config)
+	log.Infof("%+v", Config)
 }
 
 var Config *config
@@ -74,8 +74,5 @@ type config struct {
 		Channel   string
 		Username  string
 		IconEmoji string
-	}
-	Video struct {
-		APIRoot string
 	}
 }
