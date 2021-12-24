@@ -42,7 +42,7 @@ func DownloadVideo(c echo.Context) error {
 	if lambdaResCode != http.StatusOK {
 		msg, _ := ioutil.ReadAll(lambdaResBody)
 		log.Error("download image failed... code=" + strconv.Itoa(lambdaResCode) + " resp=" + string(msg))
-		return c.String(http.StatusInternalServerError, string(msg))
+		return c.String(lambdaResCode, string(msg))
 	}
 
 	// rest에게 받은 응답을 그대로 전달
