@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/depromeet/everybody-backend/rest-api/adapter/video"
 	"math/rand"
 	"time"
 
@@ -31,6 +32,7 @@ func init() {
 
 var (
 	pushAdapter push.PushAdapter
+	videoPort   video.VideoPort
 
 	notificationRepo repository.NotificationRepository
 	deviceRepo       repository.DeviceRepository
@@ -69,6 +71,7 @@ func initialize() {
 
 	dbClient := repository.Connect()
 	pushAdapter = push.NewFirebasePushAdapter()
+	videoPort = video.NewVideoPort()
 
 	notificationRepo = repository.NewNotificationRepository(dbClient)
 	deviceRepo = repository.NewDeviceRepository(dbClient)
@@ -82,7 +85,7 @@ func initialize() {
 	userService = service.NewUserService(userRepo, notificationService, deviceService)
 	albumService = service.NewAlbumService(albumRepo, pictureRepo)
 	pictureService = service.NewPictureService(pictureRepo, albumRepo)
-	videoService = service.NewVideoService(videoRepo)
+	videoService = service.NewVideoService(videoRepo, pictureRepo, videoPort)
 
 	userHandler = handler.NewUserHandler(userService)
 	notificationHandler = handler.NewNotificationHandler(notificationService)

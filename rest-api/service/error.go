@@ -5,6 +5,7 @@ import (
 )
 
 type NotFoundError error
+type BadRequestError error
 
 var (
 	ForbiddenError = goerrors.New("권한이 없습니다.")
