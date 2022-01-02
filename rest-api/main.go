@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/depromeet/everybody-backend/rest-api/adapter/noti"
 	"github.com/depromeet/everybody-backend/rest-api/adapter/push"
 	"github.com/depromeet/everybody-backend/rest-api/config"
 	_ "github.com/depromeet/everybody-backend/rest-api/config"
@@ -30,7 +31,8 @@ func init() {
 }
 
 var (
-	pushAdapter push.PushAdapter
+	pushAdapter  push.PushAdapter
+	notifierPort noti.NotifierPort
 
 	notificationRepo repository.NotificationRepository
 	deviceRepo       repository.DeviceRepository
@@ -45,12 +47,14 @@ var (
 	albumService        service.AlbumServiceInterface
 	pictureService      service.PictureServiceInterface
 	videoService        service.VideoServiceInterface
+	feedbackService     service.FeedbackService
 
 	userHandler         *handler.UserHandler
 	notificationHandler *handler.NotificationHandler
 	albumHandler        *handler.AlbumHandler
 	pictureHandler      *handler.PictureHandler
 	videoHandler        *handler.VideoHandler
+	feedbackHandler     *handler.FeedbackHandler
 
 	server *fiber.App
 
@@ -69,6 +73,7 @@ func initialize() {
 
 	dbClient := repository.Connect()
 	pushAdapter = push.NewFirebasePushAdapter()
+	notifierPort := noti.NewSlackNotifierAdapter()
 
 	notificationRepo = repository.NewNotificationRepository(dbClient)
 	deviceRepo = repository.NewDeviceRepository(dbClient)
@@ -82,12 +87,14 @@ func initialize() {
 	userService = service.NewUserService(userRepo, notificationService, deviceService)
 	albumService = service.NewAlbumService(albumRepo, pictureRepo)
 	pictureService = service.NewPictureService(pictureRepo, albumRepo)
+	feedbackService = service.NewFeedbackService(notifierPort)
 
 	userHandler = handler.NewUserHandler(userService)
 	notificationHandler = handler.NewNotificationHandler(notificationService)
 	albumHandler = handler.NewAlbumHandler(albumService)
 	pictureHandler = handler.NewPictureHandler(pictureService)
 	videoHandler = handler.NewVideoHandler(videoService)
+	feedbackHandler = handler.NewFeedbackHandler(feedbackService)
 
 	if config.Config.NotifyRoutine.Enabled {
 		notifyRoutine = routine.NewNotifyRoutine(pushAdapter, notificationService)
@@ -109,5 +116,5 @@ func initialize() {
 		}()
 	}
 
-	server = http.NewServer(userHandler, notificationHandler, albumHandler, pictureHandler, videoHandler)
+	server = http.NewServer(userHandler, notificationHandler, albumHandler, pictureHandler, videoHandler, feedbackHandler)
 }

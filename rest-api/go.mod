@@ -13,6 +13,7 @@ require (
 	github.com/parnurzeal/gorequest v0.2.16 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.8.1
+	github.com/slack-go/slack v0.10.1
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/testify v1.7.0
 	moul.io/http2curl v1.0.0 // indirect
