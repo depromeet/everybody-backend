@@ -2,10 +2,11 @@ package config
 
 import (
 	"errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"os"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func init() {
@@ -68,11 +69,21 @@ type config struct {
 		Enabled  bool
 		Interval int
 	}
-	Slack struct {
-		Enabled   bool
-		Webhook   string
-		Channel   string
-		Username  string
-		IconEmoji string
+	ErrorLog struct {
+		Slack struct {
+			Enabled   bool
+			Webhook   string
+			Channel   string
+			Username  string
+			IconEmoji string
+		}
+	}
+	Feedback struct {
+		Slack struct {
+			Webhook   string
+			Channel   string
+			Username  string
+			IconEmoji string
+		}
 	}
 }

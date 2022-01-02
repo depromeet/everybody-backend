@@ -14,6 +14,7 @@ func NewServer(
 	albumHandler *handler.AlbumHandler,
 	pictureHandler *handler.PictureHandler,
 	videoHandler *handler.VideoHandler,
+	feedbackHandler *handler.FeedbackHandler,
 ) *fiber.App {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: errorHandle,
@@ -31,6 +32,7 @@ func NewServer(
 	addAlbumHandlers(app, albumHandler)
 	addPictureHandlers(app, pictureHandler)
 	addVideoHandlers(app, videoHandler)
+	addFeedbackHandlers(app, feedbackHandler)
 
 	return app
 }
@@ -76,4 +78,9 @@ func addVideoHandlers(app *fiber.App, videoHandler *handler.VideoHandler) {
 	group.Post("", videoHandler.SaveVideo)
 	group.Get("", videoHandler.GetAllVideos)
 	group.Get("/:video_id", videoHandler.GetVideo)
+}
+
+func addFeedbackHandlers(app *fiber.App, feedbackHandler *handler.FeedbackHandler) {
+	group := app.Group("/feedbacks")
+	group.Post("", feedbackHandler.SendFeedback)
 }

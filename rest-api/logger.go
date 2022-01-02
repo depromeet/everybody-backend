@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/depromeet/everybody-backend/rest-api/config"
 	log "github.com/sirupsen/logrus"
@@ -21,21 +22,21 @@ func (h *loggerHook) Fire(entry *log.Entry) error {
 		if err != nil {
 			panic(err)
 		}
-		if config.Config.Slack.Enabled {
+		if config.Config.ErrorLog.Slack.Enabled {
 			title := "눈바디 에러 로그"
 			text := s
 			color := "#FF0000"
 			payload := slack.Payload{
-				Username:  config.Config.Slack.Username,
-				Channel:   config.Config.Slack.Channel,
-				IconEmoji: config.Config.Slack.IconEmoji,
+				Username:  config.Config.ErrorLog.Slack.Username,
+				Channel:   config.Config.ErrorLog.Slack.Channel,
+				IconEmoji: config.Config.ErrorLog.Slack.IconEmoji,
 				Attachments: []slack.Attachment{slack.Attachment{
 					Title: &title,
 					Text:  &text,
 					Color: &color,
 				}},
 			}
-			err := slack.Send(config.Config.Slack.Webhook, "", payload)
+			err := slack.Send(config.Config.ErrorLog.Slack.Webhook, "", payload)
 			if len(err) > 0 {
 				fmt.Printf("error: %s\n", err)
 			}
