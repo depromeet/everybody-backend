@@ -11,6 +11,7 @@ import (
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
 	"github.com/depromeet/everybody-backend/api-gateway/controller"
+	am "github.com/depromeet/everybody-backend/api-gateway/controller/middleware"
 	"github.com/depromeet/everybody-backend/api-gateway/util"
 )
 
@@ -33,7 +34,7 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.Logger()) // TODO: 요거 알아보기... + 에러처리 방안 - https://echo.labstack.com/guide/error-handling/
-
+	e.Use(middleware.Recover())
 	// index page & health check api
 	e.GET(config.Config.ApiGw.HealthCheckPath, (&controller.IndexController{}).Index)
 
@@ -44,6 +45,8 @@ func main() {
 	e.POST("/auth/signup", func(c echo.Context) error {
 		return controller.SignUp(c)
 	})
+	oauth := e.Group("/oauth")
+	oauth.POST("/google", am.OauthTokenMiddleware(controller.GoogleLogin))
 
 	// picures apis
 	e.POST("/pictures", func(c echo.Context) error {
