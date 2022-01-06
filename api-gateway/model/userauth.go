@@ -11,7 +11,7 @@ type UserAuth struct {
 	Password string `json:"password"`
 }
 
-func GetUserAuth(u int) UserAuth {
+func GetUserAuth(u int) (*UserAuth, error) {
 	sqlStatement := "SELECT user_id, password FROM UserAuth WHERE user_id = ?"
 	conn := util.CreateDBConn()
 	defer conn.Close()
@@ -21,9 +21,10 @@ func GetUserAuth(u int) UserAuth {
 	err := conn.QueryRow(sqlStatement, u).Scan(&userId, &password)
 	if err != nil {
 		log.Error(err)
+		return nil, err
 	}
 
-	return UserAuth{userId, password}
+	return &UserAuth{userId, password}, nil
 }
 
 func SetUserAuth(ua UserAuth) error {
