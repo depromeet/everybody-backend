@@ -8,6 +8,7 @@ import (
 
 type UserAuth struct {
 	UserId   int    `json:"user_id"`
+	SocialId string `json:"social_id"`
 	Password string `json:"password"`
 }
 
@@ -24,7 +25,10 @@ func GetUserAuth(u int) (*UserAuth, error) {
 		return nil, err
 	}
 
-	return &UserAuth{userId, password}, nil
+	return &UserAuth{
+		UserId:   userId,
+		Password: password,
+	}, nil
 }
 
 func SetUserAuth(ua UserAuth) error {
@@ -33,6 +37,40 @@ func SetUserAuth(ua UserAuth) error {
 	defer conn.Close()
 
 	result, err := conn.Exec(sqlStatement, ua.UserId, ua.Password)
+	if err != nil {
+		log.Fatal("SetUserAuth -> ", err)
+	}
+	n, err := result.RowsAffected()
+	if n != int64(1) || err != nil {
+		log.Fatal("SetUserAuth -> ", err)
+	}
+
+	return nil
+}
+
+func GetUserAuthBySocialId(sid string) (*UserAuth, error) {
+	sqlStatement := "SELECT user_id, social_id, password FROM UserAuth WHERE social_id = ?"
+	conn := util.CreateDBConn()
+	defer conn.Close()
+
+	var userId int
+	var password string
+	var socialId string
+	err := conn.QueryRow(sqlStatement, sid).Scan(&userId, &socialId, &password)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return &UserAuth{userId, socialId, password}, nil
+}
+
+func SetUserAuthWithSocialId(userId int, socialId string) error {
+	sqlStatement := "INSERT INTO UserAuth(social_id) VALUES(?) WHERE user_id = ?"
+	conn := util.CreateDBConn()
+	defer conn.Close()
+
+	result, err := conn.Exec(sqlStatement, socialId, userId)
 	if err != nil {
 		log.Fatal("SetUserAuth -> ", err)
 	}
