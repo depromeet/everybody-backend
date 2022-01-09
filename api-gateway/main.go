@@ -45,7 +45,10 @@ func main() {
 	e.POST("/auth/signup", func(c echo.Context) error {
 		return controller.SignUp(c)
 	})
-	e.POST("/auth/google", am.OauthTokenMiddleware(controller.GoogleLogin))
+
+	oauth := e.Group("/oauth", am.OauthTokenMiddleware)
+	oauth.POST("/google", controller.GoogleLogin)
+	oauth.POST("/kakao", controller.KakaoLogin)
 
 	// picures apis
 	e.POST("/pictures", func(c echo.Context) error {

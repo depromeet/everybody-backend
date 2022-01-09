@@ -1,6 +1,8 @@
 package model
 
 import (
+	"errors"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/depromeet/everybody-backend/api-gateway/util"
@@ -66,17 +68,24 @@ func GetUserAuthBySocialId(sid string) (*UserAuth, error) {
 }
 
 func SetUserAuthWithSocialId(userId int, socialId string) error {
-	sqlStatement := "INSERT INTO UserAuth(social_id) VALUES(?) WHERE user_id = ?"
+	sqlStatement := "UPDATE UserAuth SET social_id = ? WHERE user_id = ?"
 	conn := util.CreateDBConn()
 	defer conn.Close()
 
 	result, err := conn.Exec(sqlStatement, socialId, userId)
 	if err != nil {
-		log.Fatal("SetUserAuth -> ", err)
+		log.Error("SetUserAuthWithSocialId -> ", err)
+		return err
 	}
 	n, err := result.RowsAffected()
-	if n != int64(1) || err != nil {
-		log.Fatal("SetUserAuth -> ", err)
+	if err != nil {
+		log.Error("SetUserAuthWithSocialId -> ", err)
+		return err
+	}
+
+	if n < 1 {
+		log.Info("UserAuth 테이블에 해당하는 row가 없습니다.")
+		return errors.New("해당하는 유저 정보가 없습니다")
 	}
 
 	return nil
