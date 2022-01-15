@@ -9,11 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/labstack/echo/v4"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/depromeet/everybody-backend/api-gateway/model"
 	"github.com/depromeet/everybody-backend/api-gateway/util"
+	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 )
 
 type AuthController struct {

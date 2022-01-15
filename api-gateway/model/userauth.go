@@ -3,9 +3,8 @@ package model
 import (
 	"errors"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/depromeet/everybody-backend/api-gateway/util"
+	log "github.com/sirupsen/logrus"
 )
 
 type UserAuth struct {
@@ -23,7 +22,7 @@ func GetUserAuth(u int) (*UserAuth, error) {
 	var password string
 	err := conn.QueryRow(sqlStatement, u).Scan(&userId, &password)
 	if err != nil {
-		log.Error(err)
+		log.Error("GetUserAuth -> ", err)
 		return nil, err
 	}
 
@@ -60,7 +59,7 @@ func GetUserAuthBySocialId(sid string) (*UserAuth, error) {
 	var socialId string
 	err := conn.QueryRow(sqlStatement, sid).Scan(&userId, &socialId, &password)
 	if err != nil {
-		log.Error(err)
+		log.Error("GetUserAuthBySocialid -> ", err)
 		return nil, err
 	}
 
@@ -84,7 +83,7 @@ func SetUserAuthWithSocialId(userId int, socialId string) error {
 	}
 
 	if n < 1 {
-		log.Info("UserAuth 테이블에 해당하는 row가 없습니다.")
+		log.Error("존재하지 않는 user_id -> ", userId)
 		return errors.New("해당하는 유저 정보가 없습니다")
 	}
 
