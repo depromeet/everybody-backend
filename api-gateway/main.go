@@ -11,7 +11,6 @@ import (
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
 	"github.com/depromeet/everybody-backend/api-gateway/controller"
-	am "github.com/depromeet/everybody-backend/api-gateway/controller/middleware"
 	"github.com/depromeet/everybody-backend/api-gateway/util"
 )
 
@@ -49,7 +48,7 @@ func main() {
 	// oauth := e.Group("/oauth", am.OauthTokenMiddleware)
 	// oauth.POST("/google", controller.GoogleLogin)
 	// oauth.POST("/kakao", controller.KakaoLogin)
-	e.POST("/oauth/login", am.OauthTokenMiddleware(controller.OauthLogin))
+	e.POST("/oauth/login", controller.OauthLogin)
 
 	// picures apis
 	e.POST("/pictures", func(c echo.Context) error {
