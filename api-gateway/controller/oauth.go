@@ -17,16 +17,16 @@ import (
 )
 
 const (
-	googeAuthUrlAPI = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
-	kakaoAuthUrlAPI = "https://kapi.kakao.com/v2/user/me"
-	appleAuthUrlAPI
+	googeAuthUrlAPI       = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
+	kakaoAuthUrlAPI       = "https://kapi.kakao.com/v2/user/me"
+	appleAuthUrlPublicKey = "https://appleid.apple.com/auth/keys"
 )
 
-type AuthRequest struct {
-	UserId      int    `json:"user_id"`
-	Password    string `json:"password"`
-	Kind        string `json:"kind"`
-	AccessToken string `json:"access_token"`
+type OauthRequest struct {
+	UserId   int    `json:"user_id"`
+	Password string `json:"password"`
+	Kind     string `json:"kind"`
+	Token    string `json:"token"`
 }
 
 type GoogleUserInfoResponse struct {
@@ -43,9 +43,11 @@ type KakaoUserInfoResponse struct {
 	Id int `json:"id"`
 	// HasSignedUp bool      `json:"has_signed_up"`
 	ConnectedAt time.Time `json:"connected_at"`
-	KakaoAcount struct{}  `json:"kakao_account"`
-	Msg         string    `json:"msg"`
-	Code        *int      `json:"code"`
+	KakaoAcount struct {
+		Email string `json:"email"`
+	} `json:"kakao_account"`
+	Msg  string `json:"msg"`
+	Code *int   `json:"code"`
 }
 
 type AppleUserInfoResonse struct {
@@ -73,7 +75,7 @@ func getKakaoUserInfo(accessToken string) (*KakaoUserInfoResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	log.Info("소셜 로그인으로 user 정보 획득", string(userInfo))
+	log.Info("카카오 로그인으로 user 정보 획득", string(userInfo))
 
 	kakaoReponse := &KakaoUserInfoResponse{}
 	if err := json.Unmarshal(userInfo, kakaoReponse); err != nil {
@@ -108,7 +110,7 @@ func getGoogleUserInfo(accessToken string) (*GoogleUserInfoResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	log.Info("소셜 로그인으로 user 정보 획득", string(userInfo))
+	log.Info("구글 로그인으로 user 정보 획득", string(userInfo))
 
 	googleUserInfoRes := &GoogleUserInfoResponse{}
 	if err := json.Unmarshal(userInfo, googleUserInfoRes); err != nil {
@@ -129,31 +131,31 @@ func getGoogleUserInfo(accessToken string) (*GoogleUserInfoResponse, error) {
 }
 
 func OauthLogin(c echo.Context) error {
-	authRequest := &AuthRequest{}
-	if err := c.Bind(authRequest); err != nil {
+	oauthRequest := &OauthRequest{}
+	if err := c.Bind(oauthRequest); err != nil {
 		log.Error("json body parse error...", "\nerr=", err)
 		return c.String(400, "잘못된 요청입니다")
 	}
 
-	ua, err := model.GetUserAuth(authRequest.UserId)
+	ua, err := model.GetUserAuth(oauthRequest.UserId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Error("user not found... req=", authRequest)
+			log.Error("user not found...")
 			return c.String(401, "user not found...")
 		}
 		log.Error(err)
 		return c.String(500, "알 수 없는 오류가 발생했습니다")
 	}
 
-	if authRequest.Password != ua.Password {
-		log.Info("password unmatched... req=", authRequest)
+	if oauthRequest.Password != ua.Password {
+		log.Info("password unmatched...")
 		return c.String(401, "password unmatched...")
 	}
 
 	var socialId string
-	switch authRequest.Kind {
+	switch oauthRequest.Kind {
 	case "KAKAO":
-		kakaoUserInfo, err := getKakaoUserInfo(authRequest.AccessToken)
+		kakaoUserInfo, err := getKakaoUserInfo(oauthRequest.Token)
 		if err != nil {
 			// 일단 임시로 에러 처리 문자열로 비교해서 하고 나중에 wraping해서든 수정하자ㅠ
 			if strings.Contains(err.Error(), "invalid token") {
@@ -164,7 +166,7 @@ func OauthLogin(c echo.Context) error {
 		socialId = strconv.Itoa(kakaoUserInfo.Id)
 
 	case "GOOGLE":
-		googleUserInfo, err := getGoogleUserInfo(authRequest.AccessToken)
+		googleUserInfo, err := getGoogleUserInfo(oauthRequest.Token)
 		if err != nil {
 			// 일단 임시로 에러 처리 문자열로 비교해서 하고 나중에 wraping해서든 수정하자ㅠ
 			if strings.Contains(err.Error(), "invalid token") {
@@ -173,14 +175,21 @@ func OauthLogin(c echo.Context) error {
 			return c.String(500, err.Error())
 		}
 		socialId = googleUserInfo.Id
+
+	// case "APPLE":
+	// 	// _, _ = validateAppleToken(oauthRequest.Token)
+
+	default:
+		log.Error("올바르지 않은 Oauth kind: ", oauthRequest.Kind)
+		return c.JSON(400, "잘못된 요청입니다")
 	}
 
-	// 소셜로그인으로 id 값 획득하고 소셜 id로 UserAuth 테이블 탐색 후 존재하지 않으면 해당 userId에 social_id 저장
-	userAuth, err := model.GetUserAuthBySocialId(socialId)
+	// 소셜 id로 UserAuth 테이블 탐색 후 존재하지 않으면 해당 userId에 social_id 저장
+	userAuth, err := model.GetUserAuthBySocialId(socialId, oauthRequest.Kind)
 	if err != nil {
 		// does not exist
 		if err == sql.ErrNoRows {
-			err := model.SetUserAuthWithSocialId(authRequest.UserId, socialId)
+			err := model.SetUserAuthWithSocial(oauthRequest.UserId, socialId, oauthRequest.Kind)
 			if err != nil {
 				return c.String(500, "알 수 없는 오류가 발생했습니다")
 			}
@@ -190,17 +199,19 @@ func OauthLogin(c echo.Context) error {
 	}
 
 	log.Info("소셜id로 유저 조회 완료")
-	// UserAuth의 user_id, social_id 값과 request body로 요청 오는 user_id 값이 다르면 잘못된 요청
 	// userAuth nil 검사하는 이유는 최초로 소셜 로그인 하는 경우 userAuth 값이 없기 때문
+	// UserAuth의 user_id, social_id 값과 request body로 요청 오는 user_id 값이 다르면 다른 앱에서 접속한 것
+	// 기존의 user_id로 매핑해야됨
+	userId := oauthRequest.UserId
 	if userAuth != nil {
-		if authRequest.UserId != userAuth.UserId {
-			log.Error("소셜 인증을 요청한 유저 -> ", authRequest.UserId, " 기존 유저 -> ", userAuth.UserId)
-			return c.String(401, "인증에 실패했습니다")
+		if oauthRequest.UserId != userAuth.UserId {
+			log.Info("소셜 인증을 요청한 앱 유저 id -> ", oauthRequest.UserId, "\n기존 앱 유저 id-> ", userAuth.UserId)
+			userId = userAuth.UserId
 		}
 	}
 
-	// UserAuth의 userId 값으로 앱 내에서 사용할 토큰 생성
-	token, err := util.CreateAccessToken(authRequest.UserId)
+	// 앱 내에서 사용할 토큰 생성
+	token, err := util.CreateAccessToken(userId)
 	if err != nil {
 		return c.String(500, "알 수 없는 오류가 발생했습니다.")
 	}
@@ -208,7 +219,7 @@ func OauthLogin(c echo.Context) error {
 	res := map[string]string{
 		"access_token": token,
 	}
-	log.Info("Login ok... userId=", authRequest.UserId)
+	log.Info("Login ok... userId=", userId)
 
 	return c.JSON(200, res)
 }

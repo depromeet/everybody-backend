@@ -8,9 +8,10 @@ import (
 )
 
 type UserAuth struct {
-	UserId   int    `json:"user_id"`
-	SocialId string `json:"social_id"`
-	Password string `json:"password"`
+	UserId     int
+	SocialId   string
+	SocialKind string
+	Password   string
 }
 
 func GetUserAuth(u int) (*UserAuth, error) {
@@ -23,7 +24,7 @@ func GetUserAuth(u int) (*UserAuth, error) {
 	err := conn.QueryRow(sqlStatement, u).Scan(&userId, &password)
 	if err != nil {
 		log.Error("GetUserAuth -> ", err)
-		return nil, err
+		// return nil, err
 	}
 
 	return &UserAuth{
@@ -49,29 +50,27 @@ func SetUserAuth(ua UserAuth) error {
 	return nil
 }
 
-func GetUserAuthBySocialId(sid string) (*UserAuth, error) {
-	sqlStatement := "SELECT user_id, social_id, password FROM UserAuth WHERE social_id = ?"
+func GetUserAuthBySocialId(sid, sKind string) (*UserAuth, error) {
+	sqlStatement := "SELECT user_id, social_id, social_kind, password FROM UserAuth WHERE social_id = ? and social_kind = ?"
 	conn := util.CreateDBConn()
 	defer conn.Close()
 
-	var userId int
-	var password string
-	var socialId string
-	err := conn.QueryRow(sqlStatement, sid).Scan(&userId, &socialId, &password)
+	userAuth := UserAuth{}
+	err := conn.QueryRow(sqlStatement, sid, sKind).Scan(&userAuth.UserId, &userAuth.SocialId, &userAuth.SocialKind, &userAuth.Password)
 	if err != nil {
 		log.Error("GetUserAuthBySocialid -> ", err)
 		return nil, err
 	}
 
-	return &UserAuth{userId, socialId, password}, nil
+	return &userAuth, nil
 }
 
-func SetUserAuthWithSocialId(userId int, socialId string) error {
-	sqlStatement := "UPDATE UserAuth SET social_id = ? WHERE user_id = ?"
+func SetUserAuthWithSocial(userId int, sid, sKind string) error {
+	sqlStatement := "UPDATE UserAuth SET social_id = ?, social_kind = ? WHERE user_id = ?"
 	conn := util.CreateDBConn()
 	defer conn.Close()
 
-	result, err := conn.Exec(sqlStatement, socialId, userId)
+	result, err := conn.Exec(sqlStatement, sid, sKind, userId)
 	if err != nil {
 		log.Error("SetUserAuthWithSocialId -> ", err)
 		return err
