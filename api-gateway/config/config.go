@@ -48,6 +48,14 @@ type config struct {
 		AccessTokenExpireTimeMin int64  `yaml:"accessTokenExpireTimeMin"`
 	} `yaml:"apiGw"`
 
+	Oauth struct {
+		Apple struct {
+			AppId string
+		}
+		Google struct{}
+		Kakao  struct{}
+	}
+
 	DB struct {
 		MySQL struct {
 			Host         string `yaml:"host"`
