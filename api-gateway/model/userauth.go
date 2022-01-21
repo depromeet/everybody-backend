@@ -24,7 +24,7 @@ func GetUserAuth(u int) (*UserAuth, error) {
 	err := conn.QueryRow(sqlStatement, u).Scan(&userId, &password)
 	if err != nil {
 		log.Error("GetUserAuth -> ", err)
-		// return nil, err
+		return nil, err
 	}
 
 	return &UserAuth{
@@ -82,7 +82,7 @@ func SetUserAuthWithSocial(userId int, sid, sKind string) error {
 	}
 
 	if n < 1 {
-		log.Error("존재하지 않는 user_id -> ", userId)
+		log.Error("SetUserAuthWithSocialId 실패-> ", userId)
 		return errors.New("해당하는 유저 정보가 없습니다")
 	}
 

@@ -46,7 +46,10 @@ func Login(c echo.Context) error {
 
 	// access to
 	// TODO: error 처리가 안되어 있는데 error 처리 해주어야 함
-	ua, _ := model.GetUserAuth(reqUa.UserId)
+	ua, err := model.GetUserAuth(reqUa.UserId)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "user not found...")
+	}
 	if ua.UserId < 1 {
 		log.Error("user not found... req=", reqUa)
 		return c.String(http.StatusBadRequest, "user not found...")
