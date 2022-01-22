@@ -58,6 +58,29 @@ func (_m *UserService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 	return r0, r1
 }
 
+// UpdateProfileImage provides a mock function with given fields: id, body
+func (_m *UserService) UpdateProfileImage(id int, body *dto.UpdateProfileImageRequest) (*dto.UserDto, error) {
+	ret := _m.Called(id, body)
+
+	var r0 *dto.UserDto
+	if rf, ok := ret.Get(0).(func(int, *dto.UpdateProfileImageRequest) *dto.UserDto); ok {
+		r0 = rf(id, body)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*dto.UserDto)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(int, *dto.UpdateProfileImageRequest) error); ok {
+		r1 = rf(id, body)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateUser provides a mock function with given fields: id, body
 func (_m *UserService) UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.UserDto, error) {
 	ret := _m.Called(id, body)
