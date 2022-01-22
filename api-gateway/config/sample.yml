@@ -18,5 +18,11 @@ targetServer:
     address: http://localhost:8080
     prefix: restapi
   lambdaImageUpload:
-    address: http://localhost:8080
+    address: http://aaa:8080
+    method: POST
+  lambdaPublicUpload:
+    address: https://bbb/upload-public
+    method: POST
+  lambdaVideoDownload:
+    address: https://ccc/video
     method: POST
