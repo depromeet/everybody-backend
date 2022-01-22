@@ -19,7 +19,7 @@ provider:
 
 functions:
   upload-image:
-    handler: handler.handle
+    handler: upload_image.handle
     layers:
       - { Ref: PythonRequirementsLambdaLayer }
     description: ${self:provider.stage}) 전달 받은 이미지를 리사이즈 후 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
@@ -27,6 +27,16 @@ functions:
     events:
       - httpApi:
           path: /upload
+          method: post
+  upload-public-image:
+    handler: upload_public_image.handle
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
+    description: ${self:provider.stage}) 전달 받은 이미지를 리사이즈 후 OUTPUT_BUCKET/OUTPUT_OBJECT_KEY 경로에 썸네일을 생성
+    timeout: 20 # optional, in seconds, default is 6. 이미지 변환 도중 timeout 날 수도 있음.
+    events:
+      - httpApi:
+          path: /upload-public
           method: post
 
 plugins:
