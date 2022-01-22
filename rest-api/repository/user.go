@@ -12,6 +12,7 @@ type UserRepository interface {
 	FindById(id int) (*ent.User, error)
 	FindByNicknameContainingOrderByNicknameDesc(nickname string) (*ent.User, error)
 	Update(id int, user *ent.User) (*ent.User, error)
+	UpdateProfileImage(id int, profileImage string) (*ent.User, error)
 }
 
 func NewUserRepository(client *ent.Client) UserRepository {
@@ -78,6 +79,17 @@ func (repo *userRepository) Update(id int, user *ent.User) (*ent.User, error) {
 	}
 
 	result, err := update.Save(context.Background())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return result, nil
+}
+
+func (repo *userRepository) UpdateProfileImage(id int, profileImage string) (*ent.User, error) {
+	result, err := repo.db.User.UpdateOneID(id).
+		SetProfileImage(profileImage).
+		Save(context.Background())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

@@ -28,6 +28,10 @@ type UpdateUserRequest struct {
 	Weight   *int   `json:"weight"`
 }
 
+type UpdateProfileImageRequest struct {
+	ProfileImage string `json:"profile_image"`
+}
+
 type UserDto struct {
 	ID           int       `json:"id"`
 	Nickname     string    `json:"nickname"`

@@ -67,6 +67,10 @@ type config struct {
 			Address string `yaml:"address"`
 			Method  string `yaml:"method"`
 		}
+		LambdaPublicUpload struct {
+			Address string `yaml:"address"`
+			Method  string `yaml:"method"`
+		}
 		LambdaVideoDownload struct {
 			Address string
 			Method  string

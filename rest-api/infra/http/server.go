@@ -46,7 +46,7 @@ func addUserHandlers(app *fiber.App, userHandler *handler.UserHandler) {
 	group.Post("", userHandler.SignUp)
 	group.Get("/me", userHandler.GetUser)
 	group.Put("/me", userHandler.UpdateUser)
-
+	group.Put("/me/profile-image", userHandler.UpdateProfileImage)
 }
 
 func addNotificationHandlers(app *fiber.App, notificationHandler *handler.NotificationHandler) {

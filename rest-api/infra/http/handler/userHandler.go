@@ -64,5 +64,25 @@ func (h *UserHandler) UpdateUser(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(user)
+}
+
+func (h *UserHandler) UpdateProfileImage(ctx *fiber.Ctx) error {
+	id, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	body := new(dto.UpdateProfileImageRequest)
+
+	if err = ctx.BodyParser(body); err != nil {
+		return errors.WithStack(err)
+	}
+
+	user, err := h.userService.UpdateProfileImage(id, body)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return ctx.JSON(user)
 
 }

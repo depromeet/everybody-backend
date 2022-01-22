@@ -34,6 +34,7 @@ type UserService interface {
 	SignUp(body *dto.SignUpRequest) (*dto.UserDto, error)
 	GetUser(id int) (*dto.UserDto, error)
 	UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.UserDto, error)
+	UpdateProfileImage(id int, body *dto.UpdateProfileImageRequest) (*dto.UserDto, error)
 }
 
 func NewUserService(
@@ -112,6 +113,15 @@ func (s *userService) UpdateUser(id int, body *dto.UpdateUserRequest) (*dto.User
 		Height:   body.Height,
 		Weight:   body.Weight,
 	})
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return dto.UserToDto(user), nil
+}
+
+func (s *userService) UpdateProfileImage(id int, body *dto.UpdateProfileImageRequest) (*dto.UserDto, error) {
+	user, err := s.userRepo.UpdateProfileImage(id, body.ProfileImage)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
