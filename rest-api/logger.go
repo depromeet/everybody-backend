@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ashwanthkumar/slack-go-webhook"
 	"github.com/depromeet/everybody-backend/rest-api/config"
@@ -24,7 +25,8 @@ func (h *loggerHook) Fire(entry *log.Entry) error {
 		}
 		if config.Config.ErrorLog.Slack.Enabled {
 			title := "눈바디 에러 로그"
-			text := s
+			// \\n 텍스트를 \n로 변경해야 슬랙에서 가독성 좋게 출력됨.
+			text := strings.ReplaceAll(s, "\\n", "\n")
 			color := "#FF0000"
 			payload := slack.Payload{
 				Username:  config.Config.ErrorLog.Slack.Username,
