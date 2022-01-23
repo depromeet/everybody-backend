@@ -2,14 +2,15 @@ package service
 
 import (
 	"fmt"
+	"math/rand"
+	"strconv"
+
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	entUser "github.com/depromeet/everybody-backend/rest-api/ent/user"
 	"github.com/depromeet/everybody-backend/rest-api/repository"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"math/rand"
-	"strconv"
 )
 
 var (
@@ -27,7 +28,8 @@ var (
 	randomProfileImageKey = []string{
 		"beam-1.png", "beam-2.png", "beam-3.png", "beam-4.png", "beam-5.png", "beam-6.png",
 	}
-	defaultMotto = "천천히 그리고 꾸준히!"
+	defaultMotto     = "천천히 그리고 꾸준히!"
+	defaultAlbumName = "눈바디"
 )
 
 type UserService interface {
@@ -40,11 +42,13 @@ type UserService interface {
 func NewUserService(
 	userRepo repository.UserRepository,
 	notificationService NotificationService,
-	deviceService DeviceService) UserService {
+	deviceService DeviceService,
+	albumService AlbumServiceInterface) UserService {
 	return &userService{
 		userRepo:            userRepo,
 		notificationService: notificationService,
 		deviceService:       deviceService,
+		albumService:        albumService,
 	}
 }
 
@@ -53,6 +57,7 @@ type userService struct {
 	userRepo            repository.UserRepository
 	notificationService NotificationService
 	deviceService       DeviceService
+	albumService        AlbumServiceInterface
 }
 
 // SignUp 는 유저 생성 후 해당 유저의 Device를 등록합니다.
@@ -91,6 +96,14 @@ func (s *userService) SignUp(body *dto.SignUpRequest) (*dto.UserDto, error) {
 		return nil, errors.WithStack(err)
 	}
 	log.Infof("디바이스 정보를 생성했습니다. Device(id=%d)", device.ID)
+
+	_, err = s.albumService.CreateAlbum(user.ID, &dto.AlbumRequest{
+		Name: defaultAlbumName,
+	})
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	log.Info("유저의 default 앨범을 생성했습니다.")
 
 	return dto.UserToDto(user), nil
 }

@@ -84,8 +84,8 @@ func initialize() {
 
 	notificationService = service.NewNotificationService(notificationRepo, pushAdapter)
 	deviceService = service.NewDeviceService(deviceRepo)
-	userService = service.NewUserService(userRepo, notificationService, deviceService)
 	albumService = service.NewAlbumService(albumRepo, pictureRepo)
+	userService = service.NewUserService(userRepo, notificationService, deviceService, albumService)
 	pictureService = service.NewPictureService(pictureRepo, albumRepo)
 	feedbackService = service.NewFeedbackService(notifierPort)
 
