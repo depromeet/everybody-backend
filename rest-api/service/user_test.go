@@ -1,6 +1,9 @@
 package service
 
 import (
+	"testing"
+	"time"
+
 	"github.com/depromeet/everybody-backend/rest-api/dto"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
@@ -8,8 +11,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
-	"time"
 )
 
 // 유저 관련 테스트 위한 초기화 작업을 수행합니다.
@@ -18,20 +19,24 @@ func initializeUserTest(t *testing.T) *userService {
 
 	deviceSvc := new(mocks.DeviceService)
 	notificationSvc := new(mocks.NotificationService)
+	albumSvc := new(mocks.AlbumServiceInterface)
 
-	return NewUserService(userRepo, notificationSvc, deviceSvc).(*userService)
+	return NewUserService(userRepo, notificationSvc, deviceSvc, albumSvc).(*userService)
 }
 
 func TestUserService_SignUp(t *testing.T) {
 	userSvc := initializeUserTest(t)
 	deviceSvc := userSvc.deviceService.(*mocks.DeviceService)
 	notificationSvc := userSvc.notificationService.(*mocks.NotificationService)
+	albumSvc := userSvc.albumService.(*mocks.AlbumServiceInterface)
 	// TODO: device도 DTO로 리턴하도록 정의
 	deviceSvc.On("Register", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.RegisterDeviceRequest")).Return(new(ent.Device), nil)
 	notificationSvc.On("Configure", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.ConfigureNotificationRequest")).Return(new(dto.NotificationConfigDto), nil)
 
 	userRepo.On("Create", mock.AnythingOfType("*ent.User")).Return(&ent.User{}, nil)
 	userRepo.On("FindByNicknameContainingOrderByNicknameDesc", mock.AnythingOfType("string")).Return(nil, &ent.NotFoundError{})
+
+	albumSvc.On("CreateAlbum", mock.AnythingOfType("int"), mock.AnythingOfType("*dto.AlbumRequest")).Return(new(dto.AlbumDto), nil)
 
 	t.Run("성공) 회원가입", func(t *testing.T) {
 		user, err := userSvc.SignUp(&dto.SignUpRequest{
@@ -47,6 +52,9 @@ func TestUserService_SignUp(t *testing.T) {
 		deviceSvc.AssertNumberOfCalls(t, "Register", 1)
 		// 3. 알림 설정 등록
 		notificationSvc.AssertNumberOfCalls(t, "Configure", 1)
+		// 4. default 앨범 생성
+		albumSvc.AssertNumberOfCalls(t, "CreateAlbum", 1)
+
 		t.Logf("유저 생성 %#v", user)
 	})
 
