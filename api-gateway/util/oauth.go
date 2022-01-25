@@ -197,7 +197,7 @@ func GetKakaoUserInfo(accessToken string) (*KakaoUserInfoResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	log.Info("카카오 로그인으로 user 정보 획득", string(userInfo))
+	log.Info("카카오 로그인으로 user 정보 획득")
 
 	kakaoReponse := &KakaoUserInfoResponse{}
 	if err := json.Unmarshal(userInfo, kakaoReponse); err != nil {
@@ -232,7 +232,7 @@ func GetGoogleUserInfo(accessToken string) (*GoogleUserInfoResponse, error) {
 	}
 	defer resp.Body.Close()
 
-	log.Info("구글 로그인으로 user 정보 획득", string(userInfo))
+	log.Info("구글 로그인으로 user 정보 획득")
 
 	googleUserInfoRes := &GoogleUserInfoResponse{}
 	if err := json.Unmarshal(userInfo, googleUserInfoRes); err != nil {
