@@ -29,7 +29,7 @@ func Login(c echo.Context) error {
 	d.UseNumber()
 	var reqMap map[string]interface{}
 	if err := d.Decode(&reqMap); err != nil {
-		log.Error("json body parse error... bodyStr=", string(data), "\nerr=", err)
+		log.Error("json body parse error... bodyStr", "\nerr=", err)
 		return c.String(http.StatusBadRequest, "json body parse error...")
 	}
 	log.Info("Login -> body=", reqMap)
@@ -38,7 +38,7 @@ func Login(c echo.Context) error {
 	var reqUa model.UserAuth
 	userId, err := strconv.Atoi(reqMap["user_id"].(json.Number).String())
 	if err != nil {
-		log.Error("json body parse error... bodyStr=", string(data), "\nerr=", err)
+		log.Error("json body parse error... bodyStr", "\nerr=", err)
 		return c.String(http.StatusBadRequest, "json body parse error...")
 	}
 	reqUa.UserId = userId

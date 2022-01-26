@@ -144,7 +144,7 @@ func ValidateAppleTokenAndGetUserInfo(IdToken string) (*AppleUserInfoResponse, e
 				return nil, err
 			}
 
-			log.Info("애플 로그인으로 user 정보 획득: ", string(payload))
+			log.Info("애플 로그인으로 user 정보 획득")
 			log.Info("토큰 Verifying...")
 
 			if (*claims).VerifyAudience(config.Config.Oauth.Apple.AppId, true) &&
