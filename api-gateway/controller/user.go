@@ -15,6 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/depromeet/everybody-backend/api-gateway/config"
+	"github.com/depromeet/everybody-backend/api-gateway/model"
 	"github.com/depromeet/everybody-backend/api-gateway/util"
 )
 
@@ -157,4 +158,27 @@ func callLambdaPublicUpload(userId int, imageFile *multipart.FileHeader) (int, m
 	}
 
 	return resp.StatusCode, h, string(data)
+}
+
+// 회원 탈퇴
+func WithdrawUser(c echo.Context) error {
+	userId := 0
+	if config.Config.ApiGw.AuthEnable {
+		token := c.Request().Header.Get("Authorization")
+		id, err := util.VerifyAccessToken(token)
+		if err != nil {
+			return c.String(http.StatusForbidden, "Token invalid")
+		}
+		userId = id
+	} else {
+		log.Warn("Auth DISABLED... func 'WithdrawUser' processing with userId=0")
+	}
+
+	err := model.SetUserAuthStatus(userId)
+	if err != nil {
+		c.String(400, "해당하는 유저 정보가 없습니다")
+	}
+
+	log.Info("회원 탈퇴 완료")
+	return c.JSON(200, "회원 탈퇴하였습니다")
 }

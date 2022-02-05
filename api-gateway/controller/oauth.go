@@ -27,16 +27,12 @@ func OauthLogin(c echo.Context) error {
 
 	ua, err := model.GetUserAuth(oauthRequest.UserId)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			log.Error("user not found...")
-			return c.String(401, "user not found...")
-		}
-		log.Error(err)
-		return c.String(500, "알 수 없는 오류가 발생했습니다")
+		log.Error("user not found...")
+		return c.String(401, "user not found...")
 	}
 
 	if oauthRequest.Password != ua.Password {
-		log.Info("password unmatched...")
+		log.Error("password unmatched...")
 		return c.String(401, "password unmatched...")
 	}
 
@@ -90,7 +86,7 @@ func OauthLogin(c echo.Context) error {
 				return c.String(500, "알 수 없는 오류가 발생했습니다")
 			}
 		} else {
-			return c.String(500, "알 수 없는 오류가 발생했습니다")
+			return c.String(401, "user not found ...")
 		}
 	}
 
