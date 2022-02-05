@@ -176,9 +176,9 @@ func WithdrawUser(c echo.Context) error {
 
 	err := model.SetUserAuthStatus(userId)
 	if err != nil {
-		c.String(400, "해당하는 유저 정보가 없습니다")
+		return c.String(400, "해당하는 유저 정보가 없습니다")
 	}
 
 	log.Info("회원 탈퇴 완료")
-	return c.JSON(200, "회원 탈퇴하였습니다")
+	return c.String(200, "회원 탈퇴하였습니다")
 }
