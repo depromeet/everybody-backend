@@ -29,7 +29,6 @@ func GetUserAuth(u int) (*UserAuth, error) {
 		return nil, err
 	}
 
-	log.Println(userAuth.Status)
 	if userAuth.Status != userAuthStatus[0] {
 		log.Error("회원탈퇴한 유저입니다")
 		return nil, errors.New("존재하지 않는 유저입니다")
