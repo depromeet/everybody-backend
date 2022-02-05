@@ -57,6 +57,10 @@ func main() {
 	e.POST("/videos/download", func(c echo.Context) error {
 		return controller.DownloadVideo(c)
 	})
+
+	e.POST("/users/me/withdrawal", func(c echo.Context) error {
+		return controller.WithdrawUser(c)
+	})
 	e.PUT("/users/me/profile-image", func(c echo.Context) error {
 		return controller.UpdateProfileImage(c)
 	})

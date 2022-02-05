@@ -51,13 +51,13 @@ func Login(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "user not found...")
 	}
 	if ua.UserId < 1 {
-		log.Error("user not found... req=", reqUa)
+		log.Error("user not found...")
 		return c.String(http.StatusBadRequest, "user not found...")
 	}
 
 	// password 일치 여부 검사
 	if reqUa.Password != ua.Password {
-		log.Info("password unmatched... req=", reqUa)
+		log.Info("password unmatched...")
 		return c.String(http.StatusBadRequest, "password unmatched...")
 	}
 
