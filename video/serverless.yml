@@ -1,9 +1,9 @@
-service: everybody-video
+service: everybody-video2
 frameworkVersion: '2'
 
 provider:
   name: aws
-  runtime: python3.7 # 3.8버전부터는 opencv나 numpy를 위한 dependency가 완전히 보장되지 않는 linux image를 쓰게 됨
+#  runtime: python3.7 # 3.8버전부터는 opencv나 numpy를 위한 dependency가 완전히 보장되지 않는 linux image를 쓰게 됨
   lambdaHashingVersion: '20201221'
   region: ap-northeast-2
   stage: ${env:EVERYBODY_STAGE,'dev'}
@@ -16,21 +16,17 @@ provider:
     role:
       managedPolicies:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
-
+  # lambda custom base image: https://www.serverless.com/blog/container-support-for-lambda
+  ecr:
+    # In this section you can define images that will be built locally and uploaded to ECR
+    images:
+      everybody:
+        path: './'
 functions:
-#  예시용 hello
-#  hello:
-#    handler: hello_handler.handle
-#    events:
-#      - httpApi:
-#          path: /
-#          method: get
   video:
     description: 전달받은 key로 OpenCV와 numpy를 바탕으로 영상 제작 후 제공
-    handler: handler.handle
-# openCV는 layer로 처리하기에는 너무 고용량이라 못 쓴다 ㅜㅜ
-#    layers:
-#      - { Ref: PythonRequirementsLambdaLayer }
+    image:
+      name: everybody
     events:
       - httpApi:
           path: /video
@@ -38,18 +34,7 @@ functions:
 
 plugins:
   - serverless-offline
-  - serverless-python-requirements
 package:
   patterns:
     # numpy나 open cv때문에 직접 빌드해야한다.
     - '!venv/**'
-
-custom:
-  pythonRequirements:
-#    # docker로 직접 pip build를 해야할 수 있음 numpy나 opencv 같은 것들은 (window나 mac에서는 다르게 빌드될 수 있음)
-    dockerizePip: true
-    # layer에 불필요한 애들이 다 포함되어버리는 것 같은데 venv나 node_modules 같은 거...
-#    layer: true
-    # zip 하면 런타임에 압축 푸느라 너무 느림...
-#    zip: true
-
