@@ -27,3 +27,11 @@ $ serverless deploy
 `pip freeze`를 통해 로컬의 의존성을 전달할 때 boto3가 자동으로 삽입되고, 그럼 layer 크기 제한 오류가 발생한다.
 
 따라서 `pip freeze`할 때마다 꼭 필요한 패키지만 명시했는지 확인해줘야한다 ㅜㅜ
+
+## custom base image
+
+```shell
+aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 070251821212.dkr.ecr.ap-northeast-2.amazonaws.com 
+docker build . -t 070251821212.dkr.ecr.ap-northeast-2.amazonaws.com/everybody-python
+docker push 070251821212.dkr.ecr.ap-northeast-2.amazonaws.com/everybody-python
+```
