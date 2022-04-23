@@ -98,7 +98,8 @@ func (h *UserHandler) NotifyDownloadImage(ctx *fiber.Ctx) error {
 		return errors.WithStack(err)
 	}
 
-	update := h.entClient.User.UpdateOneID(id).SetDownloadCompleted(time.Now())
+	now := time.Now()
+	update := h.entClient.User.UpdateOneID(id).SetNillableDownloadCompleted(&now)
 
 	user, err := update.Save(context.Background())
 	if err != nil {

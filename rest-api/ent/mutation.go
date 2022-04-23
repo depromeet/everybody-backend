@@ -3100,7 +3100,7 @@ func (m *UserMutation) DownloadCompleted() (r time.Time, exists bool) {
 // OldDownloadCompleted returns the old "download_completed" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldDownloadCompleted(ctx context.Context) (v time.Time, err error) {
+func (m *UserMutation) OldDownloadCompleted(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldDownloadCompleted is only allowed on UpdateOne operations")
 	}
@@ -3114,9 +3114,22 @@ func (m *UserMutation) OldDownloadCompleted(ctx context.Context) (v time.Time, e
 	return oldValue.DownloadCompleted, nil
 }
 
+// ClearDownloadCompleted clears the value of the "download_completed" field.
+func (m *UserMutation) ClearDownloadCompleted() {
+	m.download_completed = nil
+	m.clearedFields[user.FieldDownloadCompleted] = struct{}{}
+}
+
+// DownloadCompletedCleared returns if the "download_completed" field was cleared in this mutation.
+func (m *UserMutation) DownloadCompletedCleared() bool {
+	_, ok := m.clearedFields[user.FieldDownloadCompleted]
+	return ok
+}
+
 // ResetDownloadCompleted resets all changes to the "download_completed" field.
 func (m *UserMutation) ResetDownloadCompleted() {
 	m.download_completed = nil
+	delete(m.clearedFields, user.FieldDownloadCompleted)
 }
 
 // AddDeviceIDs adds the "devices" edge to the Device entity by ids.
@@ -3598,6 +3611,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldWeight) {
 		fields = append(fields, user.FieldWeight)
 	}
+	if m.FieldCleared(user.FieldDownloadCompleted) {
+		fields = append(fields, user.FieldDownloadCompleted)
+	}
 	return fields
 }
 
@@ -3620,6 +3636,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldWeight:
 		m.ClearWeight()
+		return nil
+	case user.FieldDownloadCompleted:
+		m.ClearDownloadCompleted()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)

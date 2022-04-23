@@ -152,6 +152,20 @@ func (uu *UserUpdate) SetDownloadCompleted(t time.Time) *UserUpdate {
 	return uu
 }
 
+// SetNillableDownloadCompleted sets the "download_completed" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDownloadCompleted(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetDownloadCompleted(*t)
+	}
+	return uu
+}
+
+// ClearDownloadCompleted clears the value of the "download_completed" field.
+func (uu *UserUpdate) ClearDownloadCompleted() *UserUpdate {
+	uu.mutation.ClearDownloadCompleted()
+	return uu
+}
+
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (uu *UserUpdate) AddDeviceIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddDeviceIDs(ids...)
@@ -499,6 +513,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: user.FieldDownloadCompleted,
+		})
+	}
+	if uu.mutation.DownloadCompletedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: user.FieldDownloadCompleted,
 		})
 	}
@@ -892,6 +912,20 @@ func (uuo *UserUpdateOne) SetDownloadCompleted(t time.Time) *UserUpdateOne {
 	return uuo
 }
 
+// SetNillableDownloadCompleted sets the "download_completed" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDownloadCompleted(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetDownloadCompleted(*t)
+	}
+	return uuo
+}
+
+// ClearDownloadCompleted clears the value of the "download_completed" field.
+func (uuo *UserUpdateOne) ClearDownloadCompleted() *UserUpdateOne {
+	uuo.mutation.ClearDownloadCompleted()
+	return uuo
+}
+
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (uuo *UserUpdateOne) AddDeviceIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddDeviceIDs(ids...)
@@ -1263,6 +1297,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
+			Column: user.FieldDownloadCompleted,
+		})
+	}
+	if uuo.mutation.DownloadCompletedCleared() {
+		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
 			Column: user.FieldDownloadCompleted,
 		})
 	}

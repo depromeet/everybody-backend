@@ -32,7 +32,7 @@ type User struct {
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// DownloadCompleted holds the value of the "download_completed" field.
-	DownloadCompleted time.Time `json:"download_completed,omitempty"`
+	DownloadCompleted *time.Time `json:"download_completed,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges UserEdges `json:"edges"`
@@ -185,7 +185,8 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field download_completed", values[i])
 			} else if value.Valid {
-				u.DownloadCompleted = value.Time
+				u.DownloadCompleted = new(time.Time)
+				*u.DownloadCompleted = value.Time
 			}
 		}
 	}
@@ -258,8 +259,10 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("%v", u.Kind))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", download_completed=")
-	builder.WriteString(u.DownloadCompleted.Format(time.ANSIC))
+	if v := u.DownloadCompleted; v != nil {
+		builder.WriteString(", download_completed=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

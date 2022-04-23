@@ -30,7 +30,7 @@ func (User) Fields() []ent.Field {
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),
-		field.Time("download_completed"),
+		field.Time("download_completed").Optional().Nillable(),
 	}
 }
 

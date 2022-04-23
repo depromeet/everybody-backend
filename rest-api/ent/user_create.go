@@ -113,6 +113,14 @@ func (uc *UserCreate) SetDownloadCompleted(t time.Time) *UserCreate {
 	return uc
 }
 
+// SetNillableDownloadCompleted sets the "download_completed" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDownloadCompleted(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetDownloadCompleted(*t)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(i int) *UserCreate {
 	uc.mutation.SetID(i)
@@ -298,9 +306,6 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "created_at"`)}
 	}
-	if _, ok := uc.mutation.DownloadCompleted(); !ok {
-		return &ValidationError{Name: "download_completed", err: errors.New(`ent: missing required field "download_completed"`)}
-	}
 	return nil
 }
 
@@ -396,7 +401,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: user.FieldDownloadCompleted,
 		})
-		_node.DownloadCompleted = value
+		_node.DownloadCompleted = &value
 	}
 	if nodes := uc.mutation.DevicesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -34,18 +34,19 @@ type UpdateProfileImageRequest struct {
 }
 
 type UserDto struct {
-	ID                int       `json:"id"`
-	Nickname          string    `json:"nickname"`
-	Motto             string    `json:"motto"`
-	Height            *int      `json:"height"`
-	Weight            *int      `json:"weight"`
-	Kind              user.Kind `json:"kind"`
-	ProfileImage      string    `json:"profile_image"`
-	CreatedAt         time.Time `json:"created_at"`
-	DownloadCompleted time.Time `json:"download_completed"`
+	ID                int        `json:"id"`
+	Nickname          string     `json:"nickname"`
+	Motto             string     `json:"motto"`
+	Height            *int       `json:"height"`
+	Weight            *int       `json:"weight"`
+	Kind              user.Kind  `json:"kind"`
+	ProfileImage      string     `json:"profile_image"`
+	CreatedAt         time.Time  `json:"created_at"`
+	DownloadCompleted *time.Time `json:"download_completed"`
 }
 
 func UserToDto(src *ent.User) *UserDto {
+
 	return &UserDto{
 		ID:                src.ID,
 		Motto:             src.Motto,

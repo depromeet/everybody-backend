@@ -869,6 +869,20 @@ func DownloadCompletedLTE(v time.Time) predicate.User {
 	})
 }
 
+// DownloadCompletedIsNil applies the IsNil predicate on the "download_completed" field.
+func DownloadCompletedIsNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldDownloadCompleted)))
+	})
+}
+
+// DownloadCompletedNotNil applies the NotNil predicate on the "download_completed" field.
+func DownloadCompletedNotNil() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldDownloadCompleted)))
+	})
+}
+
 // HasDevices applies the HasEdge predicate on the "devices" edge.
 func HasDevices() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

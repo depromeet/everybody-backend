@@ -121,7 +121,7 @@ var (
 		{Name: "weight", Type: field.TypeInt, Nullable: true},
 		{Name: "kind", Type: field.TypeEnum, Enums: []string{"SIMPLE", "KAKAO", "APPLE", "NAVER", "GOOGLE"}},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "download_completed", Type: field.TypeTime},
+		{Name: "download_completed", Type: field.TypeTime, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
