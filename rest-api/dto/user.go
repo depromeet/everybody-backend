@@ -2,10 +2,11 @@ package dto
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/depromeet/everybody-backend/rest-api/config"
 	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/ent/user"
-	"time"
 )
 
 type SignUpRequest struct {
@@ -33,25 +34,27 @@ type UpdateProfileImageRequest struct {
 }
 
 type UserDto struct {
-	ID           int       `json:"id"`
-	Nickname     string    `json:"nickname"`
-	Motto        string    `json:"motto"`
-	Height       *int      `json:"height"`
-	Weight       *int      `json:"weight"`
-	Kind         user.Kind `json:"kind"`
-	ProfileImage string    `json:"profile_image"`
-	CreatedAt    time.Time `json:"created_at"`
+	ID                int       `json:"id"`
+	Nickname          string    `json:"nickname"`
+	Motto             string    `json:"motto"`
+	Height            *int      `json:"height"`
+	Weight            *int      `json:"weight"`
+	Kind              user.Kind `json:"kind"`
+	ProfileImage      string    `json:"profile_image"`
+	CreatedAt         time.Time `json:"created_at"`
+	DownloadCompleted time.Time `json:"download_completed"`
 }
 
 func UserToDto(src *ent.User) *UserDto {
 	return &UserDto{
-		ID:           src.ID,
-		Motto:        src.Motto,
-		Nickname:     src.Nickname,
-		Height:       src.Height,
-		Weight:       src.Weight,
-		Kind:         src.Kind,
-		ProfileImage: fmt.Sprintf("%s/%s", config.Config.PublicDriveRootURL, src.ProfileImage),
-		CreatedAt:    src.CreatedAt,
+		ID:                src.ID,
+		Motto:             src.Motto,
+		Nickname:          src.Nickname,
+		Height:            src.Height,
+		Weight:            src.Weight,
+		Kind:              src.Kind,
+		ProfileImage:      fmt.Sprintf("%s/%s", config.Config.PublicDriveRootURL, src.ProfileImage),
+		CreatedAt:         src.CreatedAt,
+		DownloadCompleted: src.DownloadCompleted,
 	}
 }
