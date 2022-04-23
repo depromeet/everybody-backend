@@ -26,6 +26,8 @@ const (
 	FieldKind = "kind"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
+	// FieldDownloadCompleted holds the string denoting the download_completed field in the database.
+	FieldDownloadCompleted = "download_completed"
 	// EdgeDevices holds the string denoting the devices edge name in mutations.
 	EdgeDevices = "devices"
 	// EdgeNotificationConfig holds the string denoting the notification_config edge name in mutations.
@@ -85,6 +87,7 @@ var Columns = []string{
 	FieldWeight,
 	FieldKind,
 	FieldCreatedAt,
+	FieldDownloadCompleted,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).

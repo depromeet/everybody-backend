@@ -2644,6 +2644,7 @@ type UserMutation struct {
 	addweight                  *int
 	kind                       *user.Kind
 	created_at                 *time.Time
+	download_completed         *time.Time
 	clearedFields              map[string]struct{}
 	devices                    map[int]struct{}
 	removeddevices             map[int]struct{}
@@ -3082,6 +3083,42 @@ func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
+// SetDownloadCompleted sets the "download_completed" field.
+func (m *UserMutation) SetDownloadCompleted(t time.Time) {
+	m.download_completed = &t
+}
+
+// DownloadCompleted returns the value of the "download_completed" field in the mutation.
+func (m *UserMutation) DownloadCompleted() (r time.Time, exists bool) {
+	v := m.download_completed
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDownloadCompleted returns the old "download_completed" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldDownloadCompleted(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldDownloadCompleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldDownloadCompleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDownloadCompleted: %w", err)
+	}
+	return oldValue.DownloadCompleted, nil
+}
+
+// ResetDownloadCompleted resets all changes to the "download_completed" field.
+func (m *UserMutation) ResetDownloadCompleted() {
+	m.download_completed = nil
+}
+
 // AddDeviceIDs adds the "devices" edge to the Device entity by ids.
 func (m *UserMutation) AddDeviceIDs(ids ...int) {
 	if m.devices == nil {
@@ -3356,7 +3393,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.profile_image != nil {
 		fields = append(fields, user.FieldProfileImage)
 	}
@@ -3377,6 +3414,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
+	}
+	if m.download_completed != nil {
+		fields = append(fields, user.FieldDownloadCompleted)
 	}
 	return fields
 }
@@ -3400,6 +3440,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Kind()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
+	case user.FieldDownloadCompleted:
+		return m.DownloadCompleted()
 	}
 	return nil, false
 }
@@ -3423,6 +3465,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldKind(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case user.FieldDownloadCompleted:
+		return m.OldDownloadCompleted(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -3480,6 +3524,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
+		return nil
+	case user.FieldDownloadCompleted:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDownloadCompleted(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -3598,6 +3649,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case user.FieldDownloadCompleted:
+		m.ResetDownloadCompleted()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

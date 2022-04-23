@@ -1,8 +1,9 @@
 package schema
 
 import (
-	"entgo.io/ent/dialect/entsql"
 	"time"
+
+	"entgo.io/ent/dialect/entsql"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -29,6 +30,7 @@ func (User) Fields() []ent.Field {
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now()
 		}),
+		field.Time("download_completed"),
 	}
 }
 

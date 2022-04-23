@@ -1,21 +1,27 @@
 package handler
 
 import (
+	"context"
+	"time"
+
 	"github.com/depromeet/everybody-backend/rest-api/dto"
+	"github.com/depromeet/everybody-backend/rest-api/ent"
 	"github.com/depromeet/everybody-backend/rest-api/service"
 	"github.com/depromeet/everybody-backend/rest-api/util"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
 
-func NewUserHandler(userService service.UserService) *UserHandler {
+func NewUserHandler(userService service.UserService, entClient *ent.Client) *UserHandler {
 	return &UserHandler{
 		userService: userService,
+		entClient:   entClient,
 	}
 }
 
 type UserHandler struct {
 	userService service.UserService
+	entClient   *ent.Client
 }
 
 func (h *UserHandler) SignUp(ctx *fiber.Ctx) error {
@@ -84,5 +90,20 @@ func (h *UserHandler) UpdateProfileImage(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(user)
+}
 
+func (h *UserHandler) NotifyDownloadImage(ctx *fiber.Ctx) error {
+	id, err := util.GetRequestUserID(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	update := h.entClient.User.UpdateOneID(id).SetDownloadCompleted(time.Now())
+
+	user, err := update.Save(context.Background())
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	return ctx.JSON(user)
 }

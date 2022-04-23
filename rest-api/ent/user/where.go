@@ -135,6 +135,13 @@ func CreatedAt(v time.Time) predicate.User {
 	})
 }
 
+// DownloadCompleted applies equality check predicate on the "download_completed" field. It's identical to DownloadCompletedEQ.
+func DownloadCompleted(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDownloadCompleted), v))
+	})
+}
+
 // ProfileImageEQ applies the EQ predicate on the "profile_image" field.
 func ProfileImageEQ(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -783,6 +790,82 @@ func CreatedAtLT(v time.Time) predicate.User {
 func CreatedAtLTE(v time.Time) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldCreatedAt), v))
+	})
+}
+
+// DownloadCompletedEQ applies the EQ predicate on the "download_completed" field.
+func DownloadCompletedEQ(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldDownloadCompleted), v))
+	})
+}
+
+// DownloadCompletedNEQ applies the NEQ predicate on the "download_completed" field.
+func DownloadCompletedNEQ(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldDownloadCompleted), v))
+	})
+}
+
+// DownloadCompletedIn applies the In predicate on the "download_completed" field.
+func DownloadCompletedIn(vs ...time.Time) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldDownloadCompleted), v...))
+	})
+}
+
+// DownloadCompletedNotIn applies the NotIn predicate on the "download_completed" field.
+func DownloadCompletedNotIn(vs ...time.Time) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldDownloadCompleted), v...))
+	})
+}
+
+// DownloadCompletedGT applies the GT predicate on the "download_completed" field.
+func DownloadCompletedGT(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldDownloadCompleted), v))
+	})
+}
+
+// DownloadCompletedGTE applies the GTE predicate on the "download_completed" field.
+func DownloadCompletedGTE(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldDownloadCompleted), v))
+	})
+}
+
+// DownloadCompletedLT applies the LT predicate on the "download_completed" field.
+func DownloadCompletedLT(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldDownloadCompleted), v))
+	})
+}
+
+// DownloadCompletedLTE applies the LTE predicate on the "download_completed" field.
+func DownloadCompletedLTE(v time.Time) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldDownloadCompleted), v))
 	})
 }
 

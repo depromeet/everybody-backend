@@ -31,6 +31,8 @@ type User struct {
 	Kind user.Kind `json:"kind,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// DownloadCompleted holds the value of the "download_completed" field.
+	DownloadCompleted time.Time `json:"download_completed,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges UserEdges `json:"edges"`
@@ -112,7 +114,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case user.FieldProfileImage, user.FieldNickname, user.FieldMotto, user.FieldKind:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt:
+		case user.FieldCreatedAt, user.FieldDownloadCompleted:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
@@ -178,6 +180,12 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				u.CreatedAt = value.Time
+			}
+		case user.FieldDownloadCompleted:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field download_completed", values[i])
+			} else if value.Valid {
+				u.DownloadCompleted = value.Time
 			}
 		}
 	}
@@ -250,6 +258,8 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("%v", u.Kind))
 	builder.WriteString(", created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", download_completed=")
+	builder.WriteString(u.DownloadCompleted.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

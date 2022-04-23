@@ -89,7 +89,7 @@ func initialize() {
 	pictureService = service.NewPictureService(pictureRepo, albumRepo)
 	feedbackService = service.NewFeedbackService(notifierPort)
 
-	userHandler = handler.NewUserHandler(userService)
+	userHandler = handler.NewUserHandler(userService, dbClient)
 	notificationHandler = handler.NewNotificationHandler(notificationService)
 	albumHandler = handler.NewAlbumHandler(albumService)
 	pictureHandler = handler.NewPictureHandler(pictureService)

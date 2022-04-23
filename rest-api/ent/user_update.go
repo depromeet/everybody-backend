@@ -146,6 +146,12 @@ func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
 	return uu
 }
 
+// SetDownloadCompleted sets the "download_completed" field.
+func (uu *UserUpdate) SetDownloadCompleted(t time.Time) *UserUpdate {
+	uu.mutation.SetDownloadCompleted(t)
+	return uu
+}
+
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (uu *UserUpdate) AddDeviceIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddDeviceIDs(ids...)
@@ -487,6 +493,13 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: user.FieldCreatedAt,
+		})
+	}
+	if value, ok := uu.mutation.DownloadCompleted(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldDownloadCompleted,
 		})
 	}
 	if uu.mutation.DevicesCleared() {
@@ -873,6 +886,12 @@ func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
 	return uuo
 }
 
+// SetDownloadCompleted sets the "download_completed" field.
+func (uuo *UserUpdateOne) SetDownloadCompleted(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetDownloadCompleted(t)
+	return uuo
+}
+
 // AddDeviceIDs adds the "devices" edge to the Device entity by IDs.
 func (uuo *UserUpdateOne) AddDeviceIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddDeviceIDs(ids...)
@@ -1238,6 +1257,13 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Type:   field.TypeTime,
 			Value:  value,
 			Column: user.FieldCreatedAt,
+		})
+	}
+	if value, ok := uuo.mutation.DownloadCompleted(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: user.FieldDownloadCompleted,
 		})
 	}
 	if uuo.mutation.DevicesCleared() {
