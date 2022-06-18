@@ -22,9 +22,7 @@ type FeedbackHandler struct {
 // GetConfig 는 요청 유저의 알림 설정을 수정합니다.
 func (h *FeedbackHandler) SendFeedback(ctx *fiber.Ctx) error {
 	user, err := util.GetRequestUserID(ctx)
-	if err != nil {
-		return errors.WithStack(err)
-	}
+	log.Infof("미인증 유저의 피드백입니다. user을 0으로 설정합니다.")
 
 	body := new(dto.SendFeedbackRequest)
 	err = ctx.BodyParser(body)

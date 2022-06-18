@@ -64,6 +64,9 @@ func main() {
 	e.PUT("/users/me/profile-image", func(c echo.Context) error {
 		return controller.UpdateProfileImage(c)
 	})
+	e.POST("/feedbacks", func(c echo.Context) error {
+		return controller.SendFeedback(c)
+	})
 
 	// fowarding to rest-api server apis
 	// 위에서 method & uri 조합으로 걸리지 않았으면 이 아래 match any로 걸림 - ref: https://echo.labstack.com/guide/routing/#path-matching-order

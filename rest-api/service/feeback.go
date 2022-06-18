@@ -25,7 +25,11 @@ func NewFeedbackService(notifierPort noti.NotifierPort) FeedbackService {
 }
 
 func (s *feedbackService) SendFeedback(sender int, body *dto.SendFeedbackRequest) error {
-	log.Infof("%s 가 피드백을 보냈습니다. %+v", strconv.Itoa(sender), body)
+	senderString := "미인증 유저"
+	if sender != 0{
+		senderString = strconv.Itoa(sender)
+	}
+	log.Infof("%s 가 피드백을 보냈습니다. %+v", senderString, body)
 	starRateString := "별점 생략"
 	if body.StarRate != nil {
 		if *body.StarRate < 0 || 5 < *body.StarRate {
@@ -37,12 +41,12 @@ func (s *feedbackService) SendFeedback(sender int, body *dto.SendFeedbackRequest
 	}
 
 	msg := &noti.Message{
-		Sender:  strconv.Itoa(sender),
+		Sender:  senderString,
 		Title:   body.Title,
 		Content: starRateString + "\n" + body.Content,
 	}
 
-	if err := s.notifierPort.Send(strconv.Itoa(sender), msg); err != nil {
+	if err := s.notifierPort.Send(senderString, msg); err != nil {
 		return errors.Wrap(err, "피드백을 보내지 못했습니다.")
 	}
 
