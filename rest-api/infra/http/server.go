@@ -8,14 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func NewServer(
-	userHandler *handler.UserHandler,
-	notificationHandler *handler.NotificationHandler,
-	albumHandler *handler.AlbumHandler,
-	pictureHandler *handler.PictureHandler,
-	videoHandler *handler.VideoHandler,
-	feedbackHandler *handler.FeedbackHandler,
-) *fiber.App {
+func NewServer(feedbackHandler *handler.FeedbackHandler) *fiber.App {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: errorHandle,
 	})
@@ -27,11 +20,11 @@ func NewServer(
 	app.Use(defaultLog)
 	app.Get("/", index)
 
-	addUserHandlers(app, userHandler)
-	addNotificationHandlers(app, notificationHandler)
-	addAlbumHandlers(app, albumHandler)
-	addPictureHandlers(app, pictureHandler)
-	addVideoHandlers(app, videoHandler)
+	//addUserHandlers(app, userHandler)
+	//addNotificationHandlers(app, notificationHandler)
+	//addAlbumHandlers(app, albumHandler)
+	//addPictureHandlers(app, pictureHandler)
+	//addVideoHandlers(app, videoHandler)
 	addFeedbackHandlers(app, feedbackHandler)
 
 	return app
